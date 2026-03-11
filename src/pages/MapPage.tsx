@@ -1,5 +1,6 @@
 import { MapPin, Star, Phone, Navigation } from "lucide-react";
 import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import clubSoccer from "@/assets/club-soccer.jpg";
 import clubArt from "@/assets/club-art.jpg";
 import clubRobotics from "@/assets/club-robotics.jpg";
@@ -25,30 +26,20 @@ const MapPage = () => {
         <p className="text-xs text-muted-foreground">Кружки рядом с вами</p>
       </div>
 
-      {/* Map */}
-      <div className="mx-4 relative rounded-2xl h-64 overflow-hidden border border-border shadow-sm" style={{
-        background: "linear-gradient(135deg, hsl(140, 40%, 93%) 0%, hsl(100, 30%, 91%) 50%, hsl(140, 35%, 89%) 100%)"
-      }}>
+      <div className="mx-4 relative rounded-2xl h-64 overflow-hidden border border-border shadow-sm bg-yellow-light">
         <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 400 300">
-          <path d="M0 150 Q100 120 200 150 Q300 180 400 140" stroke="hsl(152, 40%, 40%)" strokeWidth="3" fill="none"/>
-          <path d="M150 0 Q170 100 160 200 Q150 250 180 300" stroke="hsl(152, 40%, 40%)" strokeWidth="3" fill="none"/>
+          <path d="M0 150 Q100 120 200 150 Q300 180 400 140" stroke="hsl(45, 80%, 40%)" strokeWidth="3" fill="none"/>
+          <path d="M150 0 Q170 100 160 200 Q150 250 180 300" stroke="hsl(45, 80%, 40%)" strokeWidth="3" fill="none"/>
         </svg>
-
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-card shadow-lg" />
-          <div className="absolute inset-0 w-3.5 h-3.5 rounded-full bg-blue-400 animate-ping opacity-30" />
+          <div className="w-3.5 h-3.5 rounded-full bg-accent border-2 border-card shadow-lg" />
+          <div className="absolute inset-0 w-3.5 h-3.5 rounded-full bg-accent animate-ping opacity-30" />
         </div>
-
         {clubs.map((club) => (
-          <button
-            key={club.id}
-            onClick={() => setSelected(club.id === selected ? null : club.id)}
+          <button key={club.id} onClick={() => setSelected(club.id === selected ? null : club.id)}
             className={`absolute transition-all duration-300 z-20 ${selected === club.id ? "scale-125" : "hover:scale-110"}`}
-            style={{ left: `${club.x}%`, top: `${club.y}%`, transform: "translate(-50%, -100%)" }}
-          >
-            <div className={`w-10 h-10 rounded-xl overflow-hidden border-2 shadow-md ${
-              selected === club.id ? "border-accent" : "border-card"
-            }`}>
+            style={{ left: `${club.x}%`, top: `${club.y}%`, transform: "translate(-50%, -100%)" }}>
+            <div className={`w-10 h-10 rounded-xl overflow-hidden border-2 shadow-md ${selected === club.id ? "border-accent" : "border-card"}`}>
               <img src={club.img} alt="" className="w-full h-full object-cover" />
             </div>
           </button>
@@ -64,7 +55,7 @@ const MapPage = () => {
             <div className="flex-1 py-0.5">
               <h3 className="font-bold text-sm">{selectedClub.name}</h3>
               <div className="flex items-center gap-1.5 mt-1">
-                <Star size={11} className="text-secondary fill-secondary" />
+                <Star size={11} className="text-primary fill-primary" />
                 <span className="text-xs font-bold">{selectedClub.rating}</span>
                 <span className="text-[10px] text-muted-foreground ml-1">{selectedClub.age}</span>
               </div>
@@ -73,7 +64,8 @@ const MapPage = () => {
             </div>
           </div>
           <div className="flex gap-2 px-3 pb-3">
-            <button className="flex-1 bg-primary text-primary-foreground font-bold text-sm py-2.5 rounded-xl">Подробнее</button>
+            <button onClick={() => toast({ title: selectedClub.name, description: "Открываем подробности..." })}
+              className="flex-1 bg-primary text-primary-foreground font-bold text-sm py-2.5 rounded-xl active:scale-[0.97] transition-transform">Подробнее</button>
             <button className="flex items-center gap-1 px-4 py-2.5 rounded-xl bg-muted text-foreground font-bold text-xs">
               <Navigation size={12} />{selectedClub.dist}
             </button>
@@ -85,13 +77,9 @@ const MapPage = () => {
         <h2 className="section-title mb-3">Все кружки</h2>
         <div className="flex flex-col gap-2">
           {clubs.map((club) => (
-            <button
-              key={club.id}
-              onClick={() => setSelected(club.id)}
-              className={`flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${
-                selected === club.id ? "border-primary bg-green-light" : "border-border bg-card"
-              }`}
-            >
+            <button key={club.id} onClick={() => setSelected(club.id)}
+              className={`flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all active:scale-[0.98] ${
+                selected === club.id ? "border-primary bg-yellow-light" : "border-border bg-card"}`}>
               <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0">
                 <img src={club.img} alt="" className="w-full h-full object-cover" />
               </div>
@@ -101,7 +89,7 @@ const MapPage = () => {
               </div>
               <div className="text-right shrink-0">
                 <div className="flex items-center gap-0.5">
-                  <Star size={10} className="text-secondary fill-secondary" />
+                  <Star size={10} className="text-primary fill-primary" />
                   <span className="text-xs font-bold">{club.rating}</span>
                 </div>
                 <span className="text-[10px] text-muted-foreground">{club.dist}</span>
