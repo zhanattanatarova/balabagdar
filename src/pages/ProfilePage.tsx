@@ -6,11 +6,11 @@ import { useState } from "react";
 import AuthModal from "@/components/AuthModal";
 
 const menuItems = [
-  { icon: Crown, label: "Подписка", desc: "Бесплатный план", badge: "FREE" },
-  { icon: Heart, label: "Избранные", desc: "3 кружка", badge: "3" },
-  { icon: Clock, label: "История", desc: "Недавние просмотры", badge: "" },
-  { icon: Bell, label: "Уведомления", desc: "Новые события", badge: "2" },
-  { icon: Settings, label: "Настройки", desc: "Профиль и приватность", badge: "" },
+  { icon: Crown, label: "Подписка", desc: "Бесплатный план", badge: "FREE", color: "bg-primary/15", iconColor: "text-primary" },
+  { icon: Heart, label: "Избранные", desc: "3 кружка", badge: "3", color: "bg-pink-soft", iconColor: "text-accent" },
+  { icon: Clock, label: "История", desc: "Недавние просмотры", badge: "", color: "bg-blue-sky", iconColor: "text-secondary" },
+  { icon: Bell, label: "Уведомления", desc: "Новые события", badge: "2", color: "bg-green-light", iconColor: "text-green-fresh" },
+  { icon: Settings, label: "Настройки", desc: "Профиль и приватность", badge: "", color: "bg-muted", iconColor: "text-muted-foreground" },
 ];
 
 const ProfilePage = () => {
