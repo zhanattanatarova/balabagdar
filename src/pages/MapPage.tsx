@@ -20,30 +20,25 @@ const MapPage = () => {
 
   return (
     <div className="pb-24 max-w-lg mx-auto">
-      {/* Header */}
       <div className="px-4 pt-5 pb-3">
-        <h1 className="text-xl font-black">Карта кружков</h1>
-        <p className="text-sm text-muted-foreground">Кружки рядом с вами в Алматы</p>
+        <h1 className="text-lg font-black">Карта кружков</h1>
+        <p className="text-xs text-muted-foreground">Кружки рядом с вами</p>
       </div>
 
-      {/* Map area */}
-      <div className="mx-4 relative rounded-3xl h-72 overflow-hidden border border-border/50 shadow-lg" style={{
-        background: "linear-gradient(135deg, hsl(140, 40%, 92%) 0%, hsl(100, 30%, 90%) 50%, hsl(140, 35%, 88%) 100%)"
+      {/* Map */}
+      <div className="mx-4 relative rounded-2xl h-64 overflow-hidden border border-border shadow-sm" style={{
+        background: "linear-gradient(135deg, hsl(140, 40%, 93%) 0%, hsl(100, 30%, 91%) 50%, hsl(140, 35%, 89%) 100%)"
       }}>
-        {/* Decorative roads */}
-        <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 400 300">
+        <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 400 300">
           <path d="M0 150 Q100 120 200 150 Q300 180 400 140" stroke="hsl(152, 40%, 40%)" strokeWidth="3" fill="none"/>
           <path d="M150 0 Q170 100 160 200 Q150 250 180 300" stroke="hsl(152, 40%, 40%)" strokeWidth="3" fill="none"/>
-          <path d="M50 80 Q150 90 250 70 Q350 50 400 80" stroke="hsl(152, 40%, 40%)" strokeWidth="2" fill="none"/>
         </svg>
 
-        {/* User location */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-card shadow-lg" />
-          <div className="absolute inset-0 w-4 h-4 rounded-full bg-blue-400 animate-ping opacity-40" />
+          <div className="w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-card shadow-lg" />
+          <div className="absolute inset-0 w-3.5 h-3.5 rounded-full bg-blue-400 animate-ping opacity-30" />
         </div>
 
-        {/* Club markers */}
         {clubs.map((club) => (
           <button
             key={club.id}
@@ -51,81 +46,62 @@ const MapPage = () => {
             className={`absolute transition-all duration-300 z-20 ${selected === club.id ? "scale-125" : "hover:scale-110"}`}
             style={{ left: `${club.x}%`, top: `${club.y}%`, transform: "translate(-50%, -100%)" }}
           >
-            <div className={`relative ${selected === club.id ? "drop-shadow-xl" : "drop-shadow-md"}`}>
-              <div className={`w-11 h-11 rounded-2xl overflow-hidden border-2 transition-colors ${
-                selected === club.id ? "border-accent" : "border-card"
-              }`}>
-                <img src={club.img} alt="" className="w-full h-full object-cover" />
-              </div>
-              <div className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rotate-45 ${
-                selected === club.id ? "bg-accent" : "bg-card"
-              }`} />
+            <div className={`w-10 h-10 rounded-xl overflow-hidden border-2 shadow-md ${
+              selected === club.id ? "border-accent" : "border-card"
+            }`}>
+              <img src={club.img} alt="" className="w-full h-full object-cover" />
             </div>
           </button>
         ))}
       </div>
 
-      {/* Selected card */}
       {selectedClub && (
-        <div className="mx-4 mt-3 bg-card rounded-2xl overflow-hidden shadow-lg border border-border/50 animate-slide-up">
+        <div className="mx-4 mt-3 bg-card rounded-xl overflow-hidden shadow-sm border border-border animate-slide-up">
           <div className="flex gap-3 p-3">
-            <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0">
+            <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
               <img src={selectedClub.img} alt={selectedClub.name} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 py-0.5">
-              <h3 className="font-extrabold text-sm leading-tight">{selectedClub.name}</h3>
-              <div className="flex items-center gap-1.5 mt-1.5">
-                <div className="badge-rating">
-                  <Star size={10} className="text-secondary fill-secondary" />
-                  {selectedClub.rating}
-                </div>
-                <span className="text-xs text-muted-foreground">{selectedClub.age}</span>
+              <h3 className="font-bold text-sm">{selectedClub.name}</h3>
+              <div className="flex items-center gap-1.5 mt-1">
+                <Star size={11} className="text-secondary fill-secondary" />
+                <span className="text-xs font-bold">{selectedClub.rating}</span>
+                <span className="text-[10px] text-muted-foreground ml-1">{selectedClub.age}</span>
               </div>
-              <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
-                <MapPin size={12} />
-                {selectedClub.address}
-              </div>
-              <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                <Phone size={12} />
-                {selectedClub.phone}
-              </div>
+              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1"><MapPin size={10} />{selectedClub.address}</p>
+              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1"><Phone size={10} />{selectedClub.phone}</p>
             </div>
           </div>
           <div className="flex gap-2 px-3 pb-3">
-            <button className="flex-1 btn-primary text-sm py-2.5">Подробнее</button>
-            <button className="flex items-center gap-1 px-4 py-2.5 rounded-2xl bg-muted text-foreground font-bold text-sm">
-              <Navigation size={14} />
-              {selectedClub.dist}
+            <button className="flex-1 bg-primary text-primary-foreground font-bold text-sm py-2.5 rounded-xl">Подробнее</button>
+            <button className="flex items-center gap-1 px-4 py-2.5 rounded-xl bg-muted text-foreground font-bold text-xs">
+              <Navigation size={12} />{selectedClub.dist}
             </button>
           </div>
         </div>
       )}
 
-      {/* All clubs */}
       <div className="px-4 mt-5">
         <h2 className="section-title mb-3">Все кружки</h2>
-        <div className="flex flex-col gap-2.5">
-          {clubs.map((club, i) => (
+        <div className="flex flex-col gap-2">
+          {clubs.map((club) => (
             <button
               key={club.id}
               onClick={() => setSelected(club.id)}
-              className={`flex items-center gap-3 p-2.5 rounded-2xl border transition-all text-left animate-slide-up ${
-                selected === club.id
-                  ? "border-primary bg-green-light shadow-md"
-                  : "border-border/50 bg-card hover:shadow-sm"
+              className={`flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${
+                selected === club.id ? "border-primary bg-green-light" : "border-border bg-card"
               }`}
-              style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}
             >
-              <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0">
+              <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0">
                 <img src={club.img} alt="" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-sm truncate">{club.name}</p>
-                <p className="text-xs text-muted-foreground">{club.address}</p>
+                <p className="text-[10px] text-muted-foreground">{club.address}</p>
               </div>
               <div className="text-right shrink-0">
                 <div className="flex items-center gap-0.5">
-                  <Star size={11} className="text-secondary fill-secondary" />
+                  <Star size={10} className="text-secondary fill-secondary" />
                   <span className="text-xs font-bold">{club.rating}</span>
                 </div>
                 <span className="text-[10px] text-muted-foreground">{club.dist}</span>
