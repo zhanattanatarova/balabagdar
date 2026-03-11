@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { X, Phone, Send, ArrowRight } from "lucide-react";
+import { X, Phone, Send, ArrowRight, Loader2 } from "lucide-react";
 import logo from "@/assets/balahub-logo.png";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthModalProps {
   open: boolean;
@@ -12,27 +13,65 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("+7 ");
   const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
 
   if (!open) return null;
 
-  const handleSendCode = () => {
-    if (phone.replace(/\D/g, "").length < 11) {
+  const handleSendCode = async () => {
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length < 11) {
       toast({ title: "Ошибка", description: "Введите корректный номер телефона", variant: "destructive" });
       return;
     }
-    setStep("code");
-    toast({ title: "Код отправлен", description: "Проверьте Telegram для получения кода" });
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-code", {
+        body: { phone: digits },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setStep("code");
+      toast({ title: "Код отправлен ✅", description: "Введите 4-значный код для входа" });
+    } catch (err: any) {
+      toast({ title: "Ошибка", description: err.message || "Не удалось отправить код", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (code.length < 4) {
       toast({ title: "Ошибка", description: "Введите 4-значный код", variant: "destructive" });
       return;
     }
-    toast({ title: "Добро пожаловать! 🎉", description: "Вы успешно зарегистрировались" });
-    onClose();
-    setStep("phone");
-    setCode("");
+    const digits = phone.replace(/\D/g, "");
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("verify-code", {
+        body: { phone: digits, code },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      if (data?.session) {
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+      }
+
+      toast({
+        title: data?.isNewUser ? "Добро пожаловать! 🎉" : "С возвращением! 👋",
+        description: data?.isNewUser ? "Аккаунт создан" : "Вы вошли в аккаунт",
+      });
+      onClose();
+      setStep("phone");
+      setCode("");
+    } catch (err: any) {
+      toast({ title: "Ошибка", description: err.message || "Неверный код", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -56,7 +95,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           <p className="text-sm text-muted-foreground text-center mt-1">
             {step === "phone"
               ? "Введите номер телефона для регистрации"
-              : `Код отправлен в Telegram на ${phone}`}
+              : `Введите код подтверждения`}
           </p>
 
           {step === "phone" ? (
@@ -74,18 +113,19 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               </div>
               <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-blue-sky">
                 <Send size={16} className="text-secondary shrink-0" />
-                <p className="text-xs text-foreground/70">Код подтверждения придёт в <strong>Telegram</strong></p>
+                <p className="text-xs text-foreground/70">Код подтверждения для входа</p>
               </div>
               <button
                 onClick={handleSendCode}
-                className="w-full mt-5 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all"
+                disabled={loading}
+                className="w-full mt-5 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50"
               >
-                Получить код <ArrowRight size={18} />
+                {loading ? <Loader2 size={18} className="animate-spin" /> : <>Получить код <ArrowRight size={18} /></>}
               </button>
             </div>
           ) : (
             <div className="mt-6">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Код из Telegram</label>
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Код подтверждения</label>
               <div className="flex gap-2.5 mt-2 justify-center">
                 {[0, 1, 2, 3].map((i) => (
                   <input
@@ -109,12 +149,13 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               </div>
               <button
                 onClick={handleVerify}
-                className="w-full mt-6 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl hover:brightness-105 active:scale-[0.98] transition-all"
+                disabled={loading}
+                className="w-full mt-6 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center"
               >
-                Подтвердить
+                {loading ? <Loader2 size={18} className="animate-spin" /> : "Подтвердить"}
               </button>
               <button
-                onClick={() => setStep("phone")}
+                onClick={() => { setStep("phone"); setCode(""); }}
                 className="w-full mt-2 text-muted-foreground font-bold text-sm py-2"
               >
                 Изменить номер
