@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Bell } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/balahub-logo.png";
 import clubSoccer from "@/assets/club-soccer.jpg";
@@ -56,6 +57,7 @@ const popularClubs = [
 ];
 
 const HomePage = () => {
+  const { user } = useAuth();
   const [city, setCity] = useState("Алматы");
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
@@ -142,9 +144,17 @@ const HomePage = () => {
               <Bell size={18} className="text-primary-foreground" />
               <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] font-bold flex items-center justify-center">3</span>
             </button>
-            <button onClick={() => setShowAuth(true)} className="text-primary-foreground text-sm font-bold bg-primary-foreground/15 px-3.5 py-1.5 rounded-xl hover:bg-primary-foreground/25 transition-colors">
-              Войти
-            </button>
+            {user ? (
+              <div className="w-9 h-9 rounded-xl bg-primary-foreground/15 flex items-center justify-center">
+                <span className="text-primary-foreground text-sm font-black">
+                  {user.user_metadata?.phone?.slice(-2) || "👤"}
+                </span>
+              </div>
+            ) : (
+              <button onClick={() => setShowAuth(true)} className="text-primary-foreground text-sm font-bold bg-primary-foreground/15 px-3.5 py-1.5 rounded-xl hover:bg-primary-foreground/25 transition-colors">
+                Войти
+              </button>
+            )}
           </div>
         </div>
         <button onClick={() => setShowCityPicker(true)} className="flex items-center gap-1 text-primary-foreground/70 text-xs font-bold">
