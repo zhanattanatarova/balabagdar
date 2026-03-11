@@ -1,10 +1,21 @@
-import { Search, MapPin, ChevronDown, Star, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check } from "lucide-react";
 import heroBanner from "@/assets/hero-banner.jpg";
 import clubSoccer from "@/assets/club-soccer.jpg";
 import clubArt from "@/assets/club-art.jpg";
 import clubRobotics from "@/assets/club-robotics.jpg";
 import clubDance from "@/assets/club-dance.jpg";
 import clubSwim from "@/assets/club-swim.jpg";
+
+const cities = [
+  "Алматы", "Астана", "Шымкент", "Караганда", "Актобе",
+  "Тараз", "Павлодар", "Усть-Каменогорск", "Семей", "Атырау",
+  "Костанай", "Кызылорда", "Уральск", "Петропавловск", "Актау",
+  "Темиртау", "Туркестан", "Кокшетау", "Талдыкорган", "Экибастуз",
+  "Рудный", "Жезказган", "Каскелен", "Талгар", "Конаев",
+  "Жанаозен", "Байконур", "Балхаш", "Кентау", "Сатпаев",
+  "Сарань", "Щучинск", "Риддер", "Аксай", "Степногорск",
+];
 
 const categories = [
   { icon: "⚽", label: "Спорт" },
@@ -26,8 +37,69 @@ const popularClubs = [
 ];
 
 const HomePage = () => {
+  const [city, setCity] = useState("Алматы");
+  const [showCityPicker, setShowCityPicker] = useState(false);
+  const [citySearch, setCitySearch] = useState("");
+
+  const filteredCities = cities.filter((c) =>
+    c.toLowerCase().includes(citySearch.toLowerCase())
+  );
+
   return (
     <div className="pb-24 max-w-lg mx-auto">
+      {/* City Picker Modal */}
+      {showCityPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={() => setShowCityPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col">
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-border" />
+            </div>
+            <div className="px-4 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">Выберите город</h3>
+              <button onClick={() => setShowCityPicker(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X size={16} className="text-muted-foreground" />
+              </button>
+            </div>
+            {/* Search */}
+            <div className="px-4 pb-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+                <input
+                  value={citySearch}
+                  onChange={(e) => setCitySearch(e.target.value)}
+                  placeholder="Поиск города..."
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-semibold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  autoFocus
+                />
+              </div>
+            </div>
+            {/* City list */}
+            <div className="flex-1 overflow-y-auto px-2 pb-6">
+              {filteredCities.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => { setCity(c); setShowCityPicker(false); setCitySearch(""); }}
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${
+                    c === city ? "bg-green-light" : "hover:bg-muted"
+                  }`}
+                >
+                  <MapPin size={16} className={c === city ? "text-primary" : "text-muted-foreground"} />
+                  <span className={`text-sm ${c === city ? "font-bold text-primary" : "font-semibold text-foreground"}`}>
+                    {c}
+                  </span>
+                  {c === city && <Check size={16} className="text-primary ml-auto" />}
+                </button>
+              ))}
+              {filteredCities.length === 0 && (
+                <p className="text-center text-muted-foreground text-sm py-8">Город не найден</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Banner */}
       <div className="relative h-56 overflow-hidden">
         <img src={heroBanner} alt="Дети" className="w-full h-full object-cover" />
@@ -37,9 +109,12 @@ const HomePage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-primary-foreground/60 text-xs font-bold uppercase tracking-wider">Ваш город</p>
-              <button className="flex items-center gap-1 text-primary-foreground font-extrabold text-base mt-0.5">
+              <button
+                onClick={() => setShowCityPicker(true)}
+                className="flex items-center gap-1 text-primary-foreground font-extrabold text-base mt-0.5"
+              >
                 <MapPin size={15} />
-                Алматы
+                {city}
                 <ChevronDown size={14} />
               </button>
             </div>
@@ -86,7 +161,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Popular — horizontal scroll with photo cards */}
+      {/* Popular */}
       <div className="mt-6">
         <div className="flex items-center justify-between px-4 mb-3">
           <h2 className="section-title">🔥 Популярные</h2>
@@ -103,13 +178,10 @@ const HomePage = () => {
             >
               <img src={club.img} alt={club.name} className="group-hover:scale-105 transition-transform duration-500" />
               <div className="card-photo-overlay" />
-              
-              {/* Rating badge */}
               <div className="absolute top-3 right-3 badge-rating">
                 <Star size={11} className="text-secondary fill-secondary" />
                 {club.rating}
               </div>
-
               <div className="absolute bottom-0 left-0 right-0 p-3">
                 <h3 className="text-primary-foreground font-bold text-sm leading-snug line-clamp-2">{club.name}</h3>
                 <p className="text-primary-foreground/60 text-xs mt-1">{club.district}</p>
@@ -139,7 +211,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Vertical list cards */}
+      {/* Nearby list */}
       <div className="px-4 mt-6">
         <h2 className="section-title mb-3">Рядом с вами</h2>
         <div className="flex flex-col gap-3">
