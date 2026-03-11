@@ -134,7 +134,7 @@ const HomePage = () => {
       <div className="px-5 pt-5 pb-4" style={{ background: "var(--gradient-header)" }}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="BalaHub" className="w-9 h-9" />
+            <img src={logo} alt="BalaHub" className="w-9 h-9 animate-wiggle" />
             <span className="text-primary-foreground font-black text-xl tracking-tight">BalaHub</span>
           </div>
           <div className="flex items-center gap-2">
