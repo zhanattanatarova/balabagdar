@@ -1,80 +1,57 @@
-import { Heart, Clock, Bell, Crown, ChevronRight, Settings, LogOut, Star } from "lucide-react";
-import logo from "@/assets/balahub-logo.png";
-
-const stats = [
-  { value: "3", label: "Избранных" },
-  { value: "12", label: "Просмотров" },
-  { value: "2", label: "Отзыва" },
-];
+import { Heart, Clock, Bell, Crown, ChevronRight, Settings, LogOut } from "lucide-react";
 
 const menuItems = [
-  { icon: Crown, label: "Подписка", desc: "Бесплатный план", badge: "FREE", badgeColor: "bg-secondary text-secondary-foreground" },
-  { icon: Heart, label: "Избранные кружки", desc: "3 сохранённых кружка", badge: "3", badgeColor: "bg-accent text-accent-foreground" },
-  { icon: Clock, label: "История просмотров", desc: "Недавние просмотры", badge: "", badgeColor: "" },
-  { icon: Bell, label: "Уведомления", desc: "Новые события и акции", badge: "2", badgeColor: "bg-accent text-accent-foreground" },
-  { icon: Settings, label: "Настройки", desc: "Профиль и приватность", badge: "", badgeColor: "" },
+  { icon: Crown, label: "Подписка", desc: "Бесплатный план", badge: "FREE" },
+  { icon: Heart, label: "Избранные", desc: "3 кружка", badge: "3" },
+  { icon: Clock, label: "История", desc: "Недавние просмотры", badge: "" },
+  { icon: Bell, label: "Уведомления", desc: "Новые события", badge: "2" },
+  { icon: Settings, label: "Настройки", desc: "Профиль и приватность", badge: "" },
 ];
 
 const ProfilePage = () => {
   return (
     <div className="pb-24 max-w-lg mx-auto">
-      {/* Profile header */}
-      <div className="relative h-48 overflow-hidden" style={{
-        background: "linear-gradient(160deg, hsl(152, 60%, 40%) 0%, hsl(42, 100%, 55%) 100%)"
-      }}>
-        {/* Decorative circles */}
-        <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-primary-foreground/5" />
-        <div className="absolute -bottom-5 -left-5 w-24 h-24 rounded-full bg-primary-foreground/5" />
-        
-        <div className="absolute inset-0 flex flex-col items-center justify-center pt-4">
-          <div className="w-20 h-20 rounded-3xl bg-card shadow-xl flex items-center justify-center overflow-hidden border-4 border-primary-foreground/20">
-            <img src={logo} alt="avatar" className="w-14 h-14" />
-          </div>
-          <h1 className="text-xl font-black text-primary-foreground mt-3">Айгерим</h1>
-          <p className="text-primary-foreground/70 text-sm font-semibold">Алматы · 2 ребёнка</p>
+      <div className="pt-8 pb-6 flex flex-col items-center" style={{ background: "var(--gradient-header)" }}>
+        <div className="w-18 h-18 rounded-full bg-primary-foreground/20 flex items-center justify-center text-4xl border-4 border-primary-foreground/10">
+          👩‍👧
         </div>
+        <h1 className="text-lg font-black text-primary-foreground mt-3">Айгерим</h1>
+        <p className="text-primary-foreground/60 text-xs font-semibold">Алматы · 2 ребёнка</p>
       </div>
 
-      {/* Stats */}
-      <div className="mx-4 -mt-5 relative z-10 bg-card rounded-2xl shadow-lg border border-border/50 p-4 flex justify-around">
-        {stats.map((s) => (
-          <div key={s.label} className="text-center">
-            <p className="text-lg font-black text-primary">{s.value}</p>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{s.label}</p>
+      <div className="mx-4 -mt-4 relative z-10 bg-card rounded-xl shadow-sm border border-border p-3.5 flex justify-around">
+        {[{ v: "3", l: "Избранных" }, { v: "12", l: "Просмотров" }, { v: "2", l: "Отзыва" }].map((s) => (
+          <div key={s.l} className="text-center">
+            <p className="text-base font-black text-primary">{s.v}</p>
+            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider">{s.l}</p>
           </div>
         ))}
       </div>
 
-      {/* Menu */}
-      <div className="px-4 mt-5 flex flex-col gap-2">
-        {menuItems.map((item, i) => (
+      <div className="px-4 mt-4 flex flex-col gap-1.5">
+        {menuItems.map((item) => (
           <button
             key={item.label}
-            className="flex items-center gap-3 bg-card rounded-2xl p-3.5 border border-border/50 shadow-sm hover:shadow-md transition-all text-left animate-slide-up"
-            style={{ animationDelay: `${i * 0.05}s`, animationFillMode: "both" }}
+            className="flex items-center gap-3 bg-card rounded-xl p-3 border border-border/50 hover:bg-muted/50 transition-colors text-left"
           >
-            <div className="w-10 h-10 rounded-xl bg-green-light flex items-center justify-center shrink-0">
-              <item.icon size={18} className="text-primary" />
+            <div className="w-9 h-9 rounded-lg bg-green-light flex items-center justify-center shrink-0">
+              <item.icon size={16} className="text-primary" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-sm">{item.label}</p>
-              <p className="text-xs text-muted-foreground">{item.desc}</p>
+              <p className="text-[10px] text-muted-foreground">{item.desc}</p>
             </div>
             {item.badge && (
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.badgeColor}`}>
-                {item.badge}
-              </span>
+              <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">{item.badge}</span>
             )}
-            <ChevronRight size={16} className="text-muted-foreground shrink-0" />
+            <ChevronRight size={14} className="text-muted-foreground shrink-0" />
           </button>
         ))}
       </div>
 
-      {/* Logout */}
-      <div className="px-4 mt-6">
-        <button className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-destructive/20 text-destructive font-bold text-sm hover:bg-destructive/5 transition-colors">
-          <LogOut size={16} />
-          Выйти из аккаунта
+      <div className="px-4 mt-5">
+        <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-destructive/20 text-destructive font-bold text-sm">
+          <LogOut size={14} />Выйти
         </button>
       </div>
     </div>
