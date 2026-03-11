@@ -21,7 +21,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       }`}
       style={{ background: "linear-gradient(160deg, hsl(45, 100%, 50%) 0%, hsl(35, 100%, 48%) 100%)" }}
     >
-      <img src={logo} alt="BalaHub" className="w-28 h-28 drop-shadow-xl animate-bounce-soft" />
+      <img src={logo} alt="BalaHub" className="w-28 h-28 drop-shadow-xl animate-dance" />
       <h1 className="text-3xl font-black text-primary-foreground tracking-tight mt-2 animate-fade-in">
         BalaHub
       </h1>
