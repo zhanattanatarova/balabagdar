@@ -57,6 +57,7 @@ const popularClubs = [
 ];
 
 const HomePage = () => {
+  const { user } = useAuth();
   const [city, setCity] = useState("Алматы");
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
