@@ -21,22 +21,12 @@ const BottomNav = () => {
             <button
               key={path}
               onClick={() => navigate(path)}
-              className="flex flex-col items-center gap-0.5 px-4 py-2"
+              className="flex flex-col items-center gap-0.5 px-4 py-2 active:scale-90 transition-transform"
             >
-              <div className={`p-1.5 rounded-xl transition-all duration-200 ${
-                active ? "bg-primary" : ""
-              }`}>
-                <Icon
-                  size={20}
-                  strokeWidth={active ? 2.2 : 1.8}
-                  className={active ? "text-primary-foreground" : "text-muted-foreground"}
-                />
+              <div className={`p-1.5 rounded-xl transition-all duration-200 ${active ? "bg-primary" : ""}`}>
+                <Icon size={20} strokeWidth={active ? 2.2 : 1.8} className={active ? "text-primary-foreground" : "text-muted-foreground"} />
               </div>
-              <span className={`text-[10px] font-bold ${
-                active ? "text-primary" : "text-muted-foreground"
-              }`}>
-                {label}
-              </span>
+              <span className={`text-[10px] font-bold ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>{label}</span>
             </button>
           );
         })}

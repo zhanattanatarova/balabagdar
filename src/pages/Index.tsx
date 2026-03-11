@@ -5,6 +5,7 @@ import HomePage from "./HomePage";
 import MapPage from "./MapPage";
 import NewsPage from "./NewsPage";
 import ProfilePage from "./ProfilePage";
+import NotificationsPage from "./NotificationsPage";
 import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
@@ -17,14 +18,11 @@ const Index = () => {
 
   const renderPage = () => {
     switch (location.pathname) {
-      case "/map":
-        return <MapPage />;
-      case "/news":
-        return <NewsPage />;
-      case "/profile":
-        return <ProfilePage />;
-      default:
-        return <HomePage />;
+      case "/map": return <MapPage />;
+      case "/news": return <NewsPage />;
+      case "/profile": return <ProfilePage />;
+      case "/notifications": return <NotificationsPage />;
+      default: return <HomePage />;
     }
   };
 
