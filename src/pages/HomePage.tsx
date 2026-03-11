@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Bell } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/balahub-logo.png";
 import clubSoccer from "@/assets/club-soccer.jpg";
