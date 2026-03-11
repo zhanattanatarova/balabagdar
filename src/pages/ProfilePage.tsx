@@ -75,8 +75,8 @@ const ProfilePage = () => {
           <button key={item.label}
             onClick={() => toast({ title: item.label, description: item.desc })}
             className="flex items-center gap-3 bg-card rounded-xl p-3 border border-border/50 hover:bg-muted/50 active:scale-[0.98] transition-all text-left">
-            <div className="w-9 h-9 rounded-lg bg-yellow-light flex items-center justify-center shrink-0">
-              <item.icon size={16} className="text-primary-foreground" />
+            <div className={`w-9 h-9 rounded-lg ${item.color} flex items-center justify-center shrink-0`}>
+              <item.icon size={16} className={item.iconColor} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold text-sm">{item.label}</p>
