@@ -14,6 +14,188 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          booking_date: string
+          child_age: number | null
+          child_name: string | null
+          club_id: string
+          created_at: string
+          id: string
+          message: string | null
+          phone: string | null
+          schedule_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_date: string
+          child_age?: number | null
+          child_name?: string | null
+          club_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          phone?: string | null
+          schedule_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          booking_date?: string
+          child_age?: number | null
+          child_name?: string | null
+          club_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          phone?: string | null
+          schedule_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "club_schedules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      club_schedules: {
+        Row: {
+          club_id: string
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          max_slots: number | null
+          start_time: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          max_slots?: number | null
+          start_time: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          max_slots?: number | null
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_schedules_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clubs: {
+        Row: {
+          address: string | null
+          age_max: number | null
+          age_min: number | null
+          avatar_url: string | null
+          category: string
+          city: string
+          created_at: string
+          description_en: string | null
+          description_kz: string | null
+          description_ru: string | null
+          gallery: string[] | null
+          id: string
+          is_active: boolean | null
+          name_en: string | null
+          name_kz: string | null
+          name_ru: string
+          phone: string | null
+          price_currency: string | null
+          price_from: number | null
+          rating: number | null
+          reviews_count: number | null
+          telegram: string | null
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          age_max?: number | null
+          age_min?: number | null
+          avatar_url?: string | null
+          category?: string
+          city?: string
+          created_at?: string
+          description_en?: string | null
+          description_kz?: string | null
+          description_ru?: string | null
+          gallery?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          name_en?: string | null
+          name_kz?: string | null
+          name_ru?: string
+          phone?: string | null
+          price_currency?: string | null
+          price_from?: number | null
+          rating?: number | null
+          reviews_count?: number | null
+          telegram?: string | null
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          age_max?: number | null
+          age_min?: number | null
+          avatar_url?: string | null
+          category?: string
+          city?: string
+          created_at?: string
+          description_en?: string | null
+          description_kz?: string | null
+          description_ru?: string | null
+          gallery?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          name_en?: string | null
+          name_kz?: string | null
+          name_ru?: string
+          phone?: string | null
+          price_currency?: string | null
+          price_from?: number | null
+          rating?: number | null
+          reviews_count?: number | null
+          telegram?: string | null
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       phone_verifications: {
         Row: {
           code: string
@@ -74,15 +256,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "parent" | "club_owner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -209,6 +415,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["parent", "club_owner"],
+    },
   },
 } as const
