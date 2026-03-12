@@ -12,7 +12,6 @@ const menuItems = [
 ];
 
 const settingsItems = [
-  { icon: CreditCard, label: "Пополнить подписку", color: "bg-secondary/10", iconColor: "text-secondary" },
   { icon: MessageCircle, label: "Связаться с нами", color: "bg-primary/10", iconColor: "text-primary" },
 ];
 
@@ -37,7 +36,7 @@ const ProfilePage = () => {
               {user.user_metadata?.display_name || `User ${phone.slice(-4)}`}
             </h1>
             <p className="text-primary-foreground/70 text-xs font-bold mt-0.5">
-              Подписка: 1000 ₸ в месяц
+              🎉 Бесплатный доступ ко всем функциям
             </p>
           </>
         ) : (
