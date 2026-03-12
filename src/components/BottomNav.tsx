@@ -13,20 +13,18 @@ const BottomNav = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t-2 border-border" style={{ boxShadow: "0 -2px 12px hsl(0 0% 0% / 0.06)" }}>
-      <div className="flex justify-around items-center h-16 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto">
+    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40">
+      <div className="flex items-center gap-1 bg-card/95 backdrop-blur-xl border border-border rounded-2xl px-2 py-2" style={{ boxShadow: "0 4px 24px hsl(0 0% 0% / 0.12)" }}>
         {tabs.map(({ path, icon: Icon, label }) => {
           const active = location.pathname === path;
           return (
             <button
               key={path}
               onClick={() => navigate(path)}
-              className="flex flex-col items-center gap-0.5 px-4 py-2 active:scale-90 transition-transform"
+              className={`flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl transition-all duration-200 ${active ? "bg-primary" : "hover:bg-muted"}`}
             >
-              <div className={`p-2 rounded-xl transition-all duration-200 ${active ? "bg-primary" : ""}`}>
-                <Icon size={20} strokeWidth={active ? 2.5 : 1.8} className={active ? "text-primary-foreground" : "text-muted-foreground"} />
-              </div>
-              <span className={`text-[10px] font-bold ${active ? "text-primary" : "text-muted-foreground"}`}>{label}</span>
+              <Icon size={20} strokeWidth={active ? 2.5 : 1.8} className={active ? "text-primary-foreground" : "text-muted-foreground"} />
+              <span className={`text-[10px] font-bold ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>{label}</span>
             </button>
           );
         })}

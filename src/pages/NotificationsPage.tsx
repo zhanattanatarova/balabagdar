@@ -28,7 +28,7 @@ const NotificationsPage = () => {
   const unreadCount = items.filter((n) => !n.read).length;
 
   return (
-    <div className="pb-24 max-w-lg mx-auto">
+    <div className="pb-24 max-w-6xl mx-auto">
       <div className="px-4 pt-5 pb-3 flex items-center justify-between">
         <div>
           <h1 className="text-lg font-black flex items-center gap-2">
@@ -44,7 +44,7 @@ const NotificationsPage = () => {
         )}
       </div>
 
-      <div className="px-4 flex flex-col gap-2">
+      <div className="px-4 grid grid-cols-1 md:grid-cols-2 gap-2">
         {items.map((n, i) => (
           <button
             key={n.id}

@@ -12,7 +12,7 @@ const events = [
 ];
 
 const NewsPage = () => (
-  <div className="pb-24 max-w-lg mx-auto">
+  <div className="pb-24 max-w-6xl mx-auto">
     {/* Header banner */}
     <div className="relative h-44 rounded-b-3xl overflow-hidden" style={{ background: "var(--gradient-header)" }}>
       <div className="absolute inset-0 flex items-center justify-between px-5">
@@ -35,7 +35,7 @@ const NewsPage = () => (
     </div>
 
     {/* Events list */}
-    <div className="px-4 mt-5 flex flex-col gap-4">
+    <div className="px-4 mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {events.map((event, i) => (
         <div
           key={event.title}

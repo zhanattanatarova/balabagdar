@@ -20,13 +20,13 @@ const MapPage = () => {
   const selectedClub = clubs.find((c) => c.id === selected);
 
   return (
-    <div className="pb-24 max-w-lg mx-auto">
+    <div className="pb-24 max-w-6xl mx-auto">
       <div className="px-4 pt-5 pb-3">
         <h1 className="text-lg font-black">🗺️ Карта кружков</h1>
         <p className="text-xs text-muted-foreground font-bold">Кружки рядом с вами</p>
       </div>
 
-      <div className="mx-4 relative rounded-2xl h-64 overflow-hidden border-[3px] border-foreground/8 bg-yellow-light" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
+      <div className="mx-4 relative rounded-2xl h-64 md:h-96 overflow-hidden border-[3px] border-foreground/8 bg-yellow-light" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
         <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 400 300">
           <path d="M0 150 Q100 120 200 150 Q300 180 400 140" stroke="hsl(45, 80%, 40%)" strokeWidth="3" fill="none"/>
           <path d="M150 0 Q170 100 160 200 Q150 250 180 300" stroke="hsl(45, 80%, 40%)" strokeWidth="3" fill="none"/>
@@ -78,7 +78,7 @@ const MapPage = () => {
 
       <div className="px-4 mt-5">
         <h2 className="section-title mb-3">📋 Все кружки</h2>
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {clubs.map((club) => (
             <button key={club.id} onClick={() => setSelected(club.id)}
               className={`flex items-center gap-3 p-3 rounded-2xl text-left transition-all active:scale-[0.98] border-[3px] ${
