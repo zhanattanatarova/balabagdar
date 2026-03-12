@@ -132,6 +132,12 @@ const ClubDetailPage = () => {
               <MessageCircle size={16} /> {t("club.telegram_link")}
             </a>
           )}
+          {club.instagram && (
+            <a href={`https://instagram.com/${club.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer"
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-pink-soft font-bold text-sm">
+              📸 Instagram
+            </a>
+          )}
         </div>
       </div>
 

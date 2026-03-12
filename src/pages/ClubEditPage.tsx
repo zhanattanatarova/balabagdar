@@ -238,6 +238,7 @@ const ClubEditPage = () => {
           <InputField label={t("edit.phone")} field="phone" placeholder="+7 777 123 4567" />
           <InputField label={`💬 ${t("edit.whatsapp")}`} field="whatsapp" placeholder="+77771234567" />
           <InputField label={`✈️ ${t("edit.telegram")}`} field="telegram" placeholder="@username" />
+          <InputField label="📸 Instagram" field="instagram" placeholder="@username" />
         </div>
 
         {/* Age & Price */}
