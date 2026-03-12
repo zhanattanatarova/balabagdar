@@ -1,64 +1,67 @@
-import { Pin, Calendar, ChevronRight } from "lucide-react";
+import { Star, ChevronRight, Settings } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import eventFestival from "@/assets/event-festival.jpg";
-import eventWorkshop from "@/assets/event-workshop.jpg";
-import clubDance from "@/assets/club-dance.jpg";
-import clubSwim from "@/assets/club-swim.jpg";
-import clubSoccer from "@/assets/club-soccer.jpg";
-
-const pinnedEvent = {
-  title: "Фестиваль детского творчества «Жулдыз»",
-  date: "15 марта 2026",
-  desc: "Большой городской фестиваль для детей 3–14 лет!",
-  img: eventFestival,
-};
+import newsArt from "@/assets/news-art.jpg";
+import newsFestival from "@/assets/news-festival.jpg";
+import newsShow from "@/assets/news-show.jpg";
+import logo from "@/assets/balahub-logo.png";
 
 const events = [
-  { title: "Мастер-класс по акварели", date: "18 марта", desc: "Бесплатный мастер-класс для детей 6–12 лет.", img: eventWorkshop },
-  { title: "Открытый урок балета", date: "22 марта", desc: "Пробное занятие для девочек 4–8 лет.", img: clubDance },
-  { title: "День открытых дверей — бассейн", date: "25 марта", desc: "Пробное занятие бесплатно.", img: clubSwim },
-  { title: "Турнир по мини-футболу", date: "28 марта", desc: "Городской турнир для команд 7–12 лет.", img: clubSoccer },
+  { title: 'Мастер-класс "Юный Художник"', date: "19 Арана", rating: 4.8, img: newsArt },
+  { title: "Детский Фестиваль", date: "16 Арана", rating: 4.7, img: newsFestival },
+  { title: 'Шоу "Волшебный мир"', date: "19 Арана", rating: 4.5, img: newsShow },
 ];
 
 const NewsPage = () => (
   <div className="pb-24 max-w-lg mx-auto">
-    <div className="px-4 pt-5 pb-2">
-      <h1 className="text-lg font-black">📰 Новости</h1>
-      <p className="text-xs text-muted-foreground font-bold">Мероприятия для детей</p>
-    </div>
-
-    <div className="mx-4 mt-3 card-photo h-48 cursor-pointer group animate-fade-in"
-      onClick={() => toast({ title: pinnedEvent.title, description: pinnedEvent.desc })}>
-      <img src={pinnedEvent.img} alt={pinnedEvent.title} className="group-hover:scale-105 transition-transform duration-500" />
-      <div className="card-photo-overlay" />
-      <div className="absolute top-3 left-3 flex items-center gap-1 bg-destructive text-destructive-foreground text-[10px] font-black px-2.5 py-1.5 rounded-full border-2 border-destructive-foreground/20 animate-bounce-soft">
-        <Pin size={10} />Закреплено
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 p-4">
-        <div className="flex items-center gap-1 text-card/70 text-[10px] font-bold mb-1"><Calendar size={10} />{pinnedEvent.date}</div>
-        <h3 className="text-card font-black text-sm leading-snug">{pinnedEvent.title}</h3>
-      </div>
-    </div>
-
-    <div className="px-4 mt-5">
-      <h2 className="section-title mb-3">🗓️ Ближайшие события</h2>
-      <div className="flex flex-col gap-3">
-        {events.map((event, i) => (
-          <div key={event.title}
-            onClick={() => toast({ title: event.title, description: event.desc })}
-            className="flex gap-3 cartoon-card p-3 cursor-pointer animate-slide-up group"
-            style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
-            <div className="w-20 h-16 rounded-xl overflow-hidden shrink-0 border-2 border-foreground/8">
-              <img src={event.img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            </div>
-            <div className="flex-1 min-w-0 py-0.5">
-              <h3 className="font-black text-xs leading-snug line-clamp-2">{event.title}</h3>
-              <div className="flex items-center gap-1 mt-1.5 text-[10px] text-muted-foreground font-bold"><Calendar size={10} />{event.date}</div>
-            </div>
-            <ChevronRight size={14} className="text-accent shrink-0 mt-2" />
+    {/* Header banner */}
+    <div className="relative h-44 rounded-b-3xl overflow-hidden" style={{ background: "var(--gradient-header)" }}>
+      <div className="absolute inset-0 flex items-center justify-between px-5">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <img src={logo} alt="" className="w-6 h-6" />
+            <span className="text-primary-foreground/80 text-xs font-bold">Сегодня в Астане</span>
           </div>
-        ))}
+          <h1 className="text-xl font-black text-primary-foreground leading-snug">Новости<br />города</h1>
+        </div>
+        <button className="w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+          <Settings size={18} className="text-primary-foreground" />
+        </button>
       </div>
+      {/* Decorative illustrated bg elements */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 opacity-30" style={{
+        background: "url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 60\"><path d=\"M0 40 Q50 10 100 35 Q150 60 200 30 Q250 5 300 35 Q350 55 400 25 L400 60 L0 60Z\" fill=\"white\"/></svg>') no-repeat bottom",
+        backgroundSize: "cover"
+      }} />
+    </div>
+
+    {/* Events list */}
+    <div className="px-4 mt-5 flex flex-col gap-4">
+      {events.map((event, i) => (
+        <div
+          key={event.title}
+          onClick={() => toast({ title: event.title, description: `${event.date} · ⭐ ${event.rating}` })}
+          className="cartoon-card overflow-hidden cursor-pointer animate-slide-up"
+          style={{ animationDelay: `${i * 0.08}s`, animationFillMode: "both" }}
+        >
+          <div className="relative h-40">
+            <img src={event.img} alt={event.title} className="w-full h-full object-cover" />
+          </div>
+          <div className="p-3.5">
+            <h3 className="font-black text-sm leading-snug">{event.title}</h3>
+            <div className="flex items-center gap-1 mt-1.5">
+              {[1,2,3,4,5].map(s => (
+                <Star key={s} size={13} className={s <= Math.floor(event.rating) ? "text-secondary fill-secondary" : "text-muted-foreground/30"} />
+              ))}
+            </div>
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-xs text-muted-foreground font-bold">{event.date}</span>
+              <button className="bg-primary text-primary-foreground text-xs font-black px-3.5 py-1.5 rounded-full flex items-center gap-1">
+                Подробнее <ChevronRight size={12} />
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   </div>
 );
