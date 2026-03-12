@@ -156,31 +156,9 @@ const ClubEditPage = () => {
     );
   }
 
-  const InputField = ({ label, field, type = "text", placeholder = "" }: { label: string; field: string; type?: string; placeholder?: string }) => (
-    <div>
-      <label className="text-xs font-bold text-muted-foreground">{label}</label>
-      <input
-        type={type}
-        value={(form as any)[field]}
-        onChange={(e) => update(field, type === "number" ? parseInt(e.target.value) || 0 : e.target.value)}
-        placeholder={placeholder}
-        className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-      />
-    </div>
-  );
-
-  const TextAreaField = ({ label, field, placeholder = "" }: { label: string; field: string; placeholder?: string }) => (
-    <div>
-      <label className="text-xs font-bold text-muted-foreground">{label}</label>
-      <textarea
-        value={(form as any)[field]}
-        onChange={(e) => update(field, e.target.value)}
-        rows={3}
-        placeholder={placeholder}
-        className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-      />
-    </div>
-  );
+  const inputCls = "w-full mt-1 px-4 py-3 rounded-xl bg-muted text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary";
+  const labelCls = "text-xs font-bold text-muted-foreground";
+  const textareaCls = inputCls + " resize-none";
 
   const days = dayLabels[lang] || dayLabels.ru;
 
