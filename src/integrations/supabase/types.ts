@@ -126,6 +126,7 @@ export type Database = {
           description_ru: string | null
           gallery: string[] | null
           id: string
+          instagram: string | null
           is_active: boolean | null
           name_en: string | null
           name_kz: string | null
@@ -153,6 +154,7 @@ export type Database = {
           description_ru?: string | null
           gallery?: string[] | null
           id?: string
+          instagram?: string | null
           is_active?: boolean | null
           name_en?: string | null
           name_kz?: string | null
@@ -180,6 +182,7 @@ export type Database = {
           description_ru?: string | null
           gallery?: string[] | null
           id?: string
+          instagram?: string | null
           is_active?: boolean | null
           name_en?: string | null
           name_kz?: string | null
