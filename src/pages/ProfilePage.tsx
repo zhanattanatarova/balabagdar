@@ -37,7 +37,7 @@ const ProfilePage = () => {
               {user.user_metadata?.display_name || `User ${phone.slice(-4)}`}
             </h1>
             <p className="text-primary-foreground/70 text-xs font-bold mt-0.5">
-              Подписка: 1000 ₸ в месяц
+              🎉 Бесплатный доступ ко всем функциям
             </p>
           </>
         ) : (
