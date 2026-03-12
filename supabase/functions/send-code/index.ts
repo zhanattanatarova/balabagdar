@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
 
     await telegramApi("sendMessage", {
       chat_id: chatId,
-      text: `🔐 Ваш код для входа в BalaHub: *${code}*\n\nНикому не сообщайте этот код.`,
+      text: `🔐 Ваш код для входа в Balausa: *${code}*\n\nНикому не сообщайте этот код.`,
       parse_mode: "Markdown",
     });
 
