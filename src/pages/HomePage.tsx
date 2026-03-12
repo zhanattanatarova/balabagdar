@@ -182,7 +182,7 @@ const HomePage = () => {
             <p className="text-sm text-muted-foreground font-bold">Ничего не найдено по запросу «{searchQuery}»</p>
           </div>
         ) : (
-          <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+          <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
             {filteredClubs.map((club, i) => (
               <div
                 key={club.name}
