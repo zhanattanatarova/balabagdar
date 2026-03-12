@@ -1,14 +1,18 @@
-import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle } from "lucide-react";
+import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle, Building2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import logo from "@/assets/balahub-logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useUserRole } from "@/hooks/useUserRole";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthModal from "@/components/AuthModal";
 
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
+  const { role } = useUserRole();
+  const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
 
   const phone = user?.user_metadata?.phone || user?.email?.replace("@phone.balahub.kz", "") || "";
