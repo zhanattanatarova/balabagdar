@@ -65,6 +65,20 @@ const ProfilePage = () => {
           </button>
         )}
 
+        {user && role === "club_owner" && (
+          <button onClick={() => navigate("/dashboard")}
+            className="w-full flex items-center gap-3 bg-secondary rounded-2xl p-3.5 mb-3 text-left cartoon-card border-secondary">
+            <div className="w-10 h-10 rounded-xl bg-secondary-foreground/20 flex items-center justify-center shrink-0">
+              <Building2 size={18} className="text-secondary-foreground" />
+            </div>
+            <div className="flex-1">
+              <p className="font-black text-sm text-secondary-foreground">{t("dashboard.my_club")}</p>
+              <p className="text-[10px] text-secondary-foreground/60 font-bold">{t("dashboard.edit_profile")}</p>
+            </div>
+            <ChevronRight size={16} className="text-secondary-foreground shrink-0" />
+          </button>
+        )}
+
         <div className="cartoon-card p-1 mb-4">
           {menuItems.map((item) => (
             <button key={item.label} onClick={() => toast({ title: item.label })}
