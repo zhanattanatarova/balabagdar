@@ -1,14 +1,18 @@
-import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle } from "lucide-react";
+import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle, Building2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import logo from "@/assets/balahub-logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useUserRole } from "@/hooks/useUserRole";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthModal from "@/components/AuthModal";
 
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
+  const { role } = useUserRole();
+  const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
 
   const phone = user?.user_metadata?.phone || user?.email?.replace("@phone.balahub.kz", "") || "";
@@ -58,6 +62,20 @@ const ProfilePage = () => {
               <p className="text-[10px] text-primary-foreground/60 font-bold">{t("profile.login_desc")}</p>
             </div>
             <ChevronRight size={16} className="text-primary-foreground shrink-0" />
+          </button>
+        )}
+
+        {user && role === "club_owner" && (
+          <button onClick={() => navigate("/dashboard")}
+            className="w-full flex items-center gap-3 bg-secondary rounded-2xl p-3.5 mb-3 text-left cartoon-card border-secondary">
+            <div className="w-10 h-10 rounded-xl bg-secondary-foreground/20 flex items-center justify-center shrink-0">
+              <Building2 size={18} className="text-secondary-foreground" />
+            </div>
+            <div className="flex-1">
+              <p className="font-black text-sm text-secondary-foreground">{t("dashboard.my_club")}</p>
+              <p className="text-[10px] text-secondary-foreground/60 font-bold">{t("dashboard.edit_profile")}</p>
+            </div>
+            <ChevronRight size={16} className="text-secondary-foreground shrink-0" />
           </button>
         )}
 

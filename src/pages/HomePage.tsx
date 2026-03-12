@@ -43,6 +43,7 @@ const HomePage = () => {
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -66,14 +67,20 @@ const HomePage = () => {
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
   const filteredClubs = useMemo(() => {
-    if (!searchQuery.trim()) return clubs;
-    return clubs.filter((c) =>
-      c.name_ru?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.name_kz?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.name_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.address?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery, clubs]);
+    let result = clubs;
+    if (selectedCategory) {
+      result = result.filter((c) => c.category === selectedCategory);
+    }
+    if (searchQuery.trim()) {
+      result = result.filter((c) =>
+        c.name_ru?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.name_kz?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.name_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.address?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    return result;
+  }, [searchQuery, clubs, selectedCategory]);
 
   return (
     <div className="pb-24 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto bg-background min-h-screen">
@@ -141,8 +148,8 @@ const HomePage = () => {
       <div className="px-4 mt-4">
         <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-4">
           {categoryIds.map((id) => (
-            <button key={id} className="cat-card" onClick={() => setSearchQuery("")}>
-              <div className="cat-card-img">
+            <button key={id} className="cat-card" onClick={() => setSelectedCategory(selectedCategory === id ? null : id)}>
+              <div className={`cat-card-img ${selectedCategory === id ? "!border-primary ring-2 ring-primary/30" : ""}`}>
                 <img src={categoryIcons[id]} alt="" className="w-full h-full object-contain" />
               </div>
               <span className="text-[10px] md:text-xs font-bold text-foreground leading-tight">{t(`cat.${id}` as any)}</span>
