@@ -133,7 +133,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           <X size={16} className="text-muted-foreground" />
         </button>
         <div className="px-6 pt-6 pb-8">
-          <div className="flex justify-center mb-4"><img src={logo} alt="Balausa" className="w-16 h-16" /></div>
+          <div className="flex justify-center mb-4"><img src={logo} alt="BalaBagdar" className="w-16 h-16" /></div>
 
           {step === "phone" && (
             <>

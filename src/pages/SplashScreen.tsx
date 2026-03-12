@@ -22,10 +22,10 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       style={{ background: "linear-gradient(160deg, hsl(145, 65%, 48%) 0%, hsl(145, 55%, 35%) 100%)" }}
     >
       <div className="relative">
-        <img src={logo} alt="Balausa" className="w-36 h-36 drop-shadow-2xl animate-dance" />
+        <img src={logo} alt="BalaBagdar" className="w-36 h-36 drop-shadow-2xl animate-dance" />
       </div>
       <h1 className="text-4xl font-black text-primary-foreground tracking-tight mt-4 animate-fade-in drop-shadow-lg">
-        Balausa
+        BalaBagdar
       </h1>
       <p className="text-primary-foreground/80 mt-2 text-sm font-bold animate-fade-in" style={{ animationDelay: "0.15s" }}>
         Все кружки и специалисты для детей

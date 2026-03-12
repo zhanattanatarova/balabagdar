@@ -115,7 +115,7 @@ async function processTelegramUpdates(supabase: ReturnType<typeof createClient>)
       if (typeof msg.text === "string" && msg.text.startsWith("/start")) {
         await telegramApi("sendMessage", {
           chat_id: chatId,
-          text: "👋 Привет! Для входа в Balausa отправьте свой номер телефона кнопкой ниже.",
+          text: "👋 Привет! Для входа в BalaBagdar отправьте свой номер телефона кнопкой ниже.",
           reply_markup: {
             keyboard: [[{ text: "📱 Отправить номер", request_contact: true }]],
             resize_keyboard: true,
@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
 
     await telegramApi("sendMessage", {
       chat_id: chatId,
-      text: `🔐 Ваш код для входа в Balausa: *${code}*\n\nНикому не сообщайте этот код.`,
+      text: `🔐 Ваш код для входа в BalaBagdar: *${code}*\n\nНикому не сообщайте этот код.`,
       parse_mode: "Markdown",
     });
 
