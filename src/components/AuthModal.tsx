@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Phone, Send, ArrowRight, Loader2 } from "lucide-react";
+import { X, Phone, Send, ArrowRight, Loader2, MessageCircle } from "lucide-react";
 import logo from "@/assets/balahub-logo.png";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,7 +10,7 @@ interface AuthModalProps {
 }
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
-  const [step, setStep] = useState<"phone" | "code">("phone");
+  const [step, setStep] = useState<"phone" | "telegram" | "code">("phone");
   const [phone, setPhone] = useState("+7 ");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,9 +29,38 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         body: { phone: digits },
       });
       if (error) throw error;
+
+      if (data?.error === "telegram_not_linked") {
+        setStep("telegram");
+        toast({ title: "Нужен Telegram", description: "Откройте бота и отправьте номер телефона" });
+      } else if (data?.error) {
+        throw new Error(data.error);
+      } else {
+        setStep("code");
+        toast({ title: "Код отправлен ✅", description: "Проверьте Telegram" });
+      }
+    } catch (err: any) {
+      toast({ title: "Ошибка", description: err.message || "Не удалось отправить код", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRetryAfterTelegram = async () => {
+    setLoading(true);
+    const digits = phone.replace(/\D/g, "");
+    try {
+      const { data, error } = await supabase.functions.invoke("send-code", {
+        body: { phone: digits },
+      });
+      if (error) throw error;
+      if (data?.error === "telegram_not_linked") {
+        toast({ title: "Телефон не найден", description: "Убедитесь, что вы отправили номер боту", variant: "destructive" });
+        return;
+      }
       if (data?.error) throw new Error(data.error);
       setStep("code");
-      toast({ title: "Код отправлен ✅", description: "Введите 4-значный код для входа" });
+      toast({ title: "Код отправлен ✅", description: "Проверьте Telegram" });
     } catch (err: any) {
       toast({ title: "Ошибка", description: err.message || "Не удалось отправить код", variant: "destructive" });
     } finally {
@@ -89,78 +118,124 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           <div className="flex justify-center mb-4">
             <img src={logo} alt="BalaHub" className="w-16 h-16" />
           </div>
-          <h2 className="text-xl font-black text-center">
-            {step === "phone" ? "Вход в BalaHub" : "Подтверждение"}
-          </h2>
-          <p className="text-sm text-muted-foreground text-center mt-1">
-            {step === "phone"
-              ? "Введите номер телефона для регистрации"
-              : `Введите код подтверждения`}
-          </p>
 
-          {step === "phone" ? (
-            <div className="mt-6">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Номер телефона</label>
-              <div className="relative mt-1.5">
-                <Phone size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+7 777 123 4567"
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-blue-sky">
-                <Send size={16} className="text-secondary shrink-0" />
-                <p className="text-xs text-foreground/70">Код подтверждения для входа</p>
-              </div>
-              <button
-                onClick={handleSendCode}
-                disabled={loading}
-                className="w-full mt-5 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50"
-              >
-                {loading ? <Loader2 size={18} className="animate-spin" /> : <>Получить код <ArrowRight size={18} /></>}
-              </button>
-            </div>
-          ) : (
-            <div className="mt-6">
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Код подтверждения</label>
-              <div className="flex gap-2.5 mt-2 justify-center">
-                {[0, 1, 2, 3].map((i) => (
+          {step === "phone" && (
+            <>
+              <h2 className="text-xl font-black text-center">Вход в BalaHub</h2>
+              <p className="text-sm text-muted-foreground text-center mt-1">Введите номер телефона</p>
+              <div className="mt-6">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Номер телефона</label>
+                <div className="relative mt-1.5">
+                  <Phone size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input
-                    key={i}
-                    type="text"
-                    maxLength={1}
-                    value={code[i] || ""}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, "");
-                      const newCode = code.split("");
-                      newCode[i] = val;
-                      setCode(newCode.join(""));
-                      if (val && i < 3) {
-                        const next = e.target.nextElementSibling as HTMLInputElement;
-                        next?.focus();
-                      }
-                    }}
-                    className="w-14 h-14 text-center text-2xl font-black rounded-xl bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+7 777 123 4567"
+                    className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
-                ))}
+                </div>
+                <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-blue-sky">
+                  <MessageCircle size={16} className="text-primary shrink-0" />
+                  <p className="text-xs text-foreground/70">Код подтверждения придёт в Telegram</p>
+                </div>
+                <button
+                  onClick={handleSendCode}
+                  disabled={loading}
+                  className="w-full mt-5 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50"
+                >
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : <>Получить код <ArrowRight size={18} /></>}
+                </button>
               </div>
-              <button
-                onClick={handleVerify}
-                disabled={loading}
-                className="w-full mt-6 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center"
-              >
-                {loading ? <Loader2 size={18} className="animate-spin" /> : "Подтвердить"}
-              </button>
-              <button
-                onClick={() => { setStep("phone"); setCode(""); }}
-                className="w-full mt-2 text-muted-foreground font-bold text-sm py-2"
-              >
-                Изменить номер
-              </button>
-            </div>
+            </>
+          )}
+
+          {step === "telegram" && (
+            <>
+              <h2 className="text-xl font-black text-center">Подключите Telegram</h2>
+              <p className="text-sm text-muted-foreground text-center mt-1">Чтобы получить код, отправьте номер боту</p>
+              <div className="mt-6 space-y-4">
+                <div className="bg-green-light rounded-2xl p-4 space-y-3">
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">1️⃣</span>
+                    <p className="text-sm font-bold">Откройте бота <span className="text-primary">@BalaHubBot</span> в Telegram</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">2️⃣</span>
+                    <p className="text-sm font-bold">Нажмите <span className="text-primary">/start</span></p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">3️⃣</span>
+                    <p className="text-sm font-bold">Отправьте свой номер телефона</p>
+                  </div>
+                </div>
+                <a
+                  href="https://t.me/BalaHubBot"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#2AABEE] text-white font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all"
+                >
+                  <MessageCircle size={18} /> Открыть Telegram бота
+                </a>
+                <button
+                  onClick={handleRetryAfterTelegram}
+                  disabled={loading}
+                  className="w-full bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50"
+                >
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : <>Я отправил(а) номер <ArrowRight size={18} /></>}
+                </button>
+                <button
+                  onClick={() => setStep("phone")}
+                  className="w-full text-muted-foreground font-bold text-sm py-2"
+                >
+                  ← Назад
+                </button>
+              </div>
+            </>
+          )}
+
+          {step === "code" && (
+            <>
+              <h2 className="text-xl font-black text-center">Подтверждение</h2>
+              <p className="text-sm text-muted-foreground text-center mt-1">Введите код из Telegram</p>
+              <div className="mt-6">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Код подтверждения</label>
+                <div className="flex gap-2.5 mt-2 justify-center">
+                  {[0, 1, 2, 3].map((i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      maxLength={1}
+                      value={code[i] || ""}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        const newCode = code.split("");
+                        newCode[i] = val;
+                        setCode(newCode.join(""));
+                        if (val && i < 3) {
+                          const next = e.target.nextElementSibling as HTMLInputElement;
+                          next?.focus();
+                        }
+                      }}
+                      className="w-14 h-14 text-center text-2xl font-black rounded-xl bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  ))}
+                </div>
+                <button
+                  onClick={handleVerify}
+                  disabled={loading}
+                  className="w-full mt-6 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center"
+                >
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : "Подтвердить"}
+                </button>
+                <button
+                  onClick={() => { setStep("phone"); setCode(""); }}
+                  className="w-full mt-2 text-muted-foreground font-bold text-sm py-2"
+                >
+                  Изменить номер
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
