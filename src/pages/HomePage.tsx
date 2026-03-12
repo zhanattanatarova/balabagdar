@@ -218,7 +218,7 @@ const HomePage = () => {
           <h2 className="section-title">📍 Рядом с вами</h2>
           <button className="text-primary text-sm font-black">Все →</button>
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {popularClubs.slice(0, 3).map((club, i) => (
             <div
               key={`nearby-${club.name}`}
