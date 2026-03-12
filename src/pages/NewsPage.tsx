@@ -23,39 +23,39 @@ const events = [
 const NewsPage = () => (
   <div className="pb-24 max-w-lg mx-auto">
     <div className="px-4 pt-5 pb-2">
-      <h1 className="text-lg font-black">Новости</h1>
-      <p className="text-xs text-muted-foreground">Мероприятия для детей</p>
+      <h1 className="text-lg font-black">📰 Новости</h1>
+      <p className="text-xs text-muted-foreground font-bold">Мероприятия для детей</p>
     </div>
 
     <div className="mx-4 mt-3 card-photo h-48 cursor-pointer group animate-fade-in"
       onClick={() => toast({ title: pinnedEvent.title, description: pinnedEvent.desc })}>
       <img src={pinnedEvent.img} alt={pinnedEvent.title} className="group-hover:scale-105 transition-transform duration-500" />
       <div className="card-photo-overlay" />
-      <div className="absolute top-3 left-3 flex items-center gap-1 bg-accent text-accent-foreground text-[10px] font-bold px-2 py-1 rounded-full">
+      <div className="absolute top-3 left-3 flex items-center gap-1 bg-destructive text-destructive-foreground text-[10px] font-black px-2.5 py-1.5 rounded-full border-2 border-destructive-foreground/20 animate-bounce-soft">
         <Pin size={10} />Закреплено
       </div>
       <div className="absolute bottom-0 left-0 right-0 p-4">
-        <div className="flex items-center gap-1 text-primary-foreground/60 text-[10px] mb-1"><Calendar size={10} />{pinnedEvent.date}</div>
-        <h3 className="text-primary-foreground font-bold text-sm leading-snug">{pinnedEvent.title}</h3>
+        <div className="flex items-center gap-1 text-card/70 text-[10px] font-bold mb-1"><Calendar size={10} />{pinnedEvent.date}</div>
+        <h3 className="text-card font-black text-sm leading-snug">{pinnedEvent.title}</h3>
       </div>
     </div>
 
     <div className="px-4 mt-5">
-      <h2 className="section-title mb-3">Ближайшие события</h2>
-      <div className="flex flex-col gap-2.5">
+      <h2 className="section-title mb-3">🗓️ Ближайшие события</h2>
+      <div className="flex flex-col gap-3">
         {events.map((event, i) => (
           <div key={event.title}
             onClick={() => toast({ title: event.title, description: event.desc })}
-            className="flex gap-3 bg-card rounded-xl p-2.5 border border-border/50 shadow-sm cursor-pointer active:scale-[0.98] transition-all animate-slide-up group"
+            className="flex gap-3 cartoon-card p-3 cursor-pointer animate-slide-up group"
             style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
-            <div className="w-20 h-16 rounded-lg overflow-hidden shrink-0">
+            <div className="w-20 h-16 rounded-xl overflow-hidden shrink-0 border-2 border-foreground/8">
               <img src={event.img} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             </div>
             <div className="flex-1 min-w-0 py-0.5">
-              <h3 className="font-bold text-xs leading-snug line-clamp-2">{event.title}</h3>
-              <div className="flex items-center gap-1 mt-1 text-[10px] text-muted-foreground"><Calendar size={10} />{event.date}</div>
+              <h3 className="font-black text-xs leading-snug line-clamp-2">{event.title}</h3>
+              <div className="flex items-center gap-1 mt-1.5 text-[10px] text-muted-foreground font-bold"><Calendar size={10} />{event.date}</div>
             </div>
-            <ChevronRight size={14} className="text-muted-foreground shrink-0 mt-2" />
+            <ChevronRight size={14} className="text-accent shrink-0 mt-2" />
           </div>
         ))}
       </div>

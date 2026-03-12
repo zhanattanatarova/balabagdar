@@ -22,24 +22,25 @@ const MapPage = () => {
   return (
     <div className="pb-24 max-w-lg mx-auto">
       <div className="px-4 pt-5 pb-3">
-        <h1 className="text-lg font-black">Карта кружков</h1>
-        <p className="text-xs text-muted-foreground">Кружки рядом с вами</p>
+        <h1 className="text-lg font-black">🗺️ Карта кружков</h1>
+        <p className="text-xs text-muted-foreground font-bold">Кружки рядом с вами</p>
       </div>
 
-      <div className="mx-4 relative rounded-2xl h-64 overflow-hidden border border-border shadow-sm bg-yellow-light">
+      <div className="mx-4 relative rounded-2xl h-64 overflow-hidden border-[3px] border-foreground/8 bg-yellow-light" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
         <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 400 300">
           <path d="M0 150 Q100 120 200 150 Q300 180 400 140" stroke="hsl(45, 80%, 40%)" strokeWidth="3" fill="none"/>
           <path d="M150 0 Q170 100 160 200 Q150 250 180 300" stroke="hsl(45, 80%, 40%)" strokeWidth="3" fill="none"/>
         </svg>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="w-3.5 h-3.5 rounded-full bg-accent border-2 border-card shadow-lg" />
-          <div className="absolute inset-0 w-3.5 h-3.5 rounded-full bg-accent animate-ping opacity-30" />
+          <div className="w-4 h-4 rounded-full bg-destructive border-[3px] border-card" style={{ boxShadow: "var(--shadow-cartoon)" }} />
+          <div className="absolute inset-0 w-4 h-4 rounded-full bg-destructive animate-ping opacity-30" />
         </div>
         {clubs.map((club) => (
           <button key={club.id} onClick={() => setSelected(club.id === selected ? null : club.id)}
             className={`absolute transition-all duration-300 z-20 ${selected === club.id ? "scale-125" : "hover:scale-110"}`}
             style={{ left: `${club.x}%`, top: `${club.y}%`, transform: "translate(-50%, -100%)" }}>
-            <div className={`w-10 h-10 rounded-xl overflow-hidden border-2 shadow-md ${selected === club.id ? "border-accent" : "border-card"}`}>
+            <div className={`w-11 h-11 rounded-xl overflow-hidden border-[3px] ${selected === club.id ? "border-accent" : "border-card"}`}
+              style={{ boxShadow: "var(--shadow-cartoon)" }}>
               <img src={club.img} alt="" className="w-full h-full object-cover" />
             </div>
           </button>
@@ -47,26 +48,28 @@ const MapPage = () => {
       </div>
 
       {selectedClub && (
-        <div className="mx-4 mt-3 bg-card rounded-xl overflow-hidden shadow-sm border border-border animate-slide-up">
+        <div className="mx-4 mt-3 cartoon-card overflow-hidden animate-slide-up">
           <div className="flex gap-3 p-3">
-            <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+            <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border-2 border-foreground/8">
               <img src={selectedClub.img} alt={selectedClub.name} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 py-0.5">
-              <h3 className="font-bold text-sm">{selectedClub.name}</h3>
+              <h3 className="font-black text-sm">{selectedClub.name}</h3>
               <div className="flex items-center gap-1.5 mt-1">
-                <Star size={11} className="text-primary fill-primary" />
-                <span className="text-xs font-bold">{selectedClub.rating}</span>
-                <span className="text-[10px] text-muted-foreground ml-1">{selectedClub.age}</span>
+                <div className="flex items-center gap-1 bg-yellow-light px-2 py-0.5 rounded-full">
+                  <Star size={11} className="text-primary fill-primary" />
+                  <span className="text-xs font-black">{selectedClub.rating}</span>
+                </div>
+                <span className="text-[10px] text-muted-foreground font-bold ml-1">{selectedClub.age}</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1"><MapPin size={10} />{selectedClub.address}</p>
-              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1"><Phone size={10} />{selectedClub.phone}</p>
+              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1 font-bold"><MapPin size={10} />{selectedClub.address}</p>
+              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1 font-bold"><Phone size={10} />{selectedClub.phone}</p>
             </div>
           </div>
           <div className="flex gap-2 px-3 pb-3">
             <button onClick={() => toast({ title: selectedClub.name, description: "Открываем подробности..." })}
-              className="flex-1 bg-primary text-primary-foreground font-bold text-sm py-2.5 rounded-xl active:scale-[0.97] transition-transform">Подробнее</button>
-            <button className="flex items-center gap-1 px-4 py-2.5 rounded-xl bg-muted text-foreground font-bold text-xs">
+              className="flex-1 bg-primary text-primary-foreground font-black text-sm py-3 rounded-xl cartoon-btn border-primary">Подробнее</button>
+            <button className="flex items-center gap-1 px-4 py-3 rounded-xl bg-muted text-foreground font-black text-xs cartoon-btn border-muted">
               <Navigation size={12} />{selectedClub.dist}
             </button>
           </div>
@@ -74,25 +77,26 @@ const MapPage = () => {
       )}
 
       <div className="px-4 mt-5">
-        <h2 className="section-title mb-3">Все кружки</h2>
-        <div className="flex flex-col gap-2">
+        <h2 className="section-title mb-3">📋 Все кружки</h2>
+        <div className="flex flex-col gap-2.5">
           {clubs.map((club) => (
             <button key={club.id} onClick={() => setSelected(club.id)}
-              className={`flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all active:scale-[0.98] ${
-                selected === club.id ? "border-primary bg-yellow-light" : "border-border bg-card"}`}>
-              <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0">
+              className={`flex items-center gap-3 p-3 rounded-2xl text-left transition-all active:scale-[0.98] border-[3px] ${
+                selected === club.id ? "border-primary bg-yellow-light" : "border-foreground/8 bg-card"}`}
+              style={{ boxShadow: "var(--shadow-cartoon)" }}>
+              <div className="w-13 h-13 rounded-xl overflow-hidden shrink-0 border-2 border-foreground/5" style={{ width: "52px", height: "52px" }}>
                 <img src={club.img} alt="" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm truncate">{club.name}</p>
-                <p className="text-[10px] text-muted-foreground">{club.address}</p>
+                <p className="font-black text-sm truncate">{club.name}</p>
+                <p className="text-[10px] text-muted-foreground font-bold">{club.address}</p>
               </div>
               <div className="text-right shrink-0">
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-0.5 bg-yellow-light px-2 py-0.5 rounded-full">
                   <Star size={10} className="text-primary fill-primary" />
-                  <span className="text-xs font-bold">{club.rating}</span>
+                  <span className="text-xs font-black">{club.rating}</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground">{club.dist}</span>
+                <span className="text-[10px] text-muted-foreground font-bold mt-1 block">{club.dist}</span>
               </div>
             </button>
           ))}

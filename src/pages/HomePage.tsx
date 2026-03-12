@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Bell } from "lucide-react";
+import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Bell, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/balahub-logo.png";
@@ -34,18 +34,18 @@ const cities = [
 ];
 
 const categories = [
-  { label: "Спорт", img: catSport, id: "sport" },
-  { label: "Творчество", img: catCreativity, id: "creativity" },
-  { label: "Развитие", img: catDevelopment, id: "development" },
-  { label: "Логопеды", img: catSpeech, id: "speech" },
-  { label: "Репетиторы", img: catTutors, id: "tutors" },
-  { label: "Языки", img: catLanguages, id: "languages" },
-  { label: "ЛФК", img: catLfk, id: "lfk" },
-  { label: "Массаж", img: catMassage, id: "massage" },
-  { label: "Бассейн", img: catPool, id: "pool" },
-  { label: "Нутрициологи", img: catNutrition, id: "nutrition" },
-  { label: "Остеопаты", img: catOsteopath, id: "osteopath" },
-  { label: "Музыка", img: catMusic, id: "music" },
+  { label: "Спорт", img: catSport, id: "sport", bg: "bg-blue-sky" },
+  { label: "Творчество", img: catCreativity, id: "creativity", bg: "bg-pink-soft" },
+  { label: "Развитие", img: catDevelopment, id: "development", bg: "bg-green-light" },
+  { label: "Логопеды", img: catSpeech, id: "speech", bg: "bg-yellow-light" },
+  { label: "Репетиторы", img: catTutors, id: "tutors", bg: "bg-blue-sky" },
+  { label: "Языки", img: catLanguages, id: "languages", bg: "bg-pink-soft" },
+  { label: "ЛФК", img: catLfk, id: "lfk", bg: "bg-green-light" },
+  { label: "Массаж", img: catMassage, id: "massage", bg: "bg-yellow-light" },
+  { label: "Бассейн", img: catPool, id: "pool", bg: "bg-blue-sky" },
+  { label: "Нутрициологи", img: catNutrition, id: "nutrition", bg: "bg-pink-soft" },
+  { label: "Остеопаты", img: catOsteopath, id: "osteopath", bg: "bg-green-light" },
+  { label: "Музыка", img: catMusic, id: "music", bg: "bg-yellow-light" },
 ];
 
 const popularClubs = [
@@ -96,13 +96,13 @@ const HomePage = () => {
       {/* City Picker */}
       {showCityPicker && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
-          <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" onClick={() => setShowCityPicker(false)} />
-          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col">
-            <div className="flex justify-center pt-3 pb-1"><div className="w-10 h-1 rounded-full bg-border" /></div>
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowCityPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
-              <h3 className="font-black text-lg">Выберите город</h3>
-              <button onClick={() => setShowCityPicker(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <X size={16} className="text-muted-foreground" />
+              <h3 className="font-black text-lg">🏙️ Выберите город</h3>
+              <button onClick={() => setShowCityPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
               </button>
             </div>
             <div className="px-5 pb-3">
@@ -112,7 +112,7 @@ const HomePage = () => {
                   value={citySearch}
                   onChange={(e) => setCitySearch(e.target.value)}
                   placeholder="Поиск города..."
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-semibold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-primary border-2 border-border"
                   autoFocus
                 />
               </div>
@@ -120,57 +120,56 @@ const HomePage = () => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               {filteredCities.map((c) => (
                 <button key={c} onClick={() => { setCity(c); setShowCityPicker(false); setCitySearch(""); }}
-                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-yellow-light" : "hover:bg-muted"}`}>
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-primary/20 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}>
                   <MapPin size={16} className={c === city ? "text-primary" : "text-muted-foreground"} />
-                  <span className={`text-sm ${c === city ? "font-bold text-primary-foreground" : "font-semibold"}`}>{c}</span>
+                  <span className={`text-sm ${c === city ? "font-black text-foreground" : "font-bold"}`}>{c}</span>
                   {c === city && <Check size={16} className="text-primary ml-auto" />}
                 </button>
               ))}
-              {filteredCities.length === 0 && <p className="text-center text-muted-foreground text-sm py-8">Город не найден</p>}
+              {filteredCities.length === 0 && <p className="text-center text-muted-foreground text-sm py-8 font-bold">😕 Город не найден</p>}
             </div>
           </div>
         </div>
       )}
 
       {/* Header */}
-      <div className="px-5 pt-5 pb-4" style={{ background: "var(--gradient-header)" }}>
+      <div className="px-5 pt-5 pb-4 rounded-b-3xl" style={{ background: "var(--gradient-header)" }}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <img src={logo} alt="BalaHub" className="w-9 h-9 animate-wiggle" />
-            <span className="text-primary-foreground font-black text-xl tracking-tight">BalaHub</span>
+            <img src={logo} alt="BalaHub" className="w-10 h-10 animate-wiggle drop-shadow-lg" />
+            <span className="text-primary-foreground font-black text-2xl tracking-tight drop-shadow-sm">BalaHub</span>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate("/notifications")} className="w-9 h-9 rounded-xl bg-primary-foreground/15 flex items-center justify-center relative">
+            <button onClick={() => navigate("/notifications")} className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center relative cartoon-btn border-primary-foreground/20">
               <Bell size={18} className="text-primary-foreground" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] font-bold flex items-center justify-center">3</span>
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-black flex items-center justify-center border-2 border-primary-foreground/30 animate-bounce-soft">3</span>
             </button>
             {user ? (
-              <div className="w-9 h-9 rounded-xl bg-primary-foreground/15 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center">
                 <span className="text-primary-foreground text-sm font-black">
                   {user.user_metadata?.phone?.slice(-2) || "👤"}
                 </span>
               </div>
             ) : (
-              <button onClick={() => setShowAuth(true)} className="text-primary-foreground text-sm font-bold bg-primary-foreground/15 px-3.5 py-1.5 rounded-xl hover:bg-primary-foreground/25 transition-colors">
+              <button onClick={() => setShowAuth(true)} className="text-primary-foreground text-sm font-black bg-primary-foreground/20 px-4 py-2 rounded-xl cartoon-btn border-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors">
                 Войти
               </button>
             )}
           </div>
         </div>
-        <button onClick={() => setShowCityPicker(true)} className="flex items-center gap-1 text-primary-foreground/70 text-xs font-bold">
+        <button onClick={() => setShowCityPicker(true)} className="flex items-center gap-1 text-primary-foreground/80 text-xs font-black bg-primary-foreground/10 px-3 py-1.5 rounded-full">
           <MapPin size={12} />{city}<ChevronDown size={12} />
         </button>
-      </div>
 
-      {/* Search */}
-      <div className="px-5 -mt-0 pb-4" style={{ background: "var(--gradient-header)" }}>
-        <div className="relative">
+        {/* Search */}
+        <div className="mt-3 relative">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Поиск кружков, специалистов..."
-            className="w-full pl-10 pr-4 py-3 rounded-xl bg-card text-foreground text-sm font-semibold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent shadow-sm"
+            placeholder="🔍 Поиск кружков, специалистов..."
+            className="w-full pl-10 pr-4 py-3.5 rounded-2xl bg-card text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-accent border-[3px] border-foreground/8"
+            style={{ boxShadow: "var(--shadow-cartoon-lg)" }}
           />
         </div>
       </div>
@@ -178,18 +177,21 @@ const HomePage = () => {
       {/* Categories grid */}
       <div className="px-4 mt-5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="section-title">Категории</h2>
-          <button onClick={() => setShowAllCategories(!showAllCategories)} className="text-accent text-sm font-bold">
-            {showAllCategories ? "Свернуть" : "Все"}
+          <h2 className="section-title flex items-center gap-1.5">
+            <Sparkles size={16} className="text-primary" />
+            Категории
+          </h2>
+          <button onClick={() => setShowAllCategories(!showAllCategories)} className="text-accent text-sm font-black cartoon-btn bg-accent/10 px-3 py-1 border-accent/20">
+            {showAllCategories ? "Свернуть" : "Все →"}
           </button>
         </div>
-        <div className="grid grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-4 gap-3">
           {visibleCategories.map((cat) => (
             <button key={cat.id} className="cat-card" onClick={() => handleCategoryClick(cat)}>
               <div className="cat-card-img">
                 <img src={cat.img} alt={cat.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <span className="text-[11px] font-bold text-foreground/80 leading-tight">{cat.label}</span>
+              <span className="text-[11px] font-black text-foreground leading-tight">{cat.label}</span>
             </button>
           ))}
         </div>
@@ -198,14 +200,14 @@ const HomePage = () => {
       {/* Search results or popular */}
       <div className="mt-6">
         <div className="flex items-center justify-between px-4 mb-3">
-          <h2 className="section-title">{searchQuery ? "Результаты поиска" : "🔥 Популярные"}</h2>
-          {!searchQuery && <button className="text-accent text-sm font-bold">Все</button>}
+          <h2 className="section-title">{searchQuery ? "🔍 Результаты" : "🔥 Популярные"}</h2>
+          {!searchQuery && <button className="text-accent text-sm font-black">Все →</button>}
         </div>
 
         {filteredClubs.length === 0 ? (
           <div className="px-4 py-8 text-center">
-            <p className="text-3xl mb-2">🔍</p>
-            <p className="text-sm text-muted-foreground font-semibold">Ничего не найдено по запросу «{searchQuery}»</p>
+            <p className="text-4xl mb-2">🔍</p>
+            <p className="text-sm text-muted-foreground font-bold">Ничего не найдено по запросу «{searchQuery}»</p>
           </div>
         ) : (
           <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
@@ -213,7 +215,7 @@ const HomePage = () => {
               <div
                 key={club.name}
                 onClick={() => handleClubClick(club)}
-                className="min-w-[180px] bg-card rounded-2xl overflow-hidden shadow-sm border border-border/50 shrink-0 cursor-pointer hover:shadow-md active:scale-[0.97] transition-all animate-slide-up"
+                className="min-w-[185px] cartoon-card overflow-hidden shrink-0 cursor-pointer animate-slide-up"
                 style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}
               >
                 <div className="relative h-28">
@@ -224,11 +226,11 @@ const HomePage = () => {
                   </div>
                 </div>
                 <div className="p-3">
-                  <h3 className="font-bold text-xs leading-snug line-clamp-2 min-h-[32px]">{club.name}</h3>
-                  <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1"><MapPin size={10} />{club.district}</p>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <span className="text-[10px] text-muted-foreground">{club.reviews} отзывов</span>
-                    <span className="text-xs font-bold text-accent">{club.price}</span>
+                  <h3 className="font-black text-xs leading-snug line-clamp-2 min-h-[32px]">{club.name}</h3>
+                  <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold"><MapPin size={10} />{club.district}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-[10px] text-muted-foreground font-bold">{club.reviews} отзывов</span>
+                    <span className="text-xs font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{club.price}</span>
                   </div>
                 </div>
               </div>
@@ -240,32 +242,32 @@ const HomePage = () => {
       {/* Vertical list */}
       <div className="px-4 mt-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="section-title">Рядом с вами</h2>
-          <button className="text-accent text-sm font-bold">Все</button>
+          <h2 className="section-title">📍 Рядом с вами</h2>
+          <button className="text-accent text-sm font-black">Все →</button>
         </div>
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-3">
           {popularClubs.map((club, i) => (
             <div
               key={`nearby-${club.name}`}
               onClick={() => handleClubClick(club)}
-              className="flex gap-3 bg-card rounded-xl p-2.5 border border-border/50 shadow-sm hover:shadow-md active:scale-[0.98] transition-all cursor-pointer animate-slide-up"
+              className="flex gap-3 cartoon-card p-3 cursor-pointer animate-slide-up"
               style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}
             >
-              <div className="w-[68px] h-[68px] rounded-xl overflow-hidden shrink-0">
+              <div className="w-[72px] h-[72px] rounded-xl overflow-hidden shrink-0 border-2 border-foreground/8">
                 <img src={club.img} alt={club.name} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0 py-0.5">
-                <h3 className="font-bold text-sm truncate">{club.name}</h3>
-                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1"><MapPin size={10} />{club.district}</p>
-                <div className="flex items-center gap-3 mt-1.5">
-                  <div className="flex items-center gap-1">
+                <h3 className="font-black text-sm truncate">{club.name}</h3>
+                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 font-bold"><MapPin size={10} />{club.district}</p>
+                <div className="flex items-center gap-3 mt-2">
+                  <div className="flex items-center gap-1 bg-yellow-light px-2 py-0.5 rounded-full">
                     <Star size={11} className="text-primary fill-primary" />
-                    <span className="text-xs font-bold">{club.rating}</span>
+                    <span className="text-xs font-black">{club.rating}</span>
                   </div>
-                  <span className="text-xs font-bold text-accent">{club.price}</span>
+                  <span className="text-xs font-black text-accent">{club.price}</span>
                 </div>
               </div>
-              <ArrowRight size={16} className="text-muted-foreground shrink-0 mt-6" />
+              <ArrowRight size={18} className="text-accent shrink-0 mt-6" />
             </div>
           ))}
         </div>
