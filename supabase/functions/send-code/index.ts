@@ -115,7 +115,7 @@ async function processTelegramUpdates(supabase: ReturnType<typeof createClient>)
       if (typeof msg.text === "string" && msg.text.startsWith("/start")) {
         await telegramApi("sendMessage", {
           chat_id: chatId,
-          text: "👋 Привет! Для входа в BalaHub отправьте свой номер телефона кнопкой ниже.",
+          text: "👋 Привет! Для входа в Balausa отправьте свой номер телефона кнопкой ниже.",
           reply_markup: {
             keyboard: [[{ text: "📱 Отправить номер", request_contact: true }]],
             resize_keyboard: true,
