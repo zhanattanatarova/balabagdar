@@ -14,7 +14,7 @@ const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-card border-t-2 border-border" style={{ boxShadow: "0 -2px 12px hsl(0 0% 0% / 0.06)" }}>
-      <div className="flex justify-around items-center h-16 max-w-lg mx-auto">
+      <div className="flex justify-around items-center h-16 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto">
         {tabs.map(({ path, icon: Icon, label }) => {
           const active = location.pathname === path;
           return (

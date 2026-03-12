@@ -83,7 +83,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="pb-24 max-w-lg mx-auto bg-background min-h-screen">
+    <div className="pb-24 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto bg-background min-h-screen">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
 
       {/* City Picker */}
@@ -157,13 +157,13 @@ const HomePage = () => {
 
       {/* Categories grid */}
       <div className="px-4">
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-4">
           {categories.map((cat) => (
             <button key={cat.id} className="cat-card" onClick={() => handleCategoryClick(cat)}>
               <div className="cat-card-img">
                 <img src={cat.icon} alt={cat.label} className="w-full h-full object-contain" />
               </div>
-              <span className="text-[10px] font-bold text-foreground leading-tight">{cat.label}</span>
+              <span className="text-[10px] md:text-xs font-bold text-foreground leading-tight">{cat.label}</span>
             </button>
           ))}
         </div>
@@ -182,12 +182,12 @@ const HomePage = () => {
             <p className="text-sm text-muted-foreground font-bold">Ничего не найдено по запросу «{searchQuery}»</p>
           </div>
         ) : (
-          <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+          <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
             {filteredClubs.map((club, i) => (
               <div
                 key={club.name}
                 onClick={() => handleClubClick(club)}
-                className="min-w-[160px] cartoon-card overflow-hidden shrink-0 cursor-pointer animate-slide-up"
+                className="min-w-[160px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
                 style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}
               >
                 <div className="relative h-24">
@@ -218,7 +218,7 @@ const HomePage = () => {
           <h2 className="section-title">📍 Рядом с вами</h2>
           <button className="text-primary text-sm font-black">Все →</button>
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {popularClubs.slice(0, 3).map((club, i) => (
             <div
               key={`nearby-${club.name}`}
