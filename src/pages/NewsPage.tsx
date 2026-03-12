@@ -12,7 +12,7 @@ const events = [
 ];
 
 const NewsPage = () => (
-  <div className="pb-24 max-w-lg mx-auto">
+  <div className="pb-24 max-w-6xl mx-auto">
     {/* Header banner */}
     <div className="relative h-44 rounded-b-3xl overflow-hidden" style={{ background: "var(--gradient-header)" }}>
       <div className="absolute inset-0 flex items-center justify-between px-5">
