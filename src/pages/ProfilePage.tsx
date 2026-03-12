@@ -23,7 +23,7 @@ const ProfilePage = () => {
     <div className="pb-24 max-w-lg mx-auto">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
       <div className="pt-8 pb-6 flex flex-col items-center" style={{ background: "var(--gradient-header)" }}>
-        <div className="w-20 h-20 rounded-3xl bg-card shadow-xl flex items-center justify-center overflow-hidden border-4 border-primary-foreground/20">
+        <div className="w-20 h-20 rounded-3xl bg-card shadow-xl flex items-center justify-center overflow-hidden border-4 border-destructive">
           <img src={logo} alt="avatar" className="w-14 h-14" />
         </div>
         {user ? (
