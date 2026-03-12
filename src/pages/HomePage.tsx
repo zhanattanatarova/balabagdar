@@ -157,7 +157,7 @@ const HomePage = () => {
 
       {/* Categories grid */}
       <div className="px-4">
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-4">
           {categories.map((cat) => (
             <button key={cat.id} className="cat-card" onClick={() => handleCategoryClick(cat)}>
               <div className="cat-card-img">
