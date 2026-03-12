@@ -73,6 +73,7 @@ const ClubEditPage = () => {
           phone: c.phone || "",
           whatsapp: c.whatsapp || "",
           telegram: c.telegram || "",
+          instagram: c.instagram || "",
           age_min: c.age_min ?? 3,
           age_max: c.age_max ?? 18,
           price_from: c.price_from ?? 0,
