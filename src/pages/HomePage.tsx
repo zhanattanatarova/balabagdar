@@ -43,6 +43,7 @@ const HomePage = () => {
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
