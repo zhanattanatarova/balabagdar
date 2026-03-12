@@ -26,7 +26,7 @@ const MapPage = () => {
         <p className="text-xs text-muted-foreground font-bold">Кружки рядом с вами</p>
       </div>
 
-      <div className="mx-4 relative rounded-2xl h-64 overflow-hidden border-[3px] border-foreground/8 bg-yellow-light" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
+      <div className="mx-4 relative rounded-2xl h-64 md:h-96 overflow-hidden border-[3px] border-foreground/8 bg-yellow-light" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
         <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 400 300">
           <path d="M0 150 Q100 120 200 150 Q300 180 400 140" stroke="hsl(45, 80%, 40%)" strokeWidth="3" fill="none"/>
           <path d="M150 0 Q170 100 160 200 Q150 250 180 300" stroke="hsl(45, 80%, 40%)" strokeWidth="3" fill="none"/>
