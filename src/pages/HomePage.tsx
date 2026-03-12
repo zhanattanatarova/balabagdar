@@ -148,8 +148,8 @@ const HomePage = () => {
       <div className="px-4 mt-4">
         <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-4">
           {categoryIds.map((id) => (
-            <button key={id} className="cat-card" onClick={() => setSearchQuery("")}>
-              <div className="cat-card-img">
+            <button key={id} className="cat-card" onClick={() => setSelectedCategory(selectedCategory === id ? null : id)}>
+              <div className={`cat-card-img ${selectedCategory === id ? "!border-primary ring-2 ring-primary/30" : ""}`}>
                 <img src={categoryIcons[id]} alt="" className="w-full h-full object-contain" />
               </div>
               <span className="text-[10px] md:text-xs font-bold text-foreground leading-tight">{t(`cat.${id}` as any)}</span>
