@@ -6,99 +6,99 @@
 
 @layer base {
   :root {
-    --background: 50 100% 97%;
-    --foreground: 25 50% 10%;
+    --background: 120 30% 97%;
+    --foreground: 150 30% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 25 50% 10%;
+    --card-foreground: 150 30% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 25 50% 10%;
+    --popover-foreground: 150 30% 10%;
 
-    --primary: 45 100% 50%;
-    --primary-foreground: 25 60% 10%;
+    --primary: 145 65% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 152 70% 42%;
+    --secondary: 36 100% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 45 40% 93%;
-    --muted-foreground: 25 15% 45%;
+    --muted: 140 20% 93%;
+    --muted-foreground: 150 10% 45%;
 
-    --accent: 10 100% 55%;
+    --accent: 36 100% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 90% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 45 30% 85%;
-    --input: 45 30% 85%;
-    --ring: 45 100% 50%;
+    --border: 140 20% 88%;
+    --input: 140 20% 88%;
+    --ring: 145 65% 42%;
     --radius: 1rem;
 
     --yellow-bright: 45 100% 55%;
     --yellow-light: 50 100% 92%;
-    --orange-warm: 10 100% 55%;
-    --green-fresh: 152 70% 42%;
-    --green-light: 145 55% 90%;
-    --pink-soft: 340 90% 90%;
-    --blue-sky: 200 95% 90%;
+    --orange-warm: 36 100% 50%;
+    --green-fresh: 145 65% 42%;
+    --green-light: 145 55% 92%;
+    --pink-soft: 340 90% 92%;
+    --blue-sky: 200 95% 92%;
     --purple-fun: 270 80% 70%;
 
-    --gradient-header: linear-gradient(135deg, hsl(45, 100%, 52%) 0%, hsl(30, 100%, 50%) 100%);
-    --gradient-warm: linear-gradient(135deg, hsl(10, 100%, 58%) 0%, hsl(45, 100%, 55%) 100%);
+    --gradient-header: linear-gradient(160deg, hsl(145, 65%, 48%) 0%, hsl(145, 55%, 38%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(36, 100%, 55%) 0%, hsl(45, 100%, 55%) 100%);
     --gradient-fun: linear-gradient(135deg, hsl(340, 90%, 65%) 0%, hsl(270, 80%, 70%) 100%);
 
-    --shadow-cartoon: 0 4px 0 0 hsl(25 50% 10% / 0.15);
-    --shadow-cartoon-lg: 0 6px 0 0 hsl(25 50% 10% / 0.18);
+    --shadow-cartoon: 0 4px 0 0 hsl(150 30% 10% / 0.12);
+    --shadow-cartoon-lg: 0 6px 0 0 hsl(150 30% 10% / 0.15);
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 25 50% 10%;
-    --sidebar-primary: 45 100% 50%;
-    --sidebar-primary-foreground: 25 60% 10%;
-    --sidebar-accent: 45 40% 90%;
-    --sidebar-accent-foreground: 25 50% 10%;
-    --sidebar-border: 45 30% 85%;
-    --sidebar-ring: 45 100% 50%;
+    --sidebar-foreground: 150 30% 10%;
+    --sidebar-primary: 145 65% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 140 20% 92%;
+    --sidebar-accent-foreground: 150 30% 10%;
+    --sidebar-border: 140 20% 88%;
+    --sidebar-ring: 145 65% 42%;
   }
 
   .dark {
-    --background: 25 20% 5%;
-    --foreground: 45 30% 94%;
-    --card: 25 18% 9%;
-    --card-foreground: 45 30% 94%;
-    --popover: 25 18% 9%;
-    --popover-foreground: 45 30% 94%;
-    --primary: 45 100% 50%;
-    --primary-foreground: 25 60% 10%;
-    --secondary: 152 70% 42%;
+    --background: 150 20% 5%;
+    --foreground: 140 20% 94%;
+    --card: 150 18% 9%;
+    --card-foreground: 140 20% 94%;
+    --popover: 150 18% 9%;
+    --popover-foreground: 140 20% 94%;
+    --primary: 145 65% 42%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 36 100% 50%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 25 15% 15%;
-    --muted-foreground: 45 15% 55%;
-    --accent: 10 100% 55%;
+    --muted: 150 15% 15%;
+    --muted-foreground: 140 15% 55%;
+    --accent: 36 100% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 70% 35%;
     --destructive-foreground: 0 0% 100%;
-    --border: 25 15% 18%;
-    --input: 25 15% 18%;
-    --ring: 45 100% 50%;
+    --border: 150 15% 18%;
+    --input: 150 15% 18%;
+    --ring: 145 65% 42%;
     --yellow-bright: 45 100% 55%;
     --yellow-light: 50 60% 13%;
-    --orange-warm: 10 100% 55%;
-    --green-fresh: 152 70% 42%;
+    --orange-warm: 36 100% 50%;
+    --green-fresh: 145 65% 42%;
     --green-light: 145 25% 13%;
     --pink-soft: 340 35% 14%;
     --blue-sky: 200 35% 14%;
     --purple-fun: 270 40% 25%;
     --shadow-cartoon: 0 4px 0 0 hsl(0 0% 0% / 0.3);
     --shadow-cartoon-lg: 0 6px 0 0 hsl(0 0% 0% / 0.35);
-    --sidebar-background: 25 20% 7%;
-    --sidebar-foreground: 45 30% 94%;
-    --sidebar-primary: 45 100% 50%;
-    --sidebar-primary-foreground: 25 60% 10%;
-    --sidebar-accent: 25 15% 13%;
-    --sidebar-accent-foreground: 45 30% 94%;
-    --sidebar-border: 25 15% 18%;
-    --sidebar-ring: 45 100% 50%;
+    --sidebar-background: 150 20% 7%;
+    --sidebar-foreground: 140 20% 94%;
+    --sidebar-primary: 145 65% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 150 15% 13%;
+    --sidebar-accent-foreground: 140 20% 94%;
+    --sidebar-border: 150 15% 18%;
+    --sidebar-ring: 145 65% 42%;
   }
 }
 
@@ -119,7 +119,8 @@
     @apply inline-flex items-center gap-1 bg-card/95 backdrop-blur-sm text-foreground text-xs font-black px-2.5 py-1 rounded-full shadow-sm border-2 border-primary/30;
   }
   .card-photo {
-    @apply relative overflow-hidden rounded-2xl border-[3px] border-foreground/10;
+    @apply relative overflow-hidden rounded-2xl border-[3px];
+    border-color: hsl(var(--foreground) / 0.08);
   }
   .card-photo img {
     @apply w-full h-full object-cover;
@@ -132,8 +133,8 @@
     @apply text-center cursor-pointer;
   }
   .cat-card-img {
-    @apply aspect-[4/3] rounded-2xl overflow-hidden mb-1.5 border-[3px] transition-all duration-200;
-    border-color: hsl(var(--foreground) / 0.08);
+    @apply aspect-square rounded-2xl overflow-hidden mb-1.5 border-[3px] transition-all duration-200 bg-card flex items-center justify-center p-2;
+    border-color: hsl(var(--foreground) / 0.06);
     box-shadow: var(--shadow-cartoon);
   }
   .cat-card:hover .cat-card-img {
@@ -148,7 +149,7 @@
 
   .cartoon-card {
     @apply bg-card rounded-2xl border-[3px] transition-all duration-200;
-    border-color: hsl(var(--foreground) / 0.08);
+    border-color: hsl(var(--foreground) / 0.06);
     box-shadow: var(--shadow-cartoon);
   }
   .cartoon-card:hover {
@@ -162,7 +163,7 @@
 
   .cartoon-btn {
     @apply font-black rounded-xl border-[3px] transition-all duration-150;
-    border-color: hsl(var(--foreground) / 0.1);
+    border-color: hsl(var(--foreground) / 0.08);
     box-shadow: var(--shadow-cartoon);
   }
   .cartoon-btn:active {

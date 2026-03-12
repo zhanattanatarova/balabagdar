@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Bell, Sparkles } from "lucide-react";
+import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/balahub-logo.png";
@@ -8,18 +8,16 @@ import clubArt from "@/assets/club-art.jpg";
 import clubRobotics from "@/assets/club-robotics.jpg";
 import clubDance from "@/assets/club-dance.jpg";
 import clubSwim from "@/assets/club-swim.jpg";
-import catSport from "@/assets/cat-sport.jpg";
-import catCreativity from "@/assets/cat-creativity.jpg";
-import catDevelopment from "@/assets/cat-development.jpg";
-import catSpeech from "@/assets/cat-speech.jpg";
-import catTutors from "@/assets/cat-tutors.jpg";
-import catNutrition from "@/assets/cat-nutrition.jpg";
-import catOsteopath from "@/assets/cat-osteopath.jpg";
-import catMusic from "@/assets/cat-music.jpg";
-import catLanguages from "@/assets/cat-languages.jpg";
-import catLfk from "@/assets/cat-lfk.jpg";
-import catMassage from "@/assets/cat-massage.jpg";
-import catPool from "@/assets/cat-pool.jpg";
+import iconCreativity from "@/assets/icon-creativity.png";
+import iconSport from "@/assets/icon-sport.png";
+import iconDevelopment from "@/assets/icon-development.png";
+import iconSpeech from "@/assets/icon-speech.png";
+import iconDance from "@/assets/icon-dance.png";
+import iconRobotics from "@/assets/icon-robotics.png";
+import iconSwim from "@/assets/icon-swim.png";
+import iconMusic from "@/assets/icon-music.png";
+import iconHealth from "@/assets/icon-health.png";
+import iconTutors from "@/assets/icon-tutors.png";
 import AuthModal from "@/components/AuthModal";
 import { toast } from "@/hooks/use-toast";
 
@@ -34,36 +32,33 @@ const cities = [
 ];
 
 const categories = [
-  { label: "Спорт", img: catSport, id: "sport", bg: "bg-blue-sky" },
-  { label: "Творчество", img: catCreativity, id: "creativity", bg: "bg-pink-soft" },
-  { label: "Развитие", img: catDevelopment, id: "development", bg: "bg-green-light" },
-  { label: "Логопеды", img: catSpeech, id: "speech", bg: "bg-yellow-light" },
-  { label: "Репетиторы", img: catTutors, id: "tutors", bg: "bg-blue-sky" },
-  { label: "Языки", img: catLanguages, id: "languages", bg: "bg-pink-soft" },
-  { label: "ЛФК", img: catLfk, id: "lfk", bg: "bg-green-light" },
-  { label: "Массаж", img: catMassage, id: "massage", bg: "bg-yellow-light" },
-  { label: "Бассейн", img: catPool, id: "pool", bg: "bg-blue-sky" },
-  { label: "Нутрициологи", img: catNutrition, id: "nutrition", bg: "bg-pink-soft" },
-  { label: "Остеопаты", img: catOsteopath, id: "osteopath", bg: "bg-green-light" },
-  { label: "Музыка", img: catMusic, id: "music", bg: "bg-yellow-light" },
+  { label: "Творчество", icon: iconCreativity, id: "creativity" },
+  { label: "Спорт", icon: iconSport, id: "sport" },
+  { label: "Развитие", icon: iconDevelopment, id: "development" },
+  { label: "Логопеды", icon: iconSpeech, id: "speech" },
+  { label: "Танцы", icon: iconDance, id: "dance" },
+  { label: "Робототехника", icon: iconRobotics, id: "robotics" },
+  { label: "Бассейн", icon: iconSwim, id: "swim" },
+  { label: "Музыка", icon: iconMusic, id: "music" },
+  { label: "Здоровье", icon: iconHealth, id: "health" },
+  { label: "Репетиторы", icon: iconTutors, id: "tutors" },
 ];
 
 const popularClubs = [
-  { name: "Футбольная школа «Голеадор»", rating: 4.8, district: "Алмалинский р-н", age: "5–12 лет", img: clubSoccer, price: "от 15 000 ₸", reviews: 24 },
-  { name: "Студия «Кисточка»", rating: 4.9, district: "Бостандыкский р-н", age: "4–10 лет", img: clubArt, price: "от 12 000 ₸", reviews: 31 },
-  { name: "Робототехника KidsTech", rating: 4.7, district: "Наурызбайский р-н", age: "6–14 лет", img: clubRobotics, price: "от 20 000 ₸", reviews: 18 },
+  { name: "Арт Студия", rating: 4.9, district: "Арбитова", age: "4–10 лет", img: clubArt, price: "от 12 000 ₸", reviews: 31 },
+  { name: "Футбольная школа", rating: 4.8, district: "Абылай Хана", age: "5–12 лет", img: clubSoccer, price: "от 15 000 ₸", reviews: 24 },
+  { name: "РобоПарк", rating: 4.7, district: "Авиатор", age: "6–14 лет", img: clubRobotics, price: "от 20 000 ₸", reviews: 18 },
   { name: "Танцы «Ритм»", rating: 4.6, district: "Медеуский р-н", age: "4–16 лет", img: clubDance, price: "от 10 000 ₸", reviews: 42 },
   { name: "Плавание «Дельфин»", rating: 4.5, district: "Ауэзовский р-н", age: "3–12 лет", img: clubSwim, price: "от 18 000 ₸", reviews: 15 },
 ];
 
 const HomePage = () => {
   const { user } = useAuth();
-  const [city, setCity] = useState("Алматы");
+  const [city, setCity] = useState("Астана");
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [showAuth, setShowAuth] = useState(false);
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const navigate = useNavigate();
 
   const filteredCities = cities.filter((c) =>
@@ -78,8 +73,6 @@ const HomePage = () => {
         c.district.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [searchQuery]);
-
-  const visibleCategories = showAllCategories ? categories : categories.slice(0, 8);
 
   const handleCategoryClick = (cat: typeof categories[0]) => {
     toast({ title: cat.label, description: `Открываем раздел "${cat.label}"...` });
@@ -120,7 +113,7 @@ const HomePage = () => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               {filteredCities.map((c) => (
                 <button key={c} onClick={() => { setCity(c); setShowCityPicker(false); setCitySearch(""); }}
-                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-primary/20 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}>
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}>
                   <MapPin size={16} className={c === city ? "text-primary" : "text-muted-foreground"} />
                   <span className={`text-sm ${c === city ? "font-black text-foreground" : "font-bold"}`}>{c}</span>
                   {c === city && <Check size={16} className="text-primary ml-auto" />}
@@ -133,75 +126,47 @@ const HomePage = () => {
       )}
 
       {/* Header */}
-      <div className="px-5 pt-5 pb-4 rounded-b-3xl" style={{ background: "var(--gradient-header)" }}>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="BalaHub" className="w-10 h-10 animate-wiggle drop-shadow-lg" />
-            <span className="text-primary-foreground font-black text-2xl tracking-tight drop-shadow-sm">BalaHub</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => navigate("/notifications")} className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center relative cartoon-btn border-primary-foreground/20">
-              <Bell size={18} className="text-primary-foreground" />
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-black flex items-center justify-center border-2 border-primary-foreground/30 animate-bounce-soft">3</span>
-            </button>
-            {user ? (
-              <div className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center">
-                <span className="text-primary-foreground text-sm font-black">
-                  {user.user_metadata?.phone?.slice(-2) || "👤"}
-                </span>
-              </div>
-            ) : (
-              <button onClick={() => setShowAuth(true)} className="text-primary-foreground text-sm font-black bg-primary-foreground/20 px-4 py-2 rounded-xl cartoon-btn border-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors">
-                Войти
-              </button>
-            )}
-          </div>
+      <div className="px-5 pt-4 pb-5">
+        <div className="flex items-center justify-center mb-3">
+          <button onClick={() => setShowCityPicker(true)} className="flex items-center gap-1.5 text-foreground font-black text-lg">
+            <img src={logo} alt="" className="w-7 h-7" />
+            {city}
+            <ChevronDown size={18} className="text-primary" />
+          </button>
         </div>
-        <button onClick={() => setShowCityPicker(true)} className="flex items-center gap-1 text-primary-foreground/80 text-xs font-black bg-primary-foreground/10 px-3 py-1.5 rounded-full">
-          <MapPin size={12} />{city}<ChevronDown size={12} />
-        </button>
 
         {/* Search */}
-        <div className="mt-3 relative">
+        <div className="relative">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="🔍 Поиск кружков, специалистов..."
-            className="w-full pl-10 pr-4 py-3.5 rounded-2xl bg-card text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-accent border-[3px] border-foreground/8"
-            style={{ boxShadow: "var(--shadow-cartoon-lg)" }}
+            placeholder="Найти кружок или репетитора..."
+            className="w-full pl-10 pr-4 py-3 rounded-2xl bg-card text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-primary border-2 border-border"
+            style={{ boxShadow: "var(--shadow-cartoon)" }}
           />
         </div>
       </div>
 
       {/* Categories grid */}
-      <div className="px-4 mt-5">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="section-title flex items-center gap-1.5">
-            <Sparkles size={16} className="text-primary" />
-            Категории
-          </h2>
-          <button onClick={() => setShowAllCategories(!showAllCategories)} className="text-accent text-sm font-black cartoon-btn bg-accent/10 px-3 py-1 border-accent/20">
-            {showAllCategories ? "Свернуть" : "Все →"}
-          </button>
-        </div>
-        <div className="grid grid-cols-4 gap-3">
-          {visibleCategories.map((cat) => (
+      <div className="px-4">
+        <div className="grid grid-cols-5 gap-2">
+          {categories.map((cat) => (
             <button key={cat.id} className="cat-card" onClick={() => handleCategoryClick(cat)}>
               <div className="cat-card-img">
-                <img src={cat.img} alt={cat.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                <img src={cat.icon} alt={cat.label} className="w-full h-full object-contain" />
               </div>
-              <span className="text-[11px] font-black text-foreground leading-tight">{cat.label}</span>
+              <span className="text-[10px] font-bold text-foreground leading-tight">{cat.label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Search results or popular */}
-      <div className="mt-6">
+      {/* Popular clubs */}
+      <div className="mt-5">
         <div className="flex items-center justify-between px-4 mb-3">
-          <h2 className="section-title">{searchQuery ? "🔍 Результаты" : "🔥 Популярные"}</h2>
-          {!searchQuery && <button className="text-accent text-sm font-black">Все →</button>}
+          <h2 className="section-title">⭐ Популярные кружки</h2>
+          <button className="text-primary text-sm font-black">Все →</button>
         </div>
 
         {filteredClubs.length === 0 ? (
@@ -215,23 +180,24 @@ const HomePage = () => {
               <div
                 key={club.name}
                 onClick={() => handleClubClick(club)}
-                className="min-w-[185px] cartoon-card overflow-hidden shrink-0 cursor-pointer animate-slide-up"
+                className="min-w-[160px] cartoon-card overflow-hidden shrink-0 cursor-pointer animate-slide-up"
                 style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}
               >
-                <div className="relative h-28">
+                <div className="relative h-24">
                   <img src={club.img} alt={club.name} className="w-full h-full object-cover" />
-                  <div className="absolute top-2 right-2 badge-rating">
-                    <Star size={10} className="text-primary fill-primary" />
-                    {club.rating}
-                  </div>
                 </div>
-                <div className="p-3">
-                  <h3 className="font-black text-xs leading-snug line-clamp-2 min-h-[32px]">{club.name}</h3>
-                  <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold"><MapPin size={10} />{club.district}</p>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-[10px] text-muted-foreground font-bold">{club.reviews} отзывов</span>
-                    <span className="text-xs font-black text-accent bg-accent/10 px-2 py-0.5 rounded-full">{club.price}</span>
+                <div className="p-2.5">
+                  <h3 className="font-black text-xs leading-snug line-clamp-1">{club.name}</h3>
+                  <div className="flex items-center gap-1 mt-1">
+                    <Star size={11} className="text-secondary fill-secondary" />
+                    <Star size={11} className="text-secondary fill-secondary" />
+                    <Star size={11} className="text-secondary fill-secondary" />
+                    <Star size={11} className="text-secondary fill-secondary" />
+                    <Star size={11} className="text-muted-foreground/30" />
                   </div>
+                  <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold">
+                    <MapPin size={10} className="text-primary" />{club.district}
+                  </p>
                 </div>
               </div>
             ))}
@@ -239,35 +205,35 @@ const HomePage = () => {
         )}
       </div>
 
-      {/* Vertical list */}
-      <div className="px-4 mt-6">
+      {/* Nearby list */}
+      <div className="px-4 mt-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="section-title">📍 Рядом с вами</h2>
-          <button className="text-accent text-sm font-black">Все →</button>
+          <button className="text-primary text-sm font-black">Все →</button>
         </div>
         <div className="flex flex-col gap-3">
-          {popularClubs.map((club, i) => (
+          {popularClubs.slice(0, 3).map((club, i) => (
             <div
               key={`nearby-${club.name}`}
               onClick={() => handleClubClick(club)}
               className="flex gap-3 cartoon-card p-3 cursor-pointer animate-slide-up"
               style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}
             >
-              <div className="w-[72px] h-[72px] rounded-xl overflow-hidden shrink-0 border-2 border-foreground/8">
+              <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2" style={{ borderColor: "hsl(var(--foreground) / 0.06)" }}>
                 <img src={club.img} alt={club.name} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0 py-0.5">
                 <h3 className="font-black text-sm truncate">{club.name}</h3>
-                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 font-bold"><MapPin size={10} />{club.district}</p>
-                <div className="flex items-center gap-3 mt-2">
-                  <div className="flex items-center gap-1 bg-yellow-light px-2 py-0.5 rounded-full">
-                    <Star size={11} className="text-primary fill-primary" />
+                <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 font-bold"><MapPin size={10} className="text-primary" />{club.district}</p>
+                <div className="flex items-center gap-3 mt-1.5">
+                  <div className="flex items-center gap-1">
+                    <Star size={11} className="text-secondary fill-secondary" />
                     <span className="text-xs font-black">{club.rating}</span>
                   </div>
-                  <span className="text-xs font-black text-accent">{club.price}</span>
+                  <span className="text-xs font-bold text-muted-foreground">{club.reviews} отзывов</span>
                 </div>
               </div>
-              <ArrowRight size={18} className="text-accent shrink-0 mt-6" />
+              <ArrowRight size={16} className="text-primary shrink-0 mt-5" />
             </div>
           ))}
         </div>
