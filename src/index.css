@@ -132,7 +132,8 @@
     @apply text-center cursor-pointer;
   }
   .cat-card-img {
-    @apply aspect-[4/3] rounded-2xl overflow-hidden mb-1.5 border-[3px] border-foreground/8 transition-all duration-200;
+    @apply aspect-[4/3] rounded-2xl overflow-hidden mb-1.5 border-[3px] transition-all duration-200;
+    border-color: hsl(var(--foreground) / 0.08);
     box-shadow: var(--shadow-cartoon);
   }
   .cat-card:hover .cat-card-img {
