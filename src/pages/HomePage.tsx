@@ -187,7 +187,7 @@ const HomePage = () => {
               <div
                 key={club.name}
                 onClick={() => handleClubClick(club)}
-                className="min-w-[160px] cartoon-card overflow-hidden shrink-0 cursor-pointer animate-slide-up"
+                className="min-w-[160px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
                 style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}
               >
                 <div className="relative h-24">
