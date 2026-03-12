@@ -163,7 +163,7 @@ const HomePage = () => {
               <div className="cat-card-img">
                 <img src={cat.icon} alt={cat.label} className="w-full h-full object-contain" />
               </div>
-              <span className="text-[10px] font-bold text-foreground leading-tight">{cat.label}</span>
+              <span className="text-[10px] md:text-xs font-bold text-foreground leading-tight">{cat.label}</span>
             </button>
           ))}
         </div>
