@@ -83,7 +83,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="pb-24 max-w-lg mx-auto bg-background min-h-screen">
+    <div className="pb-24 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto bg-background min-h-screen">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
 
       {/* City Picker */}
