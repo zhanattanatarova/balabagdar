@@ -128,12 +128,13 @@ const HomePage = () => {
       {/* Header */}
       <div
         className="mx-4 mt-3 px-4 pt-4 pb-4 rounded-3xl border-[3px]"
-        style={{ background: "var(--gradient-header)", boxShadow: "var(--shadow-cartoon-lg)", borderColor: "hsl(var(--primary) / 0.35)" }}
+        style={{ background: "var(--gradient-header)", boxShadow: "var(--shadow-cartoon-lg)", borderColor: "hsl(145, 90%, 30% / 0.5)" }}
       >
         <div className="flex items-center justify-center mb-3">
           <button
             onClick={() => setShowCityPicker(true)}
-            className="flex items-center gap-1.5 text-primary-foreground font-black text-lg bg-primary-foreground/15 px-3 py-1.5 rounded-full border-2 border-primary-foreground/25"
+            className="flex items-center gap-1.5 font-black text-lg px-4 py-2 rounded-full border-[3px]"
+            style={{ background: "hsl(145, 85%, 38%)", color: "white", borderColor: "hsl(145, 90%, 28% / 0.5)" }}
           >
             <img src={logo} alt="" className="w-7 h-7" />
             {city}
@@ -143,13 +144,13 @@ const HomePage = () => {
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary/70" size={18} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "hsl(145, 70%, 35%)" }} />
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Найти кружок или репетитора..."
-            className="w-full pl-10 pr-4 py-3 rounded-2xl bg-primary-foreground text-primary text-sm font-bold placeholder:text-primary/55 focus:outline-none focus:ring-[3px] focus:ring-secondary border-[3px] border-primary-foreground/25"
-            style={{ boxShadow: "var(--shadow-cartoon)" }}
+            className="w-full pl-10 pr-4 py-3 rounded-2xl text-sm font-bold focus:outline-none focus:ring-[3px] focus:ring-secondary border-[3px]"
+            style={{ background: "white", color: "hsl(145, 70%, 30%)", boxShadow: "var(--shadow-cartoon)", borderColor: "hsl(145, 50%, 75%)" }}
           />
         </div>
       </div>
