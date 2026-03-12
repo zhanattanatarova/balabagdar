@@ -147,7 +147,8 @@
   }
 
   .cartoon-card {
-    @apply bg-card rounded-2xl border-[3px] border-foreground/8 transition-all duration-200;
+    @apply bg-card rounded-2xl border-[3px] transition-all duration-200;
+    border-color: hsl(var(--foreground) / 0.08);
     box-shadow: var(--shadow-cartoon);
   }
   .cartoon-card:hover {
@@ -160,7 +161,8 @@
   }
 
   .cartoon-btn {
-    @apply font-black rounded-xl border-[3px] border-foreground/10 transition-all duration-150;
+    @apply font-black rounded-xl border-[3px] transition-all duration-150;
+    border-color: hsl(var(--foreground) / 0.1);
     box-shadow: var(--shadow-cartoon);
   }
   .cartoon-btn:active {
