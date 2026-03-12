@@ -28,7 +28,7 @@ const NotificationsPage = () => {
   const unreadCount = items.filter((n) => !n.read).length;
 
   return (
-    <div className="pb-24 max-w-lg mx-auto">
+    <div className="pb-24 max-w-6xl mx-auto">
       <div className="px-4 pt-5 pb-3 flex items-center justify-between">
         <div>
           <h1 className="text-lg font-black flex items-center gap-2">
