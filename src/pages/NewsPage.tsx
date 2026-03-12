@@ -35,7 +35,7 @@ const NewsPage = () => (
     </div>
 
     {/* Events list */}
-    <div className="px-4 mt-5 flex flex-col gap-4">
+    <div className="px-4 mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {events.map((event, i) => (
         <div
           key={event.title}

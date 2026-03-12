@@ -44,7 +44,7 @@ const NotificationsPage = () => {
         )}
       </div>
 
-      <div className="px-4 flex flex-col gap-2">
+      <div className="px-4 grid grid-cols-1 md:grid-cols-2 gap-2">
         {items.map((n, i) => (
           <button
             key={n.id}

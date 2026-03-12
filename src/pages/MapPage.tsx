@@ -78,7 +78,7 @@ const MapPage = () => {
 
       <div className="px-4 mt-5">
         <h2 className="section-title mb-3">📋 Все кружки</h2>
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {clubs.map((club) => (
             <button key={club.id} onClick={() => setSelected(club.id)}
               className={`flex items-center gap-3 p-3 rounded-2xl text-left transition-all active:scale-[0.98] border-[3px] ${

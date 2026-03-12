@@ -23,7 +23,7 @@ const ProfilePage = () => {
   const phone = user?.user_metadata?.phone || user?.email?.replace("@phone.balahub.kz", "") || "";
 
   return (
-    <div className="pb-24 max-w-lg mx-auto">
+    <div className="pb-24 max-w-6xl mx-auto">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
 
       {/* Header */}
