@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Phone, Send, ArrowRight, Loader2, MessageCircle } from "lucide-react";
+import { X, Phone, ArrowRight, Loader2, MessageCircle } from "lucide-react";
 import logo from "@/assets/balahub-logo.png";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [phone, setPhone] = useState("+7 ");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [botUrl, setBotUrl] = useState("https://t.me");
+  const [botUsername, setBotUsername] = useState<string | null>(null);
 
   if (!open) return null;
 
@@ -23,6 +25,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       toast({ title: "Ошибка", description: "Введите корректный номер телефона", variant: "destructive" });
       return;
     }
+
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("send-code", {
@@ -31,14 +34,17 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       if (error) throw error;
 
       if (data?.error === "telegram_not_linked") {
+        setBotUrl(data?.bot_url || "https://t.me");
+        setBotUsername(data?.bot_username || null);
         setStep("telegram");
-        toast({ title: "Нужен Telegram", description: "Откройте бота и отправьте номер телефона" });
-      } else if (data?.error) {
-        throw new Error(data.error);
-      } else {
-        setStep("code");
-        toast({ title: "Код отправлен ✅", description: "Проверьте Telegram" });
+        toast({ title: "Сначала привяжите Telegram", description: "Откройте бота и отправьте номер телефона" });
+        return;
       }
+
+      if (data?.error) throw new Error(data.error);
+
+      setStep("code");
+      toast({ title: "Код отправлен ✅", description: "Проверьте Telegram" });
     } catch (err: any) {
       toast({ title: "Ошибка", description: err.message || "Не удалось отправить код", variant: "destructive" });
     } finally {
@@ -49,16 +55,21 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const handleRetryAfterTelegram = async () => {
     setLoading(true);
     const digits = phone.replace(/\D/g, "");
+
     try {
       const { data, error } = await supabase.functions.invoke("send-code", {
         body: { phone: digits },
       });
+
       if (error) throw error;
       if (data?.error === "telegram_not_linked") {
-        toast({ title: "Телефон не найден", description: "Убедитесь, что вы отправили номер боту", variant: "destructive" });
+        setBotUrl(data?.bot_url || "https://t.me");
+        setBotUsername(data?.bot_username || null);
+        toast({ title: "Телефон пока не найден", description: "Отправьте номер боту и попробуйте снова", variant: "destructive" });
         return;
       }
       if (data?.error) throw new Error(data.error);
+
       setStep("code");
       toast({ title: "Код отправлен ✅", description: "Проверьте Telegram" });
     } catch (err: any) {
@@ -73,12 +84,15 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       toast({ title: "Ошибка", description: "Введите 4-значный код", variant: "destructive" });
       return;
     }
+
     const digits = phone.replace(/\D/g, "");
     setLoading(true);
+
     try {
       const { data, error } = await supabase.functions.invoke("verify-code", {
         body: { phone: digits, code },
       });
+
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
@@ -93,6 +107,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         title: data?.isNewUser ? "Добро пожаловать! 🎉" : "С возвращением! 👋",
         description: data?.isNewUser ? "Аккаунт создан" : "Вы вошли в аккаунт",
       });
+
       onClose();
       setStep("phone");
       setCode("");
@@ -110,6 +125,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         <div className="flex justify-center pt-3 pb-1 sm:hidden">
           <div className="w-10 h-1 rounded-full bg-border" />
         </div>
+
         <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted flex items-center justify-center">
           <X size={16} className="text-muted-foreground" />
         </button>
@@ -123,6 +139,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             <>
               <h2 className="text-xl font-black text-center">Вход в BalaHub</h2>
               <p className="text-sm text-muted-foreground text-center mt-1">Введите номер телефона</p>
+
               <div className="mt-6">
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Номер телефона</label>
                 <div className="relative mt-1.5">
@@ -135,10 +152,12 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                     className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
+
                 <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-blue-sky">
                   <MessageCircle size={16} className="text-primary shrink-0" />
                   <p className="text-xs text-foreground/70">Код подтверждения придёт в Telegram</p>
                 </div>
+
                 <button
                   onClick={handleSendCode}
                   disabled={loading}
@@ -153,12 +172,15 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           {step === "telegram" && (
             <>
               <h2 className="text-xl font-black text-center">Подключите Telegram</h2>
-              <p className="text-sm text-muted-foreground text-center mt-1">Чтобы получить код, отправьте номер боту</p>
+              <p className="text-sm text-muted-foreground text-center mt-1">
+                {botUsername ? `Откройте @${botUsername} и отправьте номер телефона` : "Откройте бота и отправьте номер телефона"}
+              </p>
+
               <div className="mt-6 space-y-4">
                 <div className="bg-green-light rounded-2xl p-4 space-y-3">
                   <div className="flex items-start gap-3">
                     <span className="text-lg">1️⃣</span>
-                    <p className="text-sm font-bold">Откройте бота <span className="text-primary">@BalaHubBot</span> в Telegram</p>
+                    <p className="text-sm font-bold">Откройте бота в Telegram</p>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-lg">2️⃣</span>
@@ -166,17 +188,19 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-lg">3️⃣</span>
-                    <p className="text-sm font-bold">Отправьте свой номер телефона</p>
+                    <p className="text-sm font-bold">Отправьте номер (кнопкой «Поделиться контактом»)</p>
                   </div>
                 </div>
+
                 <a
-                  href="https://t.me/BalaHubBot"
+                  href={botUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#2AABEE] text-white font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all"
+                  className="w-full bg-secondary text-secondary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all"
                 >
                   <MessageCircle size={18} /> Открыть Telegram бота
                 </a>
+
                 <button
                   onClick={handleRetryAfterTelegram}
                   disabled={loading}
@@ -184,10 +208,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                 >
                   {loading ? <Loader2 size={18} className="animate-spin" /> : <>Я отправил(а) номер <ArrowRight size={18} /></>}
                 </button>
-                <button
-                  onClick={() => setStep("phone")}
-                  className="w-full text-muted-foreground font-bold text-sm py-2"
-                >
+
+                <button onClick={() => setStep("phone")} className="w-full text-muted-foreground font-bold text-sm py-2">
                   ← Назад
                 </button>
               </div>
@@ -198,6 +220,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             <>
               <h2 className="text-xl font-black text-center">Подтверждение</h2>
               <p className="text-sm text-muted-foreground text-center mt-1">Введите код из Telegram</p>
+
               <div className="mt-6">
                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Код подтверждения</label>
                 <div className="flex gap-2.5 mt-2 justify-center">
@@ -221,6 +244,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                     />
                   ))}
                 </div>
+
                 <button
                   onClick={handleVerify}
                   disabled={loading}
@@ -228,8 +252,12 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                 >
                   {loading ? <Loader2 size={18} className="animate-spin" /> : "Подтвердить"}
                 </button>
+
                 <button
-                  onClick={() => { setStep("phone"); setCode(""); }}
+                  onClick={() => {
+                    setStep("phone");
+                    setCode("");
+                  }}
                   className="w-full mt-2 text-muted-foreground font-bold text-sm py-2"
                 >
                   Изменить номер

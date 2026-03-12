@@ -126,23 +126,29 @@ const HomePage = () => {
       )}
 
       {/* Header */}
-      <div className="px-5 pt-4 pb-5">
+      <div
+        className="mx-4 mt-3 px-4 pt-4 pb-4 rounded-3xl border-[3px]"
+        style={{ background: "var(--gradient-header)", boxShadow: "var(--shadow-cartoon-lg)", borderColor: "hsl(var(--primary) / 0.35)" }}
+      >
         <div className="flex items-center justify-center mb-3">
-          <button onClick={() => setShowCityPicker(true)} className="flex items-center gap-1.5 text-foreground font-black text-lg">
+          <button
+            onClick={() => setShowCityPicker(true)}
+            className="flex items-center gap-1.5 text-primary-foreground font-black text-lg bg-primary-foreground/15 px-3 py-1.5 rounded-full border-2 border-primary-foreground/25"
+          >
             <img src={logo} alt="" className="w-7 h-7" />
             {city}
-            <ChevronDown size={18} className="text-primary" />
+            <ChevronDown size={18} className="text-primary-foreground" />
           </button>
         </div>
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-primary/70" size={18} />
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Найти кружок или репетитора..."
-            className="w-full pl-10 pr-4 py-3 rounded-2xl bg-card text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-primary border-2 border-border"
+            className="w-full pl-10 pr-4 py-3 rounded-2xl bg-primary-foreground text-primary text-sm font-bold placeholder:text-primary/55 focus:outline-none focus:ring-[3px] focus:ring-secondary border-[3px] border-primary-foreground/25"
             style={{ boxShadow: "var(--shadow-cartoon)" }}
           />
         </div>
