@@ -51,6 +51,7 @@ const ClubEditPage = () => {
     phone: "",
     whatsapp: "",
     telegram: "",
+    instagram: "",
     age_min: 3,
     age_max: 18,
     price_from: 0,
