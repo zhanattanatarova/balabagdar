@@ -55,6 +55,7 @@ export default {
         "green-light": "hsl(var(--green-light))",
         "pink-soft": "hsl(var(--pink-soft))",
         "blue-sky": "hsl(var(--blue-sky))",
+        "purple-fun": "hsl(var(--purple-fun))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
