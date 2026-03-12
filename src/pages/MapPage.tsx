@@ -20,7 +20,7 @@ const MapPage = () => {
   const selectedClub = clubs.find((c) => c.id === selected);
 
   return (
-    <div className="pb-24 max-w-lg mx-auto">
+    <div className="pb-24 max-w-6xl mx-auto">
       <div className="px-4 pt-5 pb-3">
         <h1 className="text-lg font-black">🗺️ Карта кружков</h1>
         <p className="text-xs text-muted-foreground font-bold">Кружки рядом с вами</p>
