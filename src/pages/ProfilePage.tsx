@@ -12,7 +12,6 @@ const menuItems = [
 ];
 
 const settingsItems = [
-  { icon: CreditCard, label: "Пополнить подписку", color: "bg-secondary/10", iconColor: "text-secondary" },
   { icon: MessageCircle, label: "Связаться с нами", color: "bg-primary/10", iconColor: "text-primary" },
 ];
 
