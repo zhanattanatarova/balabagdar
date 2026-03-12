@@ -175,58 +175,58 @@ const ClubEditPage = () => {
         {/* Name in 3 languages */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">📝 {t("edit.name")}</p>
-          <InputField label="🇷🇺 Русский" field="name_ru" placeholder="Название кружка" />
-          <InputField label="🇰🇿 Қазақша" field="name_kz" placeholder="Үйірме атауы" />
-          <InputField label="🇬🇧 English" field="name_en" placeholder="Club name" />
+          <div><label className={labelCls}>🇷🇺 Русский</label><input value={form.name_ru} onChange={(e) => update("name_ru", e.target.value)} placeholder="Название кружка" className={inputCls} /></div>
+          <div><label className={labelCls}>🇰🇿 Қазақша</label><input value={form.name_kz} onChange={(e) => update("name_kz", e.target.value)} placeholder="Үйірме атауы" className={inputCls} /></div>
+          <div><label className={labelCls}>🇬🇧 English</label><input value={form.name_en} onChange={(e) => update("name_en", e.target.value)} placeholder="Club name" className={inputCls} /></div>
         </div>
 
         {/* Description */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">📋 {t("edit.description")}</p>
-          <TextAreaField label="🇷🇺 Русский" field="description_ru" placeholder="Расскажите о вашем кружке: чему учите, какие достижения, методы..." />
-          <TextAreaField label="🇰🇿 Қазақша" field="description_kz" placeholder="Үйірмеңіз туралы айтып беріңіз..." />
-          <TextAreaField label="🇬🇧 English" field="description_en" placeholder="Tell about your club..." />
+          <div><label className={labelCls}>🇷🇺 Русский</label><textarea value={form.description_ru} onChange={(e) => update("description_ru", e.target.value)} rows={3} placeholder="Расскажите о вашем кружке..." className={textareaCls} /></div>
+          <div><label className={labelCls}>🇰🇿 Қазақша</label><textarea value={form.description_kz} onChange={(e) => update("description_kz", e.target.value)} rows={3} placeholder="Үйірмеңіз туралы..." className={textareaCls} /></div>
+          <div><label className={labelCls}>🇬🇧 English</label><textarea value={form.description_en} onChange={(e) => update("description_en", e.target.value)} rows={3} placeholder="Tell about your club..." className={textareaCls} /></div>
         </div>
 
         {/* Category & City */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">🏷️ {t("edit.category")} & {t("edit.city")}</p>
           <div>
-            <label className="text-xs font-bold text-muted-foreground">{t("edit.category")}</label>
+            <label className={labelCls}>{t("edit.category")}</label>
             <select value={form.category} onChange={(e) => update("category", e.target.value)}
-              className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-foreground text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary">
+              className={inputCls}>
               {categoryOptions.map((c) => (
                 <option key={c} value={c}>{t(`cat.${c}` as any) || c}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="text-xs font-bold text-muted-foreground">{t("edit.city")}</label>
+            <label className={labelCls}>{t("edit.city")}</label>
             <select value={form.city} onChange={(e) => update("city", e.target.value)}
-              className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-foreground text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary">
+              className={inputCls}>
               {cities.map((c) => (<option key={c} value={c}>{c}</option>))}
             </select>
           </div>
-          <InputField label={`📍 ${t("edit.address")}`} field="address" placeholder="ул. Абая, 15, 2 этаж" />
+          <div><label className={labelCls}>📍 {t("edit.address")}</label><input value={form.address} onChange={(e) => update("address", e.target.value)} placeholder="ул. Абая, 15, 2 этаж" className={inputCls} /></div>
         </div>
 
         {/* Contacts */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">📞 {t("club.contacts")}</p>
-          <InputField label={t("edit.phone")} field="phone" placeholder="+7 777 123 4567" />
-          <InputField label={`💬 ${t("edit.whatsapp")}`} field="whatsapp" placeholder="+77771234567" />
-          <InputField label={`✈️ ${t("edit.telegram")}`} field="telegram" placeholder="@username" />
-          <InputField label="📸 Instagram" field="instagram" placeholder="@username" />
+          <div><label className={labelCls}>{t("edit.phone")}</label><input value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+7 777 123 4567" className={inputCls} /></div>
+          <div><label className={labelCls}>💬 {t("edit.whatsapp")}</label><input value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} placeholder="+77771234567" className={inputCls} /></div>
+          <div><label className={labelCls}>✈️ {t("edit.telegram")}</label><input value={form.telegram} onChange={(e) => update("telegram", e.target.value)} placeholder="@username" className={inputCls} /></div>
+          <div><label className={labelCls}>📸 Instagram</label><input value={form.instagram} onChange={(e) => update("instagram", e.target.value)} placeholder="@username" className={inputCls} /></div>
         </div>
 
         {/* Age & Price */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">👶 {t("edit.age_range")}</p>
           <div className="grid grid-cols-2 gap-3">
-            <InputField label="Мин. возраст" field="age_min" type="number" />
-            <InputField label="Макс. возраст" field="age_max" type="number" />
+            <div><label className={labelCls}>Мин. возраст</label><input type="number" value={form.age_min} onChange={(e) => update("age_min", parseInt(e.target.value) || 0)} className={inputCls} /></div>
+            <div><label className={labelCls}>Макс. возраст</label><input type="number" value={form.age_max} onChange={(e) => update("age_max", parseInt(e.target.value) || 0)} className={inputCls} /></div>
           </div>
-          <InputField label={`💰 ${t("edit.price")}`} field="price_from" type="number" placeholder="15000" />
+          <div><label className={labelCls}>💰 {t("edit.price")}</label><input type="number" value={form.price_from} onChange={(e) => update("price_from", parseInt(e.target.value) || 0)} placeholder="15000" className={inputCls} /></div>
         </div>
 
         {/* Schedule */}
