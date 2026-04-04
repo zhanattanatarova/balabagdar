@@ -166,7 +166,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       <div className="mt-5">
         <div className="flex items-center justify-between px-4 mb-3">
           <h2 className="section-title">{t("home.popular")}</h2>
-          <button className="text-primary text-sm font-black">{t("home.all")}</button>
+          <button onClick={() => navigate("/map")} className="text-primary text-sm font-black">{t("home.all")}</button>
         </div>
 
         {loadingClubs ? (
