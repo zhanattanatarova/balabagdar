@@ -6,10 +6,13 @@ import MapPage from "./MapPage";
 import NewsPage from "./NewsPage";
 import ProfilePage from "./ProfilePage";
 import NotificationsPage from "./NotificationsPage";
+import ClubDashboard from "./ClubDashboard";
+import ClubEditPage from "./ClubEditPage";
 import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
+  const [city, setCity] = useState("Астана");
   const location = useLocation();
 
   const handleSplashComplete = useCallback(() => {
@@ -19,10 +22,12 @@ const Index = () => {
   const renderPage = () => {
     switch (location.pathname) {
       case "/map": return <MapPage />;
-      case "/news": return <NewsPage />;
+      case "/news": return <NewsPage city={city} />;
       case "/profile": return <ProfilePage />;
       case "/notifications": return <NotificationsPage />;
-      default: return <HomePage />;
+      case "/dashboard": return <ClubDashboard />;
+      case "/club/edit": return <ClubEditPage />;
+      default: return <HomePage city={city} setCity={setCity} />;
     }
   };
 

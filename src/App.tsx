@@ -6,8 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import Index from "./pages/Index";
 import ClubDetailPage from "./pages/ClubDetailPage";
-import ClubDashboard from "./pages/ClubDashboard";
-import ClubEditPage from "./pages/ClubEditPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,8 +23,8 @@ const App = () => (
             <Route path="/news" element={<Index />} />
             <Route path="/profile" element={<Index />} />
             <Route path="/notifications" element={<Index />} />
-            <Route path="/dashboard" element={<ClubDashboard />} />
-            <Route path="/club/edit" element={<ClubEditPage />} />
+            <Route path="/dashboard" element={<Index />} />
+            <Route path="/club/edit" element={<Index />} />
             <Route path="/club/:id" element={<ClubDetailPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
