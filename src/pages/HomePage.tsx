@@ -216,7 +216,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       <div className="px-4 mt-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="section-title">{t("home.nearby")}</h2>
-          <button className="text-primary text-sm font-black">{t("home.all")}</button>
+          <button onClick={() => navigate("/map")} className="text-primary text-sm font-black">{t("home.all")}</button>
         </div>
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredClubs.slice(0, 3).map((club, i) => {

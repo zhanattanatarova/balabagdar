@@ -19,7 +19,7 @@ const NewsPage = ({ city }: { city: string }) => (
         <div>
           <div className="flex items-center gap-2 mb-1">
             <img src={logo} alt="" className="w-6 h-6" />
-            <span className="text-primary-foreground/80 text-xs font-bold">Сегодня в Астане</span>
+            <span className="text-primary-foreground/80 text-xs font-bold">Сегодня в {city}</span>
           </div>
           <h1 className="text-xl font-black text-primary-foreground leading-snug">Новости<br />города</h1>
         </div>
