@@ -11,7 +11,7 @@ const events = [
   { title: 'Шоу "Волшебный мир"', date: "19 Арана", rating: 4.5, img: newsShow },
 ];
 
-const NewsPage = () => (
+const NewsPage = ({ city }: { city: string }) => (
   <div className="pb-24 max-w-6xl mx-auto">
     {/* Header banner */}
     <div className="relative h-44 rounded-b-3xl overflow-hidden" style={{ background: "var(--gradient-header)" }}>

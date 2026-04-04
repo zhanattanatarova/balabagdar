@@ -35,11 +35,15 @@ const categoryIcons: Record<string, string> = {
 
 const categoryIds = ["creativity", "sport", "development", "speech", "dance", "robotics", "swim", "music", "health", "tutors"];
 
-const HomePage = () => {
+interface HomePageProps {
+  city: string;
+  setCity: (city: string) => void;
+}
+
+const HomePage = ({ city, setCity }: HomePageProps) => {
   const { user } = useAuth();
   const { t, tField } = useLanguage();
   const navigate = useNavigate();
-  const [city, setCity] = useState("Астана");
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
