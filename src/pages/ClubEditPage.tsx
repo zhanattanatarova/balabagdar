@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, Save, Plus, Trash2, Clock } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Plus, Trash2, Clock, Camera, ImagePlus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -33,6 +33,8 @@ interface ScheduleItem {
   isNew?: boolean;
 }
 
+const STORAGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/club-media`;
+
 const ClubEditPage = () => {
   const { user } = useAuth();
   const { t, lang } = useLanguage();
@@ -41,6 +43,12 @@ const ClubEditPage = () => {
   const [saving, setSaving] = useState(false);
   const [clubId, setClubId] = useState<string | null>(null);
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [gallery, setGallery] = useState<string[]>([]);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     name_ru: "", name_kz: "", name_en: "",
@@ -64,6 +72,8 @@ const ClubEditPage = () => {
       if (data?.[0]) {
         const c = data[0];
         setClubId(c.id);
+        setAvatarUrl(c.avatar_url || "");
+        setGallery(c.gallery || []);
         setForm({
           name_ru: c.name_ru || "", name_kz: c.name_kz || "", name_en: c.name_en || "",
           description_ru: c.description_ru || "", description_kz: c.description_kz || "", description_en: c.description_en || "",
@@ -78,7 +88,6 @@ const ClubEditPage = () => {
           age_max: c.age_max ?? 18,
           price_from: c.price_from ?? 0,
         });
-        // Load schedules
         const { data: sched } = await supabase.from("club_schedules").select("*").eq("club_id", c.id).order("day_of_week");
         if (sched) setSchedules(sched.map((s) => ({ ...s, start_time: s.start_time?.slice(0, 5), end_time: s.end_time?.slice(0, 5) })));
       }
@@ -86,6 +95,48 @@ const ClubEditPage = () => {
     };
     fetchClub();
   }, [user]);
+
+  const uploadFile = async (file: File, path: string): Promise<string | null> => {
+    const { error } = await supabase.storage.from("club-media").upload(path, file, { upsert: true });
+    if (error) {
+      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
+      return null;
+    }
+    return `${STORAGE_URL}/${path}`;
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploadingAvatar(true);
+    const ext = file.name.split(".").pop();
+    const path = `${user.id}/avatar.${ext}`;
+    const url = await uploadFile(file, path);
+    if (url) setAvatarUrl(url + `?t=${Date.now()}`);
+    setUploadingAvatar(false);
+    if (avatarInputRef.current) avatarInputRef.current.value = "";
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !user) return;
+    setUploadingGallery(true);
+    const newUrls: string[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/gallery_${Date.now()}_${i}.${ext}`;
+      const url = await uploadFile(file, path);
+      if (url) newUrls.push(url);
+    }
+    setGallery((prev) => [...prev, ...newUrls]);
+    setUploadingGallery(false);
+    if (galleryInputRef.current) galleryInputRef.current.value = "";
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setGallery((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSave = async () => {
     if (!user) return;
@@ -95,7 +146,7 @@ const ClubEditPage = () => {
     }
     setSaving(true);
 
-    const payload = { ...form, user_id: user.id };
+    const payload = { ...form, user_id: user.id, avatar_url: avatarUrl, gallery };
     let savedClubId = clubId;
     let error;
 
@@ -107,11 +158,8 @@ const ClubEditPage = () => {
       if (data) { setClubId(data.id); savedClubId = data.id; }
     }
 
-    // Save schedules
     if (!error && savedClubId) {
-      // Delete old schedules
       await supabase.from("club_schedules").delete().eq("club_id", savedClubId);
-      // Insert new ones
       if (schedules.length > 0) {
         const schedPayload = schedules.map((s) => ({
           club_id: savedClubId!,
@@ -172,6 +220,65 @@ const ClubEditPage = () => {
       </div>
 
       <div className="px-4 space-y-4">
+        {/* Avatar & Gallery */}
+        <div className="cartoon-card p-4 space-y-4">
+          <p className="text-sm font-black">📷 Фото</p>
+          
+          {/* Avatar */}
+          <div>
+            <label className={labelCls}>Аватар кружка</label>
+            <div className="mt-2 flex items-center gap-4">
+              <div
+                onClick={() => avatarInputRef.current?.click()}
+                className="w-20 h-20 rounded-2xl border-2 border-dashed border-primary/40 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary transition-colors"
+              >
+                {uploadingAvatar ? (
+                  <Loader2 size={20} className="animate-spin text-primary" />
+                ) : avatarUrl ? (
+                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <Camera size={24} className="text-primary/50" />
+                )}
+              </div>
+              <div className="text-xs text-muted-foreground font-bold">
+                Нажмите чтобы загрузить<br />или сменить аватар
+              </div>
+            </div>
+            <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
+          </div>
+
+          {/* Gallery */}
+          <div>
+            <label className={labelCls}>Галерея (до 10 фото)</label>
+            <div className="mt-2 grid grid-cols-4 gap-2">
+              {gallery.map((url, i) => (
+                <div key={i} className="relative aspect-square rounded-xl overflow-hidden border-2 border-border">
+                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => removeGalleryImage(i)}
+                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-destructive flex items-center justify-center"
+                  >
+                    <X size={10} className="text-destructive-foreground" />
+                  </button>
+                </div>
+              ))}
+              {gallery.length < 10 && (
+                <button
+                  onClick={() => galleryInputRef.current?.click()}
+                  className="aspect-square rounded-xl border-2 border-dashed border-primary/40 flex items-center justify-center hover:border-primary transition-colors"
+                >
+                  {uploadingGallery ? (
+                    <Loader2 size={18} className="animate-spin text-primary" />
+                  ) : (
+                    <ImagePlus size={20} className="text-primary/50" />
+                  )}
+                </button>
+              )}
+            </div>
+            <input ref={galleryInputRef} type="file" accept="image/*" multiple onChange={handleGalleryUpload} className="hidden" />
+          </div>
+        </div>
+
         {/* Name in 3 languages */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">📝 {t("edit.name")}</p>
@@ -193,8 +300,7 @@ const ClubEditPage = () => {
           <p className="text-sm font-black">🏷️ {t("edit.category")} & {t("edit.city")}</p>
           <div>
             <label className={labelCls}>{t("edit.category")}</label>
-            <select value={form.category} onChange={(e) => update("category", e.target.value)}
-              className={inputCls}>
+            <select value={form.category} onChange={(e) => update("category", e.target.value)} className={inputCls}>
               {categoryOptions.map((c) => (
                 <option key={c} value={c}>{t(`cat.${c}` as any) || c}</option>
               ))}
@@ -202,8 +308,7 @@ const ClubEditPage = () => {
           </div>
           <div>
             <label className={labelCls}>{t("edit.city")}</label>
-            <select value={form.city} onChange={(e) => update("city", e.target.value)}
-              className={inputCls}>
+            <select value={form.city} onChange={(e) => update("city", e.target.value)} className={inputCls}>
               {cities.map((c) => (<option key={c} value={c}>{c}</option>))}
             </select>
           </div>
