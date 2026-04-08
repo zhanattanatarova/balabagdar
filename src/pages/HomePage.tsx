@@ -55,36 +55,33 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   useEffect(() => {
     const fetchClubs = async () => {
       setLoadingClubs(true);
-      const { data } = await supabase
+      let query = supabase
         .from("clubs")
         .select("*")
         .eq("city", city)
-        .eq("is_active", true)
+        .eq("is_active", true);
+
+      if (selectedCategory) {
+        query = query.eq("category", selectedCategory);
+      }
+
+      if (searchQuery.trim()) {
+        const sq = `%${searchQuery.trim()}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},address.ilike.${sq}`);
+      }
+
+      const { data } = await query
         .order("rating", { ascending: false })
-        .limit(20);
+        .limit(50);
       setClubs(data || []);
       setLoadingClubs(false);
     };
-    fetchClubs();
-  }, [city]);
+
+    const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
+    return () => clearTimeout(debounce);
+  }, [city, selectedCategory, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
-
-  const filteredClubs = useMemo(() => {
-    let result = clubs;
-    if (selectedCategory) {
-      result = result.filter((c) => c.category === selectedCategory);
-    }
-    if (searchQuery.trim()) {
-      result = result.filter((c) =>
-        c.name_ru?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.name_kz?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.name_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.address?.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    return result;
-  }, [searchQuery, clubs, selectedCategory]);
 
   return (
     <div className="pb-24 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto bg-background min-h-screen">
@@ -171,14 +168,14 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
         {loadingClubs ? (
           <div className="flex justify-center py-8"><Loader2 size={24} className="animate-spin text-primary" /></div>
-        ) : filteredClubs.length === 0 ? (
+        ) : clubs.length === 0 ? (
           <div className="px-4 py-8 text-center">
             <p className="text-4xl mb-2">🔍</p>
             <p className="text-sm text-muted-foreground font-bold">{t("home.not_found")}</p>
           </div>
         ) : (
           <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
-            {filteredClubs.map((club, i) => {
+            {clubs.map((club, i) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
               return (
                 <div key={club.id} onClick={() => navigate(`/club/${club.id}`)}
@@ -219,7 +216,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           <button onClick={() => navigate("/map")} className="text-primary text-sm font-black">{t("home.all")}</button>
         </div>
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filteredClubs.slice(0, 3).map((club, i) => {
+          {clubs.slice(0, 3).map((club, i) => {
             const name = tField(club.name_ru, club.name_kz, club.name_en);
             return (
               <div key={`nearby-${club.id}`} onClick={() => navigate(`/club/${club.id}`)}
