@@ -168,14 +168,14 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
         {loadingClubs ? (
           <div className="flex justify-center py-8"><Loader2 size={24} className="animate-spin text-primary" /></div>
-        ) : filteredClubs.length === 0 ? (
+        ) : clubs.length === 0 ? (
           <div className="px-4 py-8 text-center">
             <p className="text-4xl mb-2">🔍</p>
             <p className="text-sm text-muted-foreground font-bold">{t("home.not_found")}</p>
           </div>
         ) : (
           <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
-            {filteredClubs.map((club, i) => {
+            {clubs.map((club, i) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
               return (
                 <div key={club.id} onClick={() => navigate(`/club/${club.id}`)}
@@ -216,7 +216,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           <button onClick={() => navigate("/map")} className="text-primary text-sm font-black">{t("home.all")}</button>
         </div>
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filteredClubs.slice(0, 3).map((club, i) => {
+          {clubs.slice(0, 3).map((club, i) => {
             const name = tField(club.name_ru, club.name_kz, club.name_en);
             return (
               <div key={`nearby-${club.id}`} onClick={() => navigate(`/club/${club.id}`)}
