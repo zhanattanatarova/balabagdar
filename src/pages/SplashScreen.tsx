@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logo from "@/assets/balabagdar-logo.jpg";
+import logo from "@/assets/balabagdar-logo.png";
 
 interface SplashScreenProps {
   onComplete: () => void;

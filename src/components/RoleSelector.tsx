@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Users, Building2, Loader2 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
-import logo from "@/assets/balabagdar-logo.jpg";
+import logo from "@/assets/balabagdar-logo.png";
 
 interface RoleSelectorProps {
   onComplete: () => void;
