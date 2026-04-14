@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Phone, ArrowRight, Loader2, MessageCircle, RefreshCw } from "lucide-react";
-import logo from "@/assets/balahub-logo.png";
+import logo from "@/assets/balabagdar-logo.jpg";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/hooks/useLanguage";

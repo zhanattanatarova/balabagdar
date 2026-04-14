@@ -3,7 +3,7 @@ import { toast } from "@/hooks/use-toast";
 import newsArt from "@/assets/news-art.jpg";
 import newsFestival from "@/assets/news-festival.jpg";
 import newsShow from "@/assets/news-show.jpg";
-import logo from "@/assets/balahub-logo.png";
+import logo from "@/assets/balabagdar-logo.jpg";
 
 const events = [
   { title: 'Мастер-класс "Юный Художник"', date: "19 Арана", rating: 4.8, img: newsArt },

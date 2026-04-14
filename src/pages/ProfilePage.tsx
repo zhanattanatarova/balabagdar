@@ -1,6 +1,6 @@
 import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle, Building2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import logo from "@/assets/balahub-logo.png";
+import logo from "@/assets/balabagdar-logo.jpg";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useUserRole } from "@/hooks/useUserRole";
