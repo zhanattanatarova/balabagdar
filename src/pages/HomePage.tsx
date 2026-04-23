@@ -65,6 +65,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -85,6 +87,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       if (searchQuery.trim()) {
         const sq = `%${searchQuery.trim()}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},address.ilike.${sq}`);
+      } else if (selectedCategory === "languages" && selectedLanguage) {
+        // When filtering by a specific language, search clubs by language name in their fields
+        const langName = t(`lang.${selectedLanguage}` as any);
+        const sq = `%${langName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
@@ -96,7 +103,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
