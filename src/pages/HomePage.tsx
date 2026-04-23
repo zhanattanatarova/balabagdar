@@ -65,6 +65,24 @@ const danceOptions = [
   { id: "oriental", emoji: "🪷" },
 ];
 
+const healthOptions = [
+  { id: "massage", emoji: "💆" },
+  { id: "pediatrician", emoji: "👶" },
+  { id: "nutritionist", emoji: "🥗" },
+  { id: "psychologist", emoji: "🧠" },
+  { id: "neurologist", emoji: "🧬" },
+  { id: "dentist", emoji: "🦷" },
+  { id: "ophthalmologist", emoji: "👁️" },
+  { id: "orthopedist", emoji: "🦴" },
+  { id: "speech_therapist", emoji: "🗣️" },
+  { id: "defectologist", emoji: "📚" },
+  { id: "lfk", emoji: "🤸" },
+  { id: "osteopath", emoji: "🤲" },
+  { id: "allergist", emoji: "🤧" },
+  { id: "ent", emoji: "👂" },
+  { id: "vaccination", emoji: "💉" },
+];
+
 const sportOptions = [
   { id: "gymnastics", emoji: "🤸" },
   { id: "karate", emoji: "🥋" },
@@ -102,6 +120,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showDancePicker, setShowDancePicker] = useState(false);
   const [selectedSport, setSelectedSport] = useState<string | null>(null);
   const [showSportPicker, setShowSportPicker] = useState(false);
+  const [selectedHealth, setSelectedHealth] = useState<string | null>(null);
+  const [showHealthPicker, setShowHealthPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -134,6 +154,10 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const sportName = t(`sport.${selectedSport}` as any);
         const sq = `%${sportName}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "health" && selectedHealth) {
+        const healthName = t(`health.${selectedHealth}` as any);
+        const sq = `%${healthName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
@@ -145,7 +169,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
@@ -273,6 +297,46 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         </div>
       )}
 
+      {/* Health Picker */}
+      {showHealthPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowHealthPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🩺 {t("health.title")}</h3>
+              <button onClick={() => setShowHealthPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedHealth(null); setSelectedCategory(null); setShowHealthPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedHealth ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">❤️</span>
+                <span className={`text-sm ${!selectedHealth ? "font-black text-foreground" : "font-bold"}`}>{t("health.all")}</span>
+                {!selectedHealth && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {healthOptions.map((h) => {
+                const isActive = selectedHealth === h.id;
+                return (
+                  <button
+                    key={h.id}
+                    onClick={() => { setSelectedHealth(h.id); setSelectedCategory("health"); setShowHealthPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{h.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`health.${h.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* City Picker */}
       {showCityPicker && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
@@ -351,16 +415,23 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("sport");
                 return;
               }
+              if (id === "health") {
+                setShowHealthPicker(true);
+                setSelectedCategory("health");
+                return;
+              }
               if (selectedCategory === id) {
                 setSelectedCategory(null);
                 setSelectedLanguage(null);
                 setSelectedDance(null);
                 setSelectedSport(null);
+                setSelectedHealth(null);
               } else {
                 setSelectedCategory(id);
                 setSelectedLanguage(null);
                 setSelectedDance(null);
                 setSelectedSport(null);
+                setSelectedHealth(null);
               }
             };
             const isActive = selectedCategory === id;
@@ -383,6 +454,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 {id === "sport" && selectedSport && (
                   <span className="text-[9px] font-black text-primary leading-none">
                     {sportOptions.find((s) => s.id === selectedSport)?.emoji} {t(`sport.${selectedSport}` as any)}
+                  </span>
+                )}
+                {id === "health" && selectedHealth && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {healthOptions.find((h) => h.id === selectedHealth)?.emoji} {t(`health.${selectedHealth}` as any)}
                   </span>
                 )}
               </button>
