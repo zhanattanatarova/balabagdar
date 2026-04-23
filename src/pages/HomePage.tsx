@@ -98,6 +98,10 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const [selectedDance, setSelectedDance] = useState<string | null>(null);
+  const [showDancePicker, setShowDancePicker] = useState(false);
+  const [selectedSport, setSelectedSport] = useState<string | null>(null);
+  const [showSportPicker, setShowSportPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
