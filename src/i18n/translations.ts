@@ -53,6 +53,23 @@ export const translations = {
   "cat.music": { ru: "Музыка", kz: "Музыка", en: "Music" },
   "cat.health": { ru: "Здоровье", kz: "Денсаулық", en: "Health" },
   "cat.tutors": { ru: "Репетиторы", kz: "Репетиторлар", en: "Tutors" },
+  "cat.languages": { ru: "Языки", kz: "Тілдер", en: "Languages" },
+
+  // Languages modal
+  "lang.title": { ru: "Выберите язык", kz: "Тілді таңдаңыз", en: "Choose a language" },
+  "lang.all": { ru: "Все языки", kz: "Барлық тілдер", en: "All languages" },
+  "lang.english": { ru: "Английский", kz: "Ағылшын", en: "English" },
+  "lang.chinese": { ru: "Китайский", kz: "Қытай", en: "Chinese" },
+  "lang.french": { ru: "Французский", kz: "Француз", en: "French" },
+  "lang.korean": { ru: "Корейский", kz: "Корей", en: "Korean" },
+  "lang.turkish": { ru: "Турецкий", kz: "Түрік", en: "Turkish" },
+  "lang.kazakh": { ru: "Казахский", kz: "Қазақ", en: "Kazakh" },
+  "lang.russian": { ru: "Русский", kz: "Орыс", en: "Russian" },
+  "lang.german": { ru: "Немецкий", kz: "Неміс", en: "German" },
+  "lang.spanish": { ru: "Испанский", kz: "Испан", en: "Spanish" },
+  "lang.arabic": { ru: "Арабский", kz: "Араб", en: "Arabic" },
+  "lang.japanese": { ru: "Японский", kz: "Жапон", en: "Japanese" },
+  "lang.italian": { ru: "Итальянский", kz: "Итальян", en: "Italian" },
 
   // Club detail
   "club.book": { ru: "Забронировать", kz: "Брондау", en: "Book" },

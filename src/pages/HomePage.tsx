@@ -15,6 +15,7 @@ import iconSwim from "@/assets/icon-swim.png";
 import iconMusic from "@/assets/icon-music.png";
 import iconHealth from "@/assets/icon-health.png";
 import iconTutors from "@/assets/icon-tutors.png";
+import iconLanguages from "@/assets/icon-languages.png";
 import AuthModal from "@/components/AuthModal";
 
 const cities = [
@@ -31,9 +32,25 @@ const categoryIcons: Record<string, string> = {
   creativity: iconCreativity, sport: iconSport, development: iconDevelopment,
   speech: iconSpeech, dance: iconDance, robotics: iconRobotics,
   swim: iconSwim, music: iconMusic, health: iconHealth, tutors: iconTutors,
+  languages: iconLanguages,
 };
 
-const categoryIds = ["creativity", "sport", "development", "speech", "dance", "robotics", "swim", "music", "health", "tutors"];
+const categoryIds = ["creativity", "sport", "development", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages"];
+
+const languageOptions = [
+  { id: "english", emoji: "🇬🇧" },
+  { id: "chinese", emoji: "🇨🇳" },
+  { id: "french", emoji: "🇫🇷" },
+  { id: "korean", emoji: "🇰🇷" },
+  { id: "turkish", emoji: "🇹🇷" },
+  { id: "kazakh", emoji: "🇰🇿" },
+  { id: "russian", emoji: "🇷🇺" },
+  { id: "german", emoji: "🇩🇪" },
+  { id: "spanish", emoji: "🇪🇸" },
+  { id: "arabic", emoji: "🇸🇦" },
+  { id: "japanese", emoji: "🇯🇵" },
+  { id: "italian", emoji: "🇮🇹" },
+];
 
 interface HomePageProps {
   city: string;
@@ -48,6 +65,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -68,6 +87,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       if (searchQuery.trim()) {
         const sq = `%${searchQuery.trim()}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},address.ilike.${sq}`);
+      } else if (selectedCategory === "languages" && selectedLanguage) {
+        // When filtering by a specific language, search clubs by language name in their fields
+        const langName = t(`lang.${selectedLanguage}` as any);
+        const sq = `%${langName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
@@ -79,13 +103,53 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
   return (
     <div className="pb-24 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto bg-background min-h-screen">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+
+      {/* Language Picker */}
+      {showLanguagePicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowLanguagePicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🌍 {t("lang.title")}</h3>
+              <button onClick={() => setShowLanguagePicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedLanguage(null); setSelectedCategory(null); setShowLanguagePicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedLanguage ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">🌐</span>
+                <span className={`text-sm ${!selectedLanguage ? "font-black text-foreground" : "font-bold"}`}>{t("lang.all")}</span>
+                {!selectedLanguage && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {languageOptions.map((lang) => {
+                const isActive = selectedLanguage === lang.id;
+                return (
+                  <button
+                    key={lang.id}
+                    onClick={() => { setSelectedLanguage(lang.id); setSelectedCategory("languages"); setShowLanguagePicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{lang.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`lang.${lang.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* City Picker */}
       {showCityPicker && (
@@ -148,14 +212,36 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       {/* Categories */}
       <div className="px-4 mt-4">
         <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-4">
-          {categoryIds.map((id) => (
-            <button key={id} className="cat-card" onClick={() => setSelectedCategory(selectedCategory === id ? null : id)}>
-              <div className={`cat-card-img ${selectedCategory === id ? "!border-primary ring-2 ring-primary/30" : ""}`}>
-                <img src={categoryIcons[id]} alt="" className="w-full h-full object-contain" />
-              </div>
-              <span className="text-[10px] md:text-xs font-bold text-foreground leading-tight">{t(`cat.${id}` as any)}</span>
-            </button>
-          ))}
+          {categoryIds.map((id) => {
+            const handleClick = () => {
+              if (id === "languages") {
+                setShowLanguagePicker(true);
+                setSelectedCategory("languages");
+                return;
+              }
+              if (selectedCategory === id) {
+                setSelectedCategory(null);
+                setSelectedLanguage(null);
+              } else {
+                setSelectedCategory(id);
+                setSelectedLanguage(null);
+              }
+            };
+            const isActive = selectedCategory === id;
+            return (
+              <button key={id} className="cat-card" onClick={handleClick}>
+                <div className={`cat-card-img ${isActive ? "!border-primary ring-2 ring-primary/30" : ""}`}>
+                  <img src={categoryIcons[id]} alt="" className="w-full h-full object-contain" />
+                </div>
+                <span className="text-[10px] md:text-xs font-bold text-foreground leading-tight">{t(`cat.${id}` as any)}</span>
+                {id === "languages" && selectedLanguage && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {languageOptions.find((l) => l.id === selectedLanguage)?.emoji} {t(`lang.${selectedLanguage}` as any)}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
