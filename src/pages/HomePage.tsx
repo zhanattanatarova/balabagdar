@@ -52,6 +52,37 @@ const languageOptions = [
   { id: "italian", emoji: "🇮🇹" },
 ];
 
+const danceOptions = [
+  { id: "ballet", emoji: "🩰" },
+  { id: "ballroom", emoji: "💃" },
+  { id: "sport", emoji: "🏆" },
+  { id: "modern", emoji: "✨" },
+  { id: "hiphop", emoji: "🎤" },
+  { id: "folk", emoji: "🪘" },
+  { id: "latin", emoji: "🌶️" },
+  { id: "breakdance", emoji: "🕺" },
+  { id: "contemporary", emoji: "🎭" },
+  { id: "oriental", emoji: "🪷" },
+];
+
+const sportOptions = [
+  { id: "gymnastics", emoji: "🤸" },
+  { id: "karate", emoji: "🥋" },
+  { id: "judo", emoji: "🥋" },
+  { id: "taekwondo", emoji: "🦵" },
+  { id: "boxing", emoji: "🥊" },
+  { id: "wrestling", emoji: "🤼" },
+  { id: "football", emoji: "⚽" },
+  { id: "basketball", emoji: "🏀" },
+  { id: "volleyball", emoji: "🏐" },
+  { id: "tennis", emoji: "🎾" },
+  { id: "hockey", emoji: "🏒" },
+  { id: "chess", emoji: "♟️" },
+  { id: "skating", emoji: "⛸️" },
+  { id: "cycling", emoji: "🚴" },
+  { id: "athletics", emoji: "🏃" },
+];
+
 interface HomePageProps {
   city: string;
   setCity: (city: string) => void;
@@ -67,6 +98,10 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const [selectedDance, setSelectedDance] = useState<string | null>(null);
+  const [showDancePicker, setShowDancePicker] = useState(false);
+  const [selectedSport, setSelectedSport] = useState<string | null>(null);
+  const [showSportPicker, setShowSportPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -88,9 +123,16 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const sq = `%${searchQuery.trim()}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},address.ilike.${sq}`);
       } else if (selectedCategory === "languages" && selectedLanguage) {
-        // When filtering by a specific language, search clubs by language name in their fields
         const langName = t(`lang.${selectedLanguage}` as any);
         const sq = `%${langName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "dance" && selectedDance) {
+        const danceName = t(`dance.${selectedDance}` as any);
+        const sq = `%${danceName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "sport" && selectedSport) {
+        const sportName = t(`sport.${selectedSport}` as any);
+        const sq = `%${sportName}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
@@ -103,7 +145,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
@@ -142,6 +184,86 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   >
                     <span className="text-xl">{lang.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`lang.${lang.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dance Picker */}
+      {showDancePicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowDancePicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">💃 {t("dance.title")}</h3>
+              <button onClick={() => setShowDancePicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedDance(null); setSelectedCategory(null); setShowDancePicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDance ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">💫</span>
+                <span className={`text-sm ${!selectedDance ? "font-black text-foreground" : "font-bold"}`}>{t("dance.all")}</span>
+                {!selectedDance && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {danceOptions.map((d) => {
+                const isActive = selectedDance === d.id;
+                return (
+                  <button
+                    key={d.id}
+                    onClick={() => { setSelectedDance(d.id); setSelectedCategory("dance"); setShowDancePicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{d.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`dance.${d.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sport Picker */}
+      {showSportPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowSportPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">⚽ {t("sport.title")}</h3>
+              <button onClick={() => setShowSportPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedSport(null); setSelectedCategory(null); setShowSportPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedSport ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">🏅</span>
+                <span className={`text-sm ${!selectedSport ? "font-black text-foreground" : "font-bold"}`}>{t("sport.all")}</span>
+                {!selectedSport && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {sportOptions.map((s) => {
+                const isActive = selectedSport === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => { setSelectedSport(s.id); setSelectedCategory("sport"); setShowSportPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{s.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`sport.${s.id}` as any)}</span>
                     {isActive && <Check size={16} className="text-primary ml-auto" />}
                   </button>
                 );
@@ -219,12 +341,26 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("languages");
                 return;
               }
+              if (id === "dance") {
+                setShowDancePicker(true);
+                setSelectedCategory("dance");
+                return;
+              }
+              if (id === "sport") {
+                setShowSportPicker(true);
+                setSelectedCategory("sport");
+                return;
+              }
               if (selectedCategory === id) {
                 setSelectedCategory(null);
                 setSelectedLanguage(null);
+                setSelectedDance(null);
+                setSelectedSport(null);
               } else {
                 setSelectedCategory(id);
                 setSelectedLanguage(null);
+                setSelectedDance(null);
+                setSelectedSport(null);
               }
             };
             const isActive = selectedCategory === id;
@@ -237,6 +373,16 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 {id === "languages" && selectedLanguage && (
                   <span className="text-[9px] font-black text-primary leading-none">
                     {languageOptions.find((l) => l.id === selectedLanguage)?.emoji} {t(`lang.${selectedLanguage}` as any)}
+                  </span>
+                )}
+                {id === "dance" && selectedDance && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {danceOptions.find((d) => d.id === selectedDance)?.emoji} {t(`dance.${selectedDance}` as any)}
+                  </span>
+                )}
+                {id === "sport" && selectedSport && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {sportOptions.find((s) => s.id === selectedSport)?.emoji} {t(`sport.${selectedSport}` as any)}
                   </span>
                 )}
               </button>
