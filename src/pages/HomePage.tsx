@@ -111,6 +111,46 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
     <div className="pb-24 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto bg-background min-h-screen">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
 
+      {/* Language Picker */}
+      {showLanguagePicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowLanguagePicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🌍 {t("lang.title")}</h3>
+              <button onClick={() => setShowLanguagePicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedLanguage(null); setSelectedCategory(null); setShowLanguagePicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedLanguage ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">🌐</span>
+                <span className={`text-sm ${!selectedLanguage ? "font-black text-foreground" : "font-bold"}`}>{t("lang.all")}</span>
+                {!selectedLanguage && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {languageOptions.map((lang) => {
+                const isActive = selectedLanguage === lang.id;
+                return (
+                  <button
+                    key={lang.id}
+                    onClick={() => { setSelectedLanguage(lang.id); setSelectedCategory("languages"); setShowLanguagePicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{lang.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`lang.${lang.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* City Picker */}
       {showCityPicker && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
