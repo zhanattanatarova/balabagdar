@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Users, Building2, Loader2 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
-import logo from "@/assets/balabagdar-logo.png";
+import BrandLogo from "@/components/BrandLogo";
 
 interface RoleSelectorProps {
   onComplete: () => void;
@@ -24,7 +24,7 @@ const RoleSelector = ({ onComplete }: RoleSelectorProps) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 backdrop-blur-sm">
       <div className="bg-card rounded-3xl shadow-2xl max-w-sm w-full mx-4 p-6 animate-slide-up">
         <div className="flex justify-center mb-4">
-          <img src={logo} alt="BalaBagdar" className="w-14 h-14" />
+          <BrandLogo size="md" />
         </div>
         <h2 className="text-xl font-black text-center">{t("role.title")}</h2>
         <p className="text-sm text-muted-foreground text-center mt-1">{t("role.subtitle")}</p>

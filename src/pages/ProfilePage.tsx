@@ -1,6 +1,6 @@
 import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle, Building2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import logo from "@/assets/balabagdar-logo.png";
+import BrandLogo from "@/components/BrandLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -32,8 +32,8 @@ const ProfilePage = () => {
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
 
       <div className="pt-8 pb-10 flex flex-col items-center rounded-b-[2rem]" style={{ background: "var(--gradient-header)" }}>
-        <div className="w-20 h-20 rounded-full bg-card flex items-center justify-center overflow-hidden border-4 border-primary-foreground/30" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
-          <img src={logo} alt="avatar" className="w-14 h-14" />
+        <div className="border-4 border-primary-foreground/30 rounded-full" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
+          <BrandLogo size="lg" />
         </div>
         {user ? (
           <>

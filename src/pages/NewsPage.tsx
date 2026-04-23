@@ -3,7 +3,7 @@ import { toast } from "@/hooks/use-toast";
 import newsArt from "@/assets/news-art.jpg";
 import newsFestival from "@/assets/news-festival.jpg";
 import newsShow from "@/assets/news-show.jpg";
-import logo from "@/assets/balabagdar-logo.png";
+import BrandLogo from "@/components/BrandLogo";
 
 const events = [
   { title: 'Мастер-класс "Юный Художник"', date: "19 Арана", rating: 4.8, img: newsArt },
@@ -18,7 +18,7 @@ const NewsPage = ({ city }: { city: string }) => (
       <div className="absolute inset-0 flex items-center justify-between px-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <img src={logo} alt="" className="w-6 h-6" />
+            <BrandLogo size="xs" />
             <span className="text-primary-foreground/80 text-xs font-bold">Сегодня в {city}</span>
           </div>
           <h1 className="text-xl font-black text-primary-foreground leading-snug">Новости<br />города</h1>

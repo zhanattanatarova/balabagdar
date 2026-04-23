@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import logo from "@/assets/balabagdar-logo.png";
+import BrandLogo from "@/components/BrandLogo";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -21,8 +21,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       }`}
       style={{ background: "linear-gradient(160deg, hsl(145, 65%, 48%) 0%, hsl(145, 55%, 35%) 100%)" }}
     >
-      <div className="relative">
-        <img src={logo} alt="BalaBagdar" className="w-36 h-36 drop-shadow-2xl animate-dance" />
+      <div className="relative animate-dance">
+        <BrandLogo size="xl" className="drop-shadow-2xl" />
       </div>
       <h1 className="text-4xl font-black text-primary-foreground tracking-tight mt-4 animate-fade-in drop-shadow-lg">
         BalaBagdar
