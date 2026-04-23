@@ -52,6 +52,37 @@ const languageOptions = [
   { id: "italian", emoji: "🇮🇹" },
 ];
 
+const danceOptions = [
+  { id: "ballet", emoji: "🩰" },
+  { id: "ballroom", emoji: "💃" },
+  { id: "sport", emoji: "🏆" },
+  { id: "modern", emoji: "✨" },
+  { id: "hiphop", emoji: "🎤" },
+  { id: "folk", emoji: "🪘" },
+  { id: "latin", emoji: "🌶️" },
+  { id: "breakdance", emoji: "🕺" },
+  { id: "contemporary", emoji: "🎭" },
+  { id: "oriental", emoji: "🪷" },
+];
+
+const sportOptions = [
+  { id: "gymnastics", emoji: "🤸" },
+  { id: "karate", emoji: "🥋" },
+  { id: "judo", emoji: "🥋" },
+  { id: "taekwondo", emoji: "🦵" },
+  { id: "boxing", emoji: "🥊" },
+  { id: "wrestling", emoji: "🤼" },
+  { id: "football", emoji: "⚽" },
+  { id: "basketball", emoji: "🏀" },
+  { id: "volleyball", emoji: "🏐" },
+  { id: "tennis", emoji: "🎾" },
+  { id: "hockey", emoji: "🏒" },
+  { id: "chess", emoji: "♟️" },
+  { id: "skating", emoji: "⛸️" },
+  { id: "cycling", emoji: "🚴" },
+  { id: "athletics", emoji: "🏃" },
+];
+
 interface HomePageProps {
   city: string;
   setCity: (city: string) => void;
