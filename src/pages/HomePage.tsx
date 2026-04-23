@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import logo from "@/assets/balabagdar-logo.png";
+import BrandLogo from "@/components/BrandLogo";
 import iconCreativity from "@/assets/icon-creativity.png";
 import iconSport from "@/assets/icon-sport.png";
 import iconDevelopment from "@/assets/icon-development.png";
@@ -128,7 +128,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           <button onClick={() => setShowCityPicker(true)}
             className="flex items-center gap-1.5 font-black text-lg px-4 py-2 rounded-full border-[3px]"
             style={{ background: "hsl(145, 85%, 38%)", color: "white", borderColor: "hsl(145, 90%, 28% / 0.5)" }}>
-            <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm"><img src={logo} alt="" className="w-6 h-6 object-contain" /></span>{city}<ChevronDown size={18} className="text-primary-foreground" />
+            <BrandLogo size="sm" />{city}<ChevronDown size={18} className="text-primary-foreground" />
           </button>
         </div>
         <div className="relative">
