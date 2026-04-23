@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Phone, ArrowRight, Loader2, MessageCircle, RefreshCw } from "lucide-react";
-import logo from "@/assets/balabagdar-logo.png";
+import BrandLogo from "@/components/BrandLogo";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -133,7 +133,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           <X size={16} className="text-muted-foreground" />
         </button>
         <div className="px-6 pt-6 pb-8">
-          <div className="flex justify-center mb-4"><img src={logo} alt="BalaBagdar" className="w-16 h-16" /></div>
+          <div className="flex justify-center mb-4"><BrandLogo size="md" /></div>
 
           {step === "phone" && (
             <>
