@@ -123,9 +123,16 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const sq = `%${searchQuery.trim()}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},address.ilike.${sq}`);
       } else if (selectedCategory === "languages" && selectedLanguage) {
-        // When filtering by a specific language, search clubs by language name in their fields
         const langName = t(`lang.${selectedLanguage}` as any);
         const sq = `%${langName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "dance" && selectedDance) {
+        const danceName = t(`dance.${selectedDance}` as any);
+        const sq = `%${danceName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "sport" && selectedSport) {
+        const sportName = t(`sport.${selectedSport}` as any);
+        const sq = `%${sportName}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
@@ -138,7 +145,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
