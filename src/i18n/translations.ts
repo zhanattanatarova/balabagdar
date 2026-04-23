@@ -104,6 +104,25 @@ export const translations = {
   "sport.cycling": { ru: "Велоспорт", kz: "Велоспорт", en: "Cycling" },
   "sport.athletics": { ru: "Лёгкая атлетика", kz: "Жеңіл атлетика", en: "Athletics" },
 
+  // Health subcategories
+  "health.title": { ru: "Выберите услугу", kz: "Қызметті таңдаңыз", en: "Choose a service" },
+  "health.all": { ru: "Все услуги", kz: "Барлық қызметтер", en: "All services" },
+  "health.massage": { ru: "Массаж", kz: "Массаж", en: "Massage" },
+  "health.pediatrician": { ru: "Педиатр", kz: "Педиатр", en: "Pediatrician" },
+  "health.nutritionist": { ru: "Нутрициолог", kz: "Нутрициолог", en: "Nutritionist" },
+  "health.psychologist": { ru: "Психолог", kz: "Психолог", en: "Psychologist" },
+  "health.neurologist": { ru: "Невролог", kz: "Невролог", en: "Neurologist" },
+  "health.dentist": { ru: "Стоматолог", kz: "Стоматолог", en: "Dentist" },
+  "health.ophthalmologist": { ru: "Окулист", kz: "Окулист", en: "Ophthalmologist" },
+  "health.orthopedist": { ru: "Ортопед", kz: "Ортопед", en: "Orthopedist" },
+  "health.speech_therapist": { ru: "Логопед", kz: "Логопед", en: "Speech therapist" },
+  "health.defectologist": { ru: "Дефектолог", kz: "Дефектолог", en: "Defectologist" },
+  "health.lfk": { ru: "ЛФК", kz: "ЕДШ", en: "Therapeutic exercise" },
+  "health.osteopath": { ru: "Остеопат", kz: "Остеопат", en: "Osteopath" },
+  "health.allergist": { ru: "Аллерголог", kz: "Аллерголог", en: "Allergist" },
+  "health.ent": { ru: "ЛОР", kz: "ЛОР", en: "ENT" },
+  "health.vaccination": { ru: "Вакцинация", kz: "Вакцинация", en: "Vaccination" },
+
   // Club detail
   "club.book": { ru: "Забронировать", kz: "Брондау", en: "Book" },
   "club.schedule": { ru: "Расписание", kz: "Кесте", en: "Schedule" },

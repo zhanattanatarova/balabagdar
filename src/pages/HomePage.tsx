@@ -65,6 +65,24 @@ const danceOptions = [
   { id: "oriental", emoji: "🪷" },
 ];
 
+const healthOptions = [
+  { id: "massage", emoji: "💆" },
+  { id: "pediatrician", emoji: "👶" },
+  { id: "nutritionist", emoji: "🥗" },
+  { id: "psychologist", emoji: "🧠" },
+  { id: "neurologist", emoji: "🧬" },
+  { id: "dentist", emoji: "🦷" },
+  { id: "ophthalmologist", emoji: "👁️" },
+  { id: "orthopedist", emoji: "🦴" },
+  { id: "speech_therapist", emoji: "🗣️" },
+  { id: "defectologist", emoji: "📚" },
+  { id: "lfk", emoji: "🤸" },
+  { id: "osteopath", emoji: "🤲" },
+  { id: "allergist", emoji: "🤧" },
+  { id: "ent", emoji: "👂" },
+  { id: "vaccination", emoji: "💉" },
+];
+
 const sportOptions = [
   { id: "gymnastics", emoji: "🤸" },
   { id: "karate", emoji: "🥋" },
@@ -102,6 +120,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showDancePicker, setShowDancePicker] = useState(false);
   const [selectedSport, setSelectedSport] = useState<string | null>(null);
   const [showSportPicker, setShowSportPicker] = useState(false);
+  const [selectedHealth, setSelectedHealth] = useState<string | null>(null);
+  const [showHealthPicker, setShowHealthPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -134,6 +154,10 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const sportName = t(`sport.${selectedSport}` as any);
         const sq = `%${sportName}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "health" && selectedHealth) {
+        const healthName = t(`health.${selectedHealth}` as any);
+        const sq = `%${healthName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
@@ -145,7 +169,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
