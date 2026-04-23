@@ -341,12 +341,26 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("languages");
                 return;
               }
+              if (id === "dance") {
+                setShowDancePicker(true);
+                setSelectedCategory("dance");
+                return;
+              }
+              if (id === "sport") {
+                setShowSportPicker(true);
+                setSelectedCategory("sport");
+                return;
+              }
               if (selectedCategory === id) {
                 setSelectedCategory(null);
                 setSelectedLanguage(null);
+                setSelectedDance(null);
+                setSelectedSport(null);
               } else {
                 setSelectedCategory(id);
                 setSelectedLanguage(null);
+                setSelectedDance(null);
+                setSelectedSport(null);
               }
             };
             const isActive = selectedCategory === id;
@@ -359,6 +373,16 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 {id === "languages" && selectedLanguage && (
                   <span className="text-[9px] font-black text-primary leading-none">
                     {languageOptions.find((l) => l.id === selectedLanguage)?.emoji} {t(`lang.${selectedLanguage}` as any)}
+                  </span>
+                )}
+                {id === "dance" && selectedDance && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {danceOptions.find((d) => d.id === selectedDance)?.emoji} {t(`dance.${selectedDance}` as any)}
+                  </span>
+                )}
+                {id === "sport" && selectedSport && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {sportOptions.find((s) => s.id === selectedSport)?.emoji} {t(`sport.${selectedSport}` as any)}
                   </span>
                 )}
               </button>
