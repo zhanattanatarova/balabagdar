@@ -283,6 +283,17 @@ export const translations = {
   "common.loading": { ru: "Загрузка...", kz: "Жүктеу...", en: "Loading..." },
   "common.logged_out": { ru: "Вы вышли", kz: "Сіз шықтыңыз", en: "You logged out" },
   "common.bye": { ru: "До встречи! 👋", kz: "Кездескенше! 👋", en: "See you! 👋" },
+
+  // News
+  "news.today_in": { ru: "Сегодня в", kz: "Бүгін", en: "Today in" },
+  "news.title": { ru: "Новости\nгорода", kz: "Қала\nжаңалықтары", en: "City\nnews" },
+  "news.more": { ru: "Подробнее", kz: "Толығырақ", en: "More" },
+  "news.event1_title": { ru: 'Мастер-класс "Юный Художник"', kz: '"Жас суретші" шеберлік сыныбы', en: '"Young Artist" Master Class' },
+  "news.event2_title": { ru: "Детский Фестиваль", kz: "Балалар фестивалі", en: "Children's Festival" },
+  "news.event3_title": { ru: 'Шоу "Волшебный мир"', kz: '"Сиқырлы әлем" шоуы', en: '"Magic World" Show' },
+  "news.date1": { ru: "19 декабря", kz: "19 желтоқсан", en: "December 19" },
+  "news.date2": { ru: "16 декабря", kz: "16 желтоқсан", en: "December 16" },
+  "news.date3": { ru: "19 декабря", kz: "19 желтоқсан", en: "December 19" },
 } as const;
 
 export type TranslationKey = keyof typeof translations;
