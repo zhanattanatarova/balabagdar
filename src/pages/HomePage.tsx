@@ -238,6 +238,22 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const healthName = t(`health.${selectedHealth}` as any);
         const sq = `%${healthName}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "tutors" && selectedTutors) {
+        const subName = t(`tutors.${selectedTutors}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "creativity" && selectedCreativity) {
+        const subName = t(`creativity.${selectedCreativity}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "music" && selectedMusic) {
+        const subName = t(`music.${selectedMusic}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "development" && selectedDevelopment) {
+        const subName = t(`development.${selectedDevelopment}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
@@ -249,7 +265,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
