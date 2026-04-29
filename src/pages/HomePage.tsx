@@ -118,6 +118,9 @@ const tutorsOptions = [
   { id: "literature", emoji: "📖" },
   { id: "informatics", emoji: "💻" },
   { id: "ent", emoji: "🎯" },
+  { id: "nish", emoji: "🏅" },
+  { id: "ktl", emoji: "🎖️" },
+  { id: "fizmat", emoji: "🧠" },
   { id: "olympiad", emoji: "🏆" },
 ];
 
