@@ -433,7 +433,166 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         </div>
       )}
 
-      {/* City Picker */}
+      {/* Tutors Picker */}
+      {showTutorsPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowTutorsPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">📚 {t("tutors.title")}</h3>
+              <button onClick={() => setShowTutorsPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedTutors(null); setSelectedCategory(null); setShowTutorsPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedTutors ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">📖</span>
+                <span className={`text-sm ${!selectedTutors ? "font-black text-foreground" : "font-bold"}`}>{t("tutors.all")}</span>
+                {!selectedTutors && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {tutorsOptions.map((o) => {
+                const isActive = selectedTutors === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedTutors(o.id); setSelectedCategory("tutors"); setShowTutorsPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`tutors.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Creativity Picker */}
+      {showCreativityPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowCreativityPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🎨 {t("creativity.title")}</h3>
+              <button onClick={() => setShowCreativityPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedCreativity(null); setSelectedCategory(null); setShowCreativityPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedCreativity ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">🎭</span>
+                <span className={`text-sm ${!selectedCreativity ? "font-black text-foreground" : "font-bold"}`}>{t("creativity.all")}</span>
+                {!selectedCreativity && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {creativityOptions.map((o) => {
+                const isActive = selectedCreativity === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedCreativity(o.id); setSelectedCategory("creativity"); setShowCreativityPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`creativity.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Music Picker */}
+      {showMusicPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowMusicPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🎵 {t("music.title")}</h3>
+              <button onClick={() => setShowMusicPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedMusic(null); setSelectedCategory(null); setShowMusicPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedMusic ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">🎼</span>
+                <span className={`text-sm ${!selectedMusic ? "font-black text-foreground" : "font-bold"}`}>{t("music.all")}</span>
+                {!selectedMusic && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {musicOptions.map((o) => {
+                const isActive = selectedMusic === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedMusic(o.id); setSelectedCategory("music"); setShowMusicPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`music.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Development Picker */}
+      {showDevelopmentPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowDevelopmentPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🌱 {t("development.title")}</h3>
+              <button onClick={() => setShowDevelopmentPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedDevelopment(null); setSelectedCategory(null); setShowDevelopmentPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDevelopment ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">✨</span>
+                <span className={`text-sm ${!selectedDevelopment ? "font-black text-foreground" : "font-bold"}`}>{t("development.all")}</span>
+                {!selectedDevelopment && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {developmentOptions.map((o) => {
+                const isActive = selectedDevelopment === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedDevelopment(o.id); setSelectedCategory("development"); setShowDevelopmentPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`development.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {showCityPicker && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
           <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowCityPicker(false)} />
