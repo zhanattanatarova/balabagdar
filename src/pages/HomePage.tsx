@@ -101,6 +101,78 @@ const sportOptions = [
   { id: "athletics", emoji: "🏃" },
 ];
 
+const tutorsOptions = [
+  { id: "school_prep", emoji: "🎒" },
+  { id: "primary", emoji: "📓" },
+  { id: "kazakh", emoji: "🇰🇿" },
+  { id: "russian", emoji: "🇷🇺" },
+  { id: "english", emoji: "🇬🇧" },
+  { id: "math", emoji: "➗" },
+  { id: "algebra", emoji: "🧮" },
+  { id: "geometry", emoji: "📐" },
+  { id: "physics", emoji: "⚛️" },
+  { id: "chemistry", emoji: "🧪" },
+  { id: "biology", emoji: "🧬" },
+  { id: "geography", emoji: "🌍" },
+  { id: "history", emoji: "📜" },
+  { id: "literature", emoji: "📖" },
+  { id: "informatics", emoji: "💻" },
+  { id: "ent", emoji: "🎯" },
+  { id: "olympiad", emoji: "🏆" },
+];
+
+const creativityOptions = [
+  { id: "drawing", emoji: "✏️" },
+  { id: "painting", emoji: "🎨" },
+  { id: "handicraft", emoji: "🧵" },
+  { id: "sculpting", emoji: "🗿" },
+  { id: "pottery", emoji: "🏺" },
+  { id: "origami", emoji: "📄" },
+  { id: "embroidery", emoji: "🪡" },
+  { id: "knitting", emoji: "🧶" },
+  { id: "sewing", emoji: "👗" },
+  { id: "theater", emoji: "🎭" },
+  { id: "cinema", emoji: "🎬" },
+  { id: "photography", emoji: "📷" },
+  { id: "design", emoji: "🖌️" },
+  { id: "calligraphy", emoji: "🖋️" },
+  { id: "cooking", emoji: "👨‍🍳" },
+];
+
+const musicOptions = [
+  { id: "dombyra", emoji: "🪕" },
+  { id: "kobyz", emoji: "🎻" },
+  { id: "vocals", emoji: "🎤" },
+  { id: "piano", emoji: "🎹" },
+  { id: "guitar", emoji: "🎸" },
+  { id: "violin", emoji: "🎻" },
+  { id: "drums", emoji: "🥁" },
+  { id: "flute", emoji: "🪈" },
+  { id: "saxophone", emoji: "🎷" },
+  { id: "accordion", emoji: "🪗" },
+  { id: "cello", emoji: "🎻" },
+  { id: "solfeggio", emoji: "🎼" },
+  { id: "theory", emoji: "📝" },
+  { id: "dj", emoji: "🎧" },
+  { id: "choir", emoji: "👥" },
+];
+
+const developmentOptions = [
+  { id: "early", emoji: "👶" },
+  { id: "special", emoji: "💖" },
+  { id: "afk", emoji: "🤸" },
+  { id: "aba", emoji: "🧩" },
+  { id: "sensory", emoji: "✋" },
+  { id: "montessori", emoji: "🧸" },
+  { id: "logic", emoji: "🧠" },
+  { id: "memory", emoji: "💡" },
+  { id: "mental_arithmetic", emoji: "🔢" },
+  { id: "reading", emoji: "📚" },
+  { id: "emotional", emoji: "❤️" },
+  { id: "social", emoji: "🤝" },
+  { id: "fine_motor", emoji: "✌️" },
+];
+
 interface HomePageProps {
   city: string;
   setCity: (city: string) => void;
