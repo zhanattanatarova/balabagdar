@@ -194,6 +194,14 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showSportPicker, setShowSportPicker] = useState(false);
   const [selectedHealth, setSelectedHealth] = useState<string | null>(null);
   const [showHealthPicker, setShowHealthPicker] = useState(false);
+  const [selectedTutors, setSelectedTutors] = useState<string | null>(null);
+  const [showTutorsPicker, setShowTutorsPicker] = useState(false);
+  const [selectedCreativity, setSelectedCreativity] = useState<string | null>(null);
+  const [showCreativityPicker, setShowCreativityPicker] = useState(false);
+  const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
+  const [showMusicPicker, setShowMusicPicker] = useState(false);
+  const [selectedDevelopment, setSelectedDevelopment] = useState<string | null>(null);
+  const [showDevelopmentPicker, setShowDevelopmentPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
