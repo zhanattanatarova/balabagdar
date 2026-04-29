@@ -8,7 +8,20 @@ interface LanguageContextType {
   tField: (fieldRu: string, fieldKz?: string | null, fieldEn?: string | null) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType | null>(null);
+const defaultLang: Lang = (typeof localStorage !== "undefined" && (localStorage.getItem("balahub_lang") as Lang)) || "ru";
+
+const fallbackContext: LanguageContextType = {
+  lang: defaultLang,
+  setLang: () => {},
+  t: (key) => translations[key]?.[defaultLang] || translations[key]?.["ru"] || key,
+  tField: (fieldRu, fieldKz, fieldEn) => {
+    if (defaultLang === "kz" && fieldKz) return fieldKz;
+    if (defaultLang === "en" && fieldEn) return fieldEn;
+    return fieldRu;
+  },
+};
+
+const LanguageContext = createContext<LanguageContextType>(fallbackContext);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLangState] = useState<Lang>(() => {
@@ -39,7 +52,5 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useLanguage = () => {
-  const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error("useLanguage must be used within LanguageProvider");
-  return ctx;
+  return useContext(LanguageContext);
 };
