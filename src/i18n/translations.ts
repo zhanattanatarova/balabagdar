@@ -54,6 +54,7 @@ export const translations = {
   "cat.health": { ru: "Здоровье", kz: "Денсаулық", en: "Health" },
   "cat.tutors": { ru: "Репетиторы", kz: "Репетиторлар", en: "Tutors" },
   "cat.languages": { ru: "Языки", kz: "Тілдер", en: "Languages" },
+  "cat.shops": { ru: "Детские магазины", kz: "Балалар дүкендері", en: "Kids shops" },
 
   // Languages modal
   "lang.title": { ru: "Выберите язык", kz: "Тілді таңдаңыз", en: "Choose a language" },
