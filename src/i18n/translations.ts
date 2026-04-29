@@ -141,6 +141,9 @@ export const translations = {
   "tutors.literature": { ru: "Литература", kz: "Әдебиет", en: "Literature" },
   "tutors.informatics": { ru: "Информатика", kz: "Информатика", en: "Computer science" },
   "tutors.ent": { ru: "Подготовка к ЕНТ", kz: "ҰБТ дайындық", en: "ENT prep" },
+  "tutors.nish": { ru: "Подготовка к НИШ", kz: "НЗМ дайындық", en: "NIS prep" },
+  "tutors.ktl": { ru: "Подготовка к КТЛ", kz: "ҚТЛ дайындық", en: "KTL prep" },
+  "tutors.fizmat": { ru: "Подготовка в Физмат", kz: "Физмат дайындық", en: "Physmath prep" },
   "tutors.olympiad": { ru: "Олимпиадная подготовка", kz: "Олимпиадаға дайындық", en: "Olympiad prep" },
   "tutors.primary": { ru: "Начальная школа", kz: "Бастауыш мектеп", en: "Primary school" },
 
