@@ -675,18 +675,46 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("health");
                 return;
               }
+              if (id === "tutors") {
+                setShowTutorsPicker(true);
+                setSelectedCategory("tutors");
+                return;
+              }
+              if (id === "creativity") {
+                setShowCreativityPicker(true);
+                setSelectedCategory("creativity");
+                return;
+              }
+              if (id === "music") {
+                setShowMusicPicker(true);
+                setSelectedCategory("music");
+                return;
+              }
+              if (id === "development") {
+                setShowDevelopmentPicker(true);
+                setSelectedCategory("development");
+                return;
+              }
               if (selectedCategory === id) {
                 setSelectedCategory(null);
                 setSelectedLanguage(null);
                 setSelectedDance(null);
                 setSelectedSport(null);
                 setSelectedHealth(null);
+                setSelectedTutors(null);
+                setSelectedCreativity(null);
+                setSelectedMusic(null);
+                setSelectedDevelopment(null);
               } else {
                 setSelectedCategory(id);
                 setSelectedLanguage(null);
                 setSelectedDance(null);
                 setSelectedSport(null);
                 setSelectedHealth(null);
+                setSelectedTutors(null);
+                setSelectedCreativity(null);
+                setSelectedMusic(null);
+                setSelectedDevelopment(null);
               }
             };
             const isActive = selectedCategory === id;
@@ -714,6 +742,26 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 {id === "health" && selectedHealth && (
                   <span className="text-[9px] font-black text-primary leading-none">
                     {healthOptions.find((h) => h.id === selectedHealth)?.emoji} {t(`health.${selectedHealth}` as any)}
+                  </span>
+                )}
+                {id === "tutors" && selectedTutors && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {tutorsOptions.find((o) => o.id === selectedTutors)?.emoji} {t(`tutors.${selectedTutors}` as any)}
+                  </span>
+                )}
+                {id === "creativity" && selectedCreativity && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {creativityOptions.find((o) => o.id === selectedCreativity)?.emoji} {t(`creativity.${selectedCreativity}` as any)}
+                  </span>
+                )}
+                {id === "music" && selectedMusic && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {musicOptions.find((o) => o.id === selectedMusic)?.emoji} {t(`music.${selectedMusic}` as any)}
+                  </span>
+                )}
+                {id === "development" && selectedDevelopment && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {developmentOptions.find((o) => o.id === selectedDevelopment)?.emoji} {t(`development.${selectedDevelopment}` as any)}
                   </span>
                 )}
               </button>
