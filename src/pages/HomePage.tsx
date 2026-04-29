@@ -101,6 +101,78 @@ const sportOptions = [
   { id: "athletics", emoji: "🏃" },
 ];
 
+const tutorsOptions = [
+  { id: "school_prep", emoji: "🎒" },
+  { id: "primary", emoji: "📓" },
+  { id: "kazakh", emoji: "🇰🇿" },
+  { id: "russian", emoji: "🇷🇺" },
+  { id: "english", emoji: "🇬🇧" },
+  { id: "math", emoji: "➗" },
+  { id: "algebra", emoji: "🧮" },
+  { id: "geometry", emoji: "📐" },
+  { id: "physics", emoji: "⚛️" },
+  { id: "chemistry", emoji: "🧪" },
+  { id: "biology", emoji: "🧬" },
+  { id: "geography", emoji: "🌍" },
+  { id: "history", emoji: "📜" },
+  { id: "literature", emoji: "📖" },
+  { id: "informatics", emoji: "💻" },
+  { id: "ent", emoji: "🎯" },
+  { id: "olympiad", emoji: "🏆" },
+];
+
+const creativityOptions = [
+  { id: "drawing", emoji: "✏️" },
+  { id: "painting", emoji: "🎨" },
+  { id: "handicraft", emoji: "🧵" },
+  { id: "sculpting", emoji: "🗿" },
+  { id: "pottery", emoji: "🏺" },
+  { id: "origami", emoji: "📄" },
+  { id: "embroidery", emoji: "🪡" },
+  { id: "knitting", emoji: "🧶" },
+  { id: "sewing", emoji: "👗" },
+  { id: "theater", emoji: "🎭" },
+  { id: "cinema", emoji: "🎬" },
+  { id: "photography", emoji: "📷" },
+  { id: "design", emoji: "🖌️" },
+  { id: "calligraphy", emoji: "🖋️" },
+  { id: "cooking", emoji: "👨‍🍳" },
+];
+
+const musicOptions = [
+  { id: "dombyra", emoji: "🪕" },
+  { id: "kobyz", emoji: "🎻" },
+  { id: "vocals", emoji: "🎤" },
+  { id: "piano", emoji: "🎹" },
+  { id: "guitar", emoji: "🎸" },
+  { id: "violin", emoji: "🎻" },
+  { id: "drums", emoji: "🥁" },
+  { id: "flute", emoji: "🪈" },
+  { id: "saxophone", emoji: "🎷" },
+  { id: "accordion", emoji: "🪗" },
+  { id: "cello", emoji: "🎻" },
+  { id: "solfeggio", emoji: "🎼" },
+  { id: "theory", emoji: "📝" },
+  { id: "dj", emoji: "🎧" },
+  { id: "choir", emoji: "👥" },
+];
+
+const developmentOptions = [
+  { id: "early", emoji: "👶" },
+  { id: "special", emoji: "💖" },
+  { id: "afk", emoji: "🤸" },
+  { id: "aba", emoji: "🧩" },
+  { id: "sensory", emoji: "✋" },
+  { id: "montessori", emoji: "🧸" },
+  { id: "logic", emoji: "🧠" },
+  { id: "memory", emoji: "💡" },
+  { id: "mental_arithmetic", emoji: "🔢" },
+  { id: "reading", emoji: "📚" },
+  { id: "emotional", emoji: "❤️" },
+  { id: "social", emoji: "🤝" },
+  { id: "fine_motor", emoji: "✌️" },
+];
+
 interface HomePageProps {
   city: string;
   setCity: (city: string) => void;
@@ -122,6 +194,14 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showSportPicker, setShowSportPicker] = useState(false);
   const [selectedHealth, setSelectedHealth] = useState<string | null>(null);
   const [showHealthPicker, setShowHealthPicker] = useState(false);
+  const [selectedTutors, setSelectedTutors] = useState<string | null>(null);
+  const [showTutorsPicker, setShowTutorsPicker] = useState(false);
+  const [selectedCreativity, setSelectedCreativity] = useState<string | null>(null);
+  const [showCreativityPicker, setShowCreativityPicker] = useState(false);
+  const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
+  const [showMusicPicker, setShowMusicPicker] = useState(false);
+  const [selectedDevelopment, setSelectedDevelopment] = useState<string | null>(null);
+  const [showDevelopmentPicker, setShowDevelopmentPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -158,6 +238,22 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const healthName = t(`health.${selectedHealth}` as any);
         const sq = `%${healthName}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "tutors" && selectedTutors) {
+        const subName = t(`tutors.${selectedTutors}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "creativity" && selectedCreativity) {
+        const subName = t(`creativity.${selectedCreativity}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "music" && selectedMusic) {
+        const subName = t(`music.${selectedMusic}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "development" && selectedDevelopment) {
+        const subName = t(`development.${selectedDevelopment}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
@@ -169,7 +265,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
@@ -337,7 +433,166 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         </div>
       )}
 
-      {/* City Picker */}
+      {/* Tutors Picker */}
+      {showTutorsPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowTutorsPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">📚 {t("tutors.title")}</h3>
+              <button onClick={() => setShowTutorsPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedTutors(null); setSelectedCategory(null); setShowTutorsPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedTutors ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">📖</span>
+                <span className={`text-sm ${!selectedTutors ? "font-black text-foreground" : "font-bold"}`}>{t("tutors.all")}</span>
+                {!selectedTutors && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {tutorsOptions.map((o) => {
+                const isActive = selectedTutors === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedTutors(o.id); setSelectedCategory("tutors"); setShowTutorsPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`tutors.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Creativity Picker */}
+      {showCreativityPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowCreativityPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🎨 {t("creativity.title")}</h3>
+              <button onClick={() => setShowCreativityPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedCreativity(null); setSelectedCategory(null); setShowCreativityPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedCreativity ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">🎭</span>
+                <span className={`text-sm ${!selectedCreativity ? "font-black text-foreground" : "font-bold"}`}>{t("creativity.all")}</span>
+                {!selectedCreativity && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {creativityOptions.map((o) => {
+                const isActive = selectedCreativity === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedCreativity(o.id); setSelectedCategory("creativity"); setShowCreativityPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`creativity.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Music Picker */}
+      {showMusicPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowMusicPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🎵 {t("music.title")}</h3>
+              <button onClick={() => setShowMusicPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedMusic(null); setSelectedCategory(null); setShowMusicPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedMusic ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">🎼</span>
+                <span className={`text-sm ${!selectedMusic ? "font-black text-foreground" : "font-bold"}`}>{t("music.all")}</span>
+                {!selectedMusic && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {musicOptions.map((o) => {
+                const isActive = selectedMusic === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedMusic(o.id); setSelectedCategory("music"); setShowMusicPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`music.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Development Picker */}
+      {showDevelopmentPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowDevelopmentPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">🌱 {t("development.title")}</h3>
+              <button onClick={() => setShowDevelopmentPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedDevelopment(null); setSelectedCategory(null); setShowDevelopmentPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDevelopment ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">✨</span>
+                <span className={`text-sm ${!selectedDevelopment ? "font-black text-foreground" : "font-bold"}`}>{t("development.all")}</span>
+                {!selectedDevelopment && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {developmentOptions.map((o) => {
+                const isActive = selectedDevelopment === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedDevelopment(o.id); setSelectedCategory("development"); setShowDevelopmentPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`development.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {showCityPicker && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
           <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowCityPicker(false)} />
@@ -420,18 +675,46 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("health");
                 return;
               }
+              if (id === "tutors") {
+                setShowTutorsPicker(true);
+                setSelectedCategory("tutors");
+                return;
+              }
+              if (id === "creativity") {
+                setShowCreativityPicker(true);
+                setSelectedCategory("creativity");
+                return;
+              }
+              if (id === "music") {
+                setShowMusicPicker(true);
+                setSelectedCategory("music");
+                return;
+              }
+              if (id === "development") {
+                setShowDevelopmentPicker(true);
+                setSelectedCategory("development");
+                return;
+              }
               if (selectedCategory === id) {
                 setSelectedCategory(null);
                 setSelectedLanguage(null);
                 setSelectedDance(null);
                 setSelectedSport(null);
                 setSelectedHealth(null);
+                setSelectedTutors(null);
+                setSelectedCreativity(null);
+                setSelectedMusic(null);
+                setSelectedDevelopment(null);
               } else {
                 setSelectedCategory(id);
                 setSelectedLanguage(null);
                 setSelectedDance(null);
                 setSelectedSport(null);
                 setSelectedHealth(null);
+                setSelectedTutors(null);
+                setSelectedCreativity(null);
+                setSelectedMusic(null);
+                setSelectedDevelopment(null);
               }
             };
             const isActive = selectedCategory === id;
@@ -459,6 +742,26 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 {id === "health" && selectedHealth && (
                   <span className="text-[9px] font-black text-primary leading-none">
                     {healthOptions.find((h) => h.id === selectedHealth)?.emoji} {t(`health.${selectedHealth}` as any)}
+                  </span>
+                )}
+                {id === "tutors" && selectedTutors && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {tutorsOptions.find((o) => o.id === selectedTutors)?.emoji} {t(`tutors.${selectedTutors}` as any)}
+                  </span>
+                )}
+                {id === "creativity" && selectedCreativity && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {creativityOptions.find((o) => o.id === selectedCreativity)?.emoji} {t(`creativity.${selectedCreativity}` as any)}
+                  </span>
+                )}
+                {id === "music" && selectedMusic && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {musicOptions.find((o) => o.id === selectedMusic)?.emoji} {t(`music.${selectedMusic}` as any)}
+                  </span>
+                )}
+                {id === "development" && selectedDevelopment && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {developmentOptions.find((o) => o.id === selectedDevelopment)?.emoji} {t(`development.${selectedDevelopment}` as any)}
                   </span>
                 )}
               </button>
