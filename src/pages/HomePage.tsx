@@ -16,6 +16,7 @@ import iconMusic from "@/assets/icon-music.png";
 import iconHealth from "@/assets/icon-health.png";
 import iconTutors from "@/assets/icon-tutors.png";
 import iconLanguages from "@/assets/icon-languages.png";
+import iconShops from "@/assets/icon-shops.png";
 import AuthModal from "@/components/AuthModal";
 
 const cities = [
