@@ -17,6 +17,7 @@ import iconHealth from "@/assets/icon-health.png";
 import iconTutors from "@/assets/icon-tutors.png";
 import iconLanguages from "@/assets/icon-languages.png";
 import iconShops from "@/assets/icon-shops.png";
+import iconSpecial from "@/assets/icon-special.png";
 import AuthModal from "@/components/AuthModal";
 
 const cities = [
@@ -33,10 +34,10 @@ const categoryIcons: Record<string, string> = {
   creativity: iconCreativity, sport: iconSport, development: iconDevelopment,
   speech: iconSpeech, dance: iconDance, robotics: iconRobotics,
   swim: iconSwim, music: iconMusic, health: iconHealth, tutors: iconTutors,
-  languages: iconLanguages, shops: iconShops,
+  languages: iconLanguages, shops: iconShops, special: iconSpecial,
 };
 
-const categoryIds = ["creativity", "sport", "development", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
+const categoryIds = ["creativity", "sport", "development", "special", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
 
 const languageOptions = [
   { id: "english", emoji: "🇬🇧" },
@@ -161,6 +162,25 @@ const musicOptions = [
   { id: "choir", emoji: "👥" },
 ];
 
+const specialOptions = [
+  { id: "afk", emoji: "🤸" },
+  { id: "lfk", emoji: "🧘" },
+  { id: "aba", emoji: "🧩" },
+  { id: "sensory", emoji: "✋" },
+  { id: "speech", emoji: "🗣️" },
+  { id: "psychologist", emoji: "🧠" },
+  { id: "neurologist", emoji: "🧬" },
+  { id: "massage", emoji: "💆" },
+  { id: "osteopath", emoji: "🤲" },
+  { id: "swim", emoji: "🏊" },
+  { id: "hippotherapy", emoji: "🐴" },
+  { id: "canistherapy", emoji: "🐶" },
+  { id: "art", emoji: "🎨" },
+  { id: "music", emoji: "🎵" },
+  { id: "montessori", emoji: "🧸" },
+  { id: "inclusive", emoji: "💖" },
+];
+
 const developmentOptions = [
   { id: "early", emoji: "👶" },
   { id: "special", emoji: "💖" },
@@ -206,6 +226,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showMusicPicker, setShowMusicPicker] = useState(false);
   const [selectedDevelopment, setSelectedDevelopment] = useState<string | null>(null);
   const [showDevelopmentPicker, setShowDevelopmentPicker] = useState(false);
+  const [selectedSpecial, setSelectedSpecial] = useState<string | null>(null);
+  const [showSpecialPicker, setShowSpecialPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -258,6 +280,10 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const subName = t(`development.${selectedDevelopment}` as any);
         const sq = `%${subName}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "special" && selectedSpecial) {
+        const subName = t(`special.${selectedSpecial}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
@@ -269,7 +295,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
