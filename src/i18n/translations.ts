@@ -216,6 +216,24 @@ export const translations = {
   "club.telegram_link": { ru: "Telegram", kz: "Telegram", en: "Telegram" },
   "club.gallery": { ru: "Галерея", kz: "Галерея", en: "Gallery" },
 
+  // Reviews
+  "reviews.title": { ru: "Отзывы", kz: "Пікірлер", en: "Reviews" },
+  "reviews.leave": { ru: "Оставить отзыв", kz: "Пікір қалдыру", en: "Leave a review" },
+  "reviews.your_rating": { ru: "Ваша оценка", kz: "Сіздің бағаңыз", en: "Your rating" },
+  "reviews.comment": { ru: "Комментарий", kz: "Пікір", en: "Comment" },
+  "reviews.comment_placeholder": { ru: "Поделитесь впечатлениями…", kz: "Әсеріңізбен бөлісіңіз…", en: "Share your experience…" },
+  "reviews.submit": { ru: "Опубликовать", kz: "Жариялау", en: "Publish" },
+  "reviews.update": { ru: "Обновить отзыв", kz: "Пікірді жаңарту", en: "Update review" },
+  "reviews.delete": { ru: "Удалить", kz: "Жою", en: "Delete" },
+  "reviews.empty": { ru: "Пока нет отзывов. Будьте первым!", kz: "Әзірге пікірлер жоқ. Бірінші болыңыз!", en: "No reviews yet. Be the first!" },
+  "reviews.login_required": { ru: "Войдите, чтобы оставить отзыв", kz: "Пікір қалдыру үшін кіріңіз", en: "Sign in to leave a review" },
+  "reviews.success": { ru: "Спасибо за отзыв! ✅", kz: "Пікіріңіз үшін рахмет! ✅", en: "Thanks for your review! ✅" },
+  "reviews.deleted": { ru: "Отзыв удалён", kz: "Пікір жойылды", en: "Review deleted" },
+  "reviews.report": { ru: "Пожаловаться", kz: "Шағымдану", en: "Report" },
+  "reviews.reported": { ru: "Жалоба отправлена", kz: "Шағым жіберілді", en: "Report sent" },
+  "reviews.rating_required": { ru: "Выберите оценку", kz: "Бағаны таңдаңыз", en: "Select a rating" },
+  "reviews.you": { ru: "Вы", kz: "Сіз", en: "You" },
+
   // Booking
   "booking.title": { ru: "Запись на занятие", kz: "Сабаққа жазылу", en: "Book a class" },
   "booking.child_name": { ru: "Имя ребёнка", kz: "Баланың аты", en: "Child's name" },

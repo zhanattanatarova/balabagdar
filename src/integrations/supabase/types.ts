@@ -259,6 +259,85 @@ export type Database = {
         }
         Relationships: []
       }
+      review_reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string | null
+          review_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          review_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          review_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_reports_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          author_name: string | null
+          club_id: string
+          comment: string
+          created_at: string
+          id: string
+          is_hidden: boolean
+          rating: number
+          reports_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author_name?: string | null
+          club_id: string
+          comment?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          rating: number
+          reports_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author_name?: string | null
+          club_id?: string
+          comment?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          rating?: number
+          reports_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
