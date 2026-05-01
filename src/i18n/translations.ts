@@ -55,6 +55,27 @@ export const translations = {
   "cat.tutors": { ru: "Репетиторы", kz: "Репетиторлар", en: "Tutors" },
   "cat.languages": { ru: "Языки", kz: "Тілдер", en: "Languages" },
   "cat.shops": { ru: "Детские магазины", kz: "Балалар дүкендері", en: "Kids shops" },
+  "cat.special": { ru: "Особенные дети", kz: "Ерекше балалар", en: "Special needs" },
+
+  // Special needs subcategories
+  "special.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
+  "special.all": { ru: "Все направления", kz: "Барлық бағыттар", en: "All directions" },
+  "special.afk": { ru: "АФК (адаптивная физкультура)", kz: "АДШ (адаптивті дене шынықтыру)", en: "Adaptive PE (AFK)" },
+  "special.lfk": { ru: "ЛФК (лечебная физкультура)", kz: "ЕДШ (емдік дене шынықтыру)", en: "Therapeutic exercise (LFK)" },
+  "special.aba": { ru: "ABA-терапия", kz: "ABA-терапия", en: "ABA therapy" },
+  "special.sensory": { ru: "Сенсорная интеграция", kz: "Сенсорлық интеграция", en: "Sensory integration" },
+  "special.speech": { ru: "Логопед-дефектолог", kz: "Логопед-дефектолог", en: "Speech & defectology" },
+  "special.psychologist": { ru: "Детский психолог", kz: "Балалар психологы", en: "Child psychologist" },
+  "special.neurologist": { ru: "Невролог", kz: "Невролог", en: "Neurologist" },
+  "special.massage": { ru: "Лечебный массаж", kz: "Емдік массаж", en: "Therapeutic massage" },
+  "special.osteopath": { ru: "Остеопат", kz: "Остеопат", en: "Osteopath" },
+  "special.swim": { ru: "Адаптивное плавание", kz: "Бейімделген жүзу", en: "Adaptive swimming" },
+  "special.hippotherapy": { ru: "Иппотерапия", kz: "Иппотерапия", en: "Hippotherapy" },
+  "special.canistherapy": { ru: "Канистерапия", kz: "Канистерапия", en: "Canistherapy" },
+  "special.art": { ru: "Арт-терапия", kz: "Арт-терапия", en: "Art therapy" },
+  "special.music": { ru: "Музыкотерапия", kz: "Музыкотерапия", en: "Music therapy" },
+  "special.montessori": { ru: "Монтессори", kz: "Монтессори", en: "Montessori" },
+  "special.inclusive": { ru: "Инклюзивный центр", kz: "Инклюзивті орталық", en: "Inclusive center" },
 
   // Languages modal
   "lang.title": { ru: "Выберите язык", kz: "Тілді таңдаңыз", en: "Choose a language" },

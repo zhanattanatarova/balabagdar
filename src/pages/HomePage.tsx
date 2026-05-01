@@ -17,6 +17,7 @@ import iconHealth from "@/assets/icon-health.png";
 import iconTutors from "@/assets/icon-tutors.png";
 import iconLanguages from "@/assets/icon-languages.png";
 import iconShops from "@/assets/icon-shops.png";
+import iconSpecial from "@/assets/icon-special.png";
 import AuthModal from "@/components/AuthModal";
 
 const cities = [
@@ -33,10 +34,10 @@ const categoryIcons: Record<string, string> = {
   creativity: iconCreativity, sport: iconSport, development: iconDevelopment,
   speech: iconSpeech, dance: iconDance, robotics: iconRobotics,
   swim: iconSwim, music: iconMusic, health: iconHealth, tutors: iconTutors,
-  languages: iconLanguages, shops: iconShops,
+  languages: iconLanguages, shops: iconShops, special: iconSpecial,
 };
 
-const categoryIds = ["creativity", "sport", "development", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
+const categoryIds = ["creativity", "sport", "development", "special", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
 
 const languageOptions = [
   { id: "english", emoji: "🇬🇧" },
@@ -161,6 +162,25 @@ const musicOptions = [
   { id: "choir", emoji: "👥" },
 ];
 
+const specialOptions = [
+  { id: "afk", emoji: "🤸" },
+  { id: "lfk", emoji: "🧘" },
+  { id: "aba", emoji: "🧩" },
+  { id: "sensory", emoji: "✋" },
+  { id: "speech", emoji: "🗣️" },
+  { id: "psychologist", emoji: "🧠" },
+  { id: "neurologist", emoji: "🧬" },
+  { id: "massage", emoji: "💆" },
+  { id: "osteopath", emoji: "🤲" },
+  { id: "swim", emoji: "🏊" },
+  { id: "hippotherapy", emoji: "🐴" },
+  { id: "canistherapy", emoji: "🐶" },
+  { id: "art", emoji: "🎨" },
+  { id: "music", emoji: "🎵" },
+  { id: "montessori", emoji: "🧸" },
+  { id: "inclusive", emoji: "💖" },
+];
+
 const developmentOptions = [
   { id: "early", emoji: "👶" },
   { id: "special", emoji: "💖" },
@@ -206,6 +226,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showMusicPicker, setShowMusicPicker] = useState(false);
   const [selectedDevelopment, setSelectedDevelopment] = useState<string | null>(null);
   const [showDevelopmentPicker, setShowDevelopmentPicker] = useState(false);
+  const [selectedSpecial, setSelectedSpecial] = useState<string | null>(null);
+  const [showSpecialPicker, setShowSpecialPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
@@ -258,6 +280,10 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const subName = t(`development.${selectedDevelopment}` as any);
         const sq = `%${subName}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
+      } else if (selectedCategory === "special" && selectedSpecial) {
+        const subName = t(`special.${selectedSpecial}` as any);
+        const sq = `%${subName}%`;
+        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
@@ -269,7 +295,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
@@ -597,6 +623,46 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         </div>
       )}
 
+      {/* Special Picker */}
+      {showSpecialPicker && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowSpecialPicker(false)} />
+          <div className="relative w-full max-w-lg bg-card rounded-t-3xl shadow-2xl animate-slide-up max-h-[75vh] flex flex-col border-t-[4px] border-x-[4px] border-primary">
+            <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
+            <div className="px-5 pb-3 flex items-center justify-between">
+              <h3 className="font-black text-lg">💖 {t("special.title")}</h3>
+              <button onClick={() => setShowSpecialPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+                <X size={16} className="text-destructive" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-3 pb-8">
+              <button
+                onClick={() => { setSelectedSpecial(null); setSelectedCategory(null); setShowSpecialPicker(false); }}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedSpecial ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+              >
+                <span className="text-xl">✨</span>
+                <span className={`text-sm ${!selectedSpecial ? "font-black text-foreground" : "font-bold"}`}>{t("special.all")}</span>
+                {!selectedSpecial && <Check size={16} className="text-primary ml-auto" />}
+              </button>
+              {specialOptions.map((o) => {
+                const isActive = selectedSpecial === o.id;
+                return (
+                  <button
+                    key={o.id}
+                    onClick={() => { setSelectedSpecial(o.id); setSelectedCategory("special"); setShowSpecialPicker(false); }}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                  >
+                    <span className="text-xl">{o.emoji}</span>
+                    <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`special.${o.id}` as any)}</span>
+                    {isActive && <Check size={16} className="text-primary ml-auto" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {showCityPicker && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
           <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={() => setShowCityPicker(false)} />
@@ -699,6 +765,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("development");
                 return;
               }
+              if (id === "special") {
+                setShowSpecialPicker(true);
+                setSelectedCategory("special");
+                return;
+              }
               if (selectedCategory === id) {
                 setSelectedCategory(null);
                 setSelectedLanguage(null);
@@ -709,6 +780,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCreativity(null);
                 setSelectedMusic(null);
                 setSelectedDevelopment(null);
+                setSelectedSpecial(null);
               } else {
                 setSelectedCategory(id);
                 setSelectedLanguage(null);
@@ -719,6 +791,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCreativity(null);
                 setSelectedMusic(null);
                 setSelectedDevelopment(null);
+                setSelectedSpecial(null);
               }
             };
             const isActive = selectedCategory === id;
@@ -766,6 +839,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 {id === "development" && selectedDevelopment && (
                   <span className="text-[9px] font-black text-primary leading-none">
                     {developmentOptions.find((o) => o.id === selectedDevelopment)?.emoji} {t(`development.${selectedDevelopment}` as any)}
+                  </span>
+                )}
+                {id === "special" && selectedSpecial && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {specialOptions.find((o) => o.id === selectedSpecial)?.emoji} {t(`special.${selectedSpecial}` as any)}
                   </span>
                 )}
               </button>
