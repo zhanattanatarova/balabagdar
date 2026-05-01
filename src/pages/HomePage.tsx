@@ -841,6 +841,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                     {developmentOptions.find((o) => o.id === selectedDevelopment)?.emoji} {t(`development.${selectedDevelopment}` as any)}
                   </span>
                 )}
+                {id === "special" && selectedSpecial && (
+                  <span className="text-[9px] font-black text-primary leading-none">
+                    {specialOptions.find((o) => o.id === selectedSpecial)?.emoji} {t(`special.${selectedSpecial}` as any)}
+                  </span>
+                )}
               </button>
             );
           })}
