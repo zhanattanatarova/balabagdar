@@ -181,6 +181,9 @@ const ClubDetailPage = () => {
           </div>
         </div>
       )}
+
+      {/* Reviews */}
+      <ClubReviews clubId={club.id} />
     </div>
   );
 };
