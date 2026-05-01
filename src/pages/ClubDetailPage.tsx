@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import BookingModal from "@/components/BookingModal";
+import ClubReviews from "@/components/ClubReviews";
 
 const ClubDetailPage = () => {
   const { id } = useParams();
