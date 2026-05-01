@@ -765,6 +765,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("development");
                 return;
               }
+              if (id === "special") {
+                setShowSpecialPicker(true);
+                setSelectedCategory("special");
+                return;
+              }
               if (selectedCategory === id) {
                 setSelectedCategory(null);
                 setSelectedLanguage(null);
@@ -775,6 +780,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCreativity(null);
                 setSelectedMusic(null);
                 setSelectedDevelopment(null);
+                setSelectedSpecial(null);
               } else {
                 setSelectedCategory(id);
                 setSelectedLanguage(null);
@@ -785,6 +791,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCreativity(null);
                 setSelectedMusic(null);
                 setSelectedDevelopment(null);
+                setSelectedSpecial(null);
               }
             };
             const isActive = selectedCategory === id;
