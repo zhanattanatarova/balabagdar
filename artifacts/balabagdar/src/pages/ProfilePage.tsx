@@ -9,7 +9,7 @@ import AuthModal from "@/components/AuthModal";
 import { api } from "@/lib/api";
 
 const SUPPORT_TELEGRAM = "https://t.me/balabagdar_support";
-const SUPPORT_WHATSAPP = "https://wa.me/77001234567";
+const SUPPORT_WHATSAPP = "https://wa.me/77474807286";
 
 const ContactModal = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { t } = useLanguage();
@@ -45,7 +45,7 @@ const ContactModal = ({ open, onClose }: { open: boolean; onClose: () => void })
             </div>
             <div className="flex-1">
               <p className="font-black text-sm">{t("contact.whatsapp")}</p>
-              <p className="text-xs text-muted-foreground font-bold">+7 700 123 4567</p>
+              <p className="text-xs text-muted-foreground font-bold">+7 747 480 7286</p>
             </div>
             <ExternalLink size={16} className="text-muted-foreground" />
           </a>
