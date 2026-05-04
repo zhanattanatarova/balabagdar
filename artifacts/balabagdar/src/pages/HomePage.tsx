@@ -240,32 +240,23 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         if (selectedCategory) params.category = selectedCategory;
         if (searchQuery.trim()) params.search = searchQuery.trim();
 
-        let data = await api.clubs.list(params);
-
-        // Client-side sub-category filtering by keyword search in name/description
-        const getSubFilter = () => {
-          if (selectedCategory === "languages" && selectedLanguage) return t(`lang.${selectedLanguage}` as any);
-          if (selectedCategory === "dance" && selectedDance) return t(`dance.${selectedDance}` as any);
-          if (selectedCategory === "sport" && selectedSport) return t(`sport.${selectedSport}` as any);
-          if (selectedCategory === "health" && selectedHealth) return t(`health.${selectedHealth}` as any);
-          if (selectedCategory === "tutors" && selectedTutors) return t(`tutors.${selectedTutors}` as any);
-          if (selectedCategory === "creativity" && selectedCreativity) return t(`creativity.${selectedCreativity}` as any);
-          if (selectedCategory === "music" && selectedMusic) return t(`music.${selectedMusic}` as any);
-          if (selectedCategory === "development" && selectedDevelopment) return t(`development.${selectedDevelopment}` as any);
-          if (selectedCategory === "special" && selectedSpecial) return t(`special.${selectedSpecial}` as any);
+        // Pass subcategory as API param for proper DB-level filtering
+        const getSubcategory = () => {
+          if (selectedCategory === "languages") return selectedLanguage;
+          if (selectedCategory === "dance") return selectedDance;
+          if (selectedCategory === "sport") return selectedSport;
+          if (selectedCategory === "health") return selectedHealth;
+          if (selectedCategory === "tutors") return selectedTutors;
+          if (selectedCategory === "creativity") return selectedCreativity;
+          if (selectedCategory === "music") return selectedMusic;
+          if (selectedCategory === "development") return selectedDevelopment;
+          if (selectedCategory === "special") return selectedSpecial;
           return null;
         };
+        const subcategory = getSubcategory();
+        if (subcategory) params.subcategory = subcategory;
 
-        const subFilter = getSubFilter();
-        if (subFilter && !searchQuery.trim()) {
-          const kw = subFilter.toLowerCase();
-          data = data.filter((c: any) =>
-            [c.nameRu, c.nameKz, c.nameEn, c.descriptionRu, c.descriptionKz, c.descriptionEn,
-             c.name_ru, c.name_kz, c.name_en, c.description_ru, c.description_kz, c.description_en]
-              .some((v) => v?.toLowerCase().includes(kw))
-          );
-        }
-
+        const data = await api.clubs.list(params);
         setClubs(data || []);
       } catch {}
       setLoadingClubs(false);

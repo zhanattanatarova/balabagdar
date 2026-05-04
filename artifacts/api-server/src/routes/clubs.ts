@@ -32,9 +32,11 @@ router.get("/", async (req, res) => {
       .orderBy(desc(clubsTable.rating))
       .limit(parseInt(limit) || 50);
 
+    const { subcategory } = req.query as Record<string, string>;
     let filtered = clubs;
     if (city) filtered = filtered.filter((c) => c.city === city);
     if (category) filtered = filtered.filter((c) => c.category === category);
+    if (subcategory) filtered = filtered.filter((c) => c.subcategory === subcategory);
     if (search) {
       const s = search.toLowerCase();
       filtered = filtered.filter(
@@ -111,6 +113,7 @@ router.post("/", async (req, res) => {
       descriptionKz: clubData.description_kz || null,
       descriptionEn: clubData.description_en || null,
       category: clubData.category || "other",
+      subcategory: clubData.subcategory || null,
       city: clubData.city || "Астана",
       address: clubData.address || null,
       phone: clubData.phone || null,
@@ -171,6 +174,7 @@ router.put("/:id", async (req, res) => {
       descriptionKz: clubData.description_kz || null,
       descriptionEn: clubData.description_en || null,
       category: clubData.category || "other",
+      subcategory: clubData.subcategory || null,
       city: clubData.city || "Астана",
       address: clubData.address || null,
       phone: clubData.phone || null,

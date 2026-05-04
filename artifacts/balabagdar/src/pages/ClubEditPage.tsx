@@ -8,8 +8,104 @@ import { toast } from "@/hooks/use-toast";
 
 const categoryOptions = [
   "creativity", "sport", "development", "speech", "dance",
-  "robotics", "swim", "music", "health", "tutors", "other",
+  "robotics", "swim", "music", "health", "tutors", "languages", "special", "other",
 ];
+
+const subcategoryOptions: Record<string, { id: string; label: string }[]> = {
+  health: [
+    { id: "massage", label: "💆 Массаж" },
+    { id: "pediatrician", label: "👶 Педиатр" },
+    { id: "nutritionist", label: "🥗 Нутрициолог" },
+    { id: "psychologist", label: "🧠 Психолог" },
+    { id: "neurologist", label: "🧬 Невролог" },
+    { id: "dentist", label: "🦷 Стоматолог" },
+    { id: "ophthalmologist", label: "👁️ Окулист" },
+    { id: "orthopedist", label: "🦴 Ортопед" },
+    { id: "speech_therapist", label: "🗣️ Логопед" },
+    { id: "defectologist", label: "📚 Дефектолог" },
+    { id: "lfk", label: "🤸 ЛФК" },
+    { id: "osteopath", label: "🤲 Остеопат" },
+    { id: "allergist", label: "🤧 Аллерголог" },
+    { id: "ent", label: "👂 ЛОР" },
+    { id: "vaccination", label: "💉 Вакцинация" },
+  ],
+  dance: [
+    { id: "ballet", label: "🩰 Балет" },
+    { id: "ballroom", label: "🕺 Бальные танцы" },
+    { id: "sport", label: "🏆 Спортивные танцы" },
+    { id: "modern", label: "✨ Современные танцы" },
+    { id: "hiphop", label: "🎤 Хип-хоп" },
+    { id: "folk", label: "🪘 Народные танцы" },
+    { id: "latin", label: "🌶️ Латино" },
+    { id: "breakdance", label: "🕺 Брейк-данс" },
+    { id: "contemporary", label: "🎭 Контемпорари" },
+    { id: "oriental", label: "🪷 Восточные танцы" },
+  ],
+  sport: [
+    { id: "gymnastics", label: "🤸 Гимнастика" },
+    { id: "karate", label: "🥋 Каратэ" },
+    { id: "judo", label: "🥋 Дзюдо" },
+    { id: "taekwondo", label: "🥋 Тхэквондо" },
+    { id: "boxing", label: "🥊 Бокс" },
+    { id: "wrestling", label: "🤼 Борьба" },
+    { id: "football", label: "⚽ Футбол" },
+    { id: "basketball", label: "🏀 Баскетбол" },
+    { id: "volleyball", label: "🏐 Волейбол" },
+    { id: "tennis", label: "🎾 Теннис" },
+    { id: "hockey", label: "🏒 Хоккей" },
+    { id: "chess", label: "♟️ Шахматы" },
+    { id: "skating", label: "⛸️ Фигурное катание" },
+    { id: "cycling", label: "🚴 Велоспорт" },
+    { id: "athletics", label: "🏃 Лёгкая атлетика" },
+  ],
+  tutors: [
+    { id: "school_prep", label: "📚 Подготовка к школе" },
+    { id: "kazakh", label: "🇰🇿 Казахский язык" },
+    { id: "russian", label: "🇷🇺 Русский язык" },
+    { id: "english", label: "🇬🇧 Английский язык" },
+    { id: "math", label: "➕ Математика" },
+    { id: "physics", label: "⚡ Физика" },
+    { id: "chemistry", label: "🧪 Химия" },
+    { id: "biology", label: "🌿 Биология" },
+    { id: "ent", label: "📝 Подготовка к ЕНТ" },
+    { id: "olympiad", label: "🏆 Олимпиадная подготовка" },
+  ],
+  creativity: [
+    { id: "drawing", label: "🎨 Рисование" },
+    { id: "painting", label: "🖌️ Живопись" },
+    { id: "handicraft", label: "🧶 Рукоделие" },
+    { id: "sculpting", label: "🏺 Лепка" },
+    { id: "pottery", label: "🫙 Гончарное дело" },
+  ],
+  music: [
+    { id: "guitar", label: "🎸 Гитара" },
+    { id: "piano", label: "🎹 Пианино" },
+    { id: "violin", label: "🎻 Скрипка" },
+    { id: "vocal", label: "🎤 Вокал" },
+    { id: "drums", label: "🥁 Барабаны" },
+  ],
+  special: [
+    { id: "aba", label: "🧩 ABA-терапия" },
+    { id: "sensory", label: "🌈 Сенсорная интеграция" },
+    { id: "speech", label: "🗣️ Логопед-дефектолог" },
+    { id: "psychologist", label: "🧠 Детский психолог" },
+    { id: "afk", label: "🏃 АФК" },
+    { id: "lfk", label: "🤸 ЛФК" },
+    { id: "art", label: "🎨 Арт-терапия" },
+    { id: "music", label: "🎵 Музыкотерапия" },
+    { id: "inclusive", label: "♾️ Инклюзивный центр" },
+  ],
+  languages: [
+    { id: "english", label: "🇬🇧 Английский" },
+    { id: "chinese", label: "🇨🇳 Китайский" },
+    { id: "french", label: "🇫🇷 Французский" },
+    { id: "korean", label: "🇰🇷 Корейский" },
+    { id: "turkish", label: "🇹🇷 Турецкий" },
+    { id: "kazakh", label: "🇰🇿 Казахский" },
+    { id: "german", label: "🇩🇪 Немецкий" },
+    { id: "arabic", label: "🇸🇦 Арабский" },
+  ],
+};
 
 const cities = [
   "Алматы", "Астана", "Шымкент", "Караганда", "Актобе",
@@ -52,6 +148,7 @@ const ClubEditPage = () => {
     name_ru: "", name_kz: "", name_en: "",
     description_ru: "", description_kz: "", description_en: "",
     category: "other",
+    subcategory: "",
     city: "Астана",
     address: "",
     phone: "",
@@ -81,6 +178,7 @@ const ClubEditPage = () => {
             description_kz: c.descriptionKz || c.description_kz || "",
             description_en: c.descriptionEn || c.description_en || "",
             category: c.category || "other",
+            subcategory: c.subcategory || "",
             city: c.city || "Астана",
             address: c.address || "",
             phone: c.phone || "",
@@ -292,12 +390,31 @@ const ClubEditPage = () => {
           <p className="text-sm font-black">🏷️ {t("edit.category")} & {t("edit.city")}</p>
           <div>
             <label className={labelCls}>{t("edit.category")}</label>
-            <select value={form.category} onChange={(e) => update("category", e.target.value)} className={inputCls}>
+            <select
+              value={form.category}
+              onChange={(e) => { update("category", e.target.value); update("subcategory", ""); }}
+              className={inputCls}
+            >
               {categoryOptions.map((c) => (
                 <option key={c} value={c}>{t(`cat.${c}` as any) || c}</option>
               ))}
             </select>
           </div>
+          {subcategoryOptions[form.category] && (
+            <div>
+              <label className={labelCls}>🔖 Подкатегория / специализация</label>
+              <select
+                value={form.subcategory}
+                onChange={(e) => update("subcategory", e.target.value)}
+                className={inputCls}
+              >
+                <option value="">— Не указано —</option>
+                {subcategoryOptions[form.category].map((s) => (
+                  <option key={s.id} value={s.id}>{s.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div>
             <label className={labelCls}>{t("edit.city")}</label>
             <select value={form.city} onChange={(e) => update("city", e.target.value)} className={inputCls}>

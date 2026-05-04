@@ -13,6 +13,7 @@ export const clubsTable = pgTable("clubs", {
   descriptionKz: text("description_kz"),
   descriptionEn: text("description_en"),
   category: text("category").notNull().default("other"),
+  subcategory: text("subcategory"),
   city: text("city").notNull().default("Астана"),
   address: text("address"),
   phone: text("phone"),
