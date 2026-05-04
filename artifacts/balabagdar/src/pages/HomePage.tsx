@@ -35,9 +35,10 @@ const categoryIcons: Record<string, string> = {
   speech: iconSpeech, dance: iconDance, robotics: iconRobotics,
   swim: iconSwim, music: iconMusic, health: iconHealth, tutors: iconTutors,
   languages: iconLanguages, shops: iconShops, special: iconSpecial,
+  kindergarten: iconDevelopment,
 };
 
-const categoryIds = ["creativity", "sport", "development", "special", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
+const categoryIds = ["creativity", "sport", "development", "special", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "kindergarten", "shops"];
 
 const languageOptions = [
   { id: "english", emoji: "🇬🇧" },

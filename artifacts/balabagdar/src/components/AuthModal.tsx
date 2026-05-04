@@ -51,14 +51,19 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     setLoading(true);
     try {
       const result = await api.auth.sendCode(digits());
-      setChannel((result as any).channel || null);
+      const ch = (result as any).channel || null;
+      const dl = (result as any).deepLink || null;
+      setChannel(ch);
       setNeedsLink(!!(result as any).needsLink);
-      setDeepLink((result as any).deepLink || null);
+      setDeepLink(dl);
       setStep("code");
       if ((result as any).dev_code) {
         setDevCode((result as any).dev_code);
-      } else if ((result as any).channel === "telegram") {
+      } else if (ch === "telegram") {
         toast({ title: t("auth.code_sent"), description: t("auth.check_telegram") });
+      } else if (ch === "none" && dl) {
+        // Auto-open Telegram deep link — no button needed
+        window.open(dl, "_blank");
       }
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
@@ -159,21 +164,10 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               )}
 
               {channel === "none" && !devCode && (
-                <div className="mt-3 space-y-2">
-                  <p className="text-sm text-center text-foreground/70">
-                    Нажмите кнопку — бот <strong>сразу пришлёт вам код</strong>
-                  </p>
-                  <a
-                    href={deepLink || `https://t.me/${TELEGRAM_BOT}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#2AABEE] text-white font-bold text-base hover:brightness-105 active:scale-[0.98] transition-all"
-                  >
-                    <MessageCircle size={20} />
-                    Открыть Telegram → получить код
-                  </a>
-                  <p className="text-xs text-center text-muted-foreground">
-                    После получения кода вернитесь и введите его ниже
+                <div className="mt-3 flex items-center gap-2 p-3 rounded-xl bg-blue-sky">
+                  <MessageCircle size={16} className="text-primary shrink-0" />
+                  <p className="text-xs text-foreground/70">
+                    Открылся Telegram — бот пришлёт вам код. Вернитесь и введите его ниже.
                   </p>
                 </div>
               )}

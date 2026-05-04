@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 
 const categoryOptions = [
   "creativity", "sport", "development", "speech", "dance",
-  "robotics", "swim", "music", "health", "tutors", "languages", "special", "other",
+  "robotics", "swim", "music", "health", "tutors", "languages", "special", "kindergarten", "other",
 ];
 
 const subcategoryOptions: Record<string, { id: string; label: string }[]> = {

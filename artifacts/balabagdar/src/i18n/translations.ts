@@ -56,6 +56,7 @@ export const translations = {
   "cat.languages": { ru: "Языки", kz: "Тілдер", en: "Languages" },
   "cat.shops": { ru: "Детские магазины", kz: "Балалар дүкендері", en: "Kids shops" },
   "cat.special": { ru: "Особенные дети", kz: "Ерекше балалар", en: "Special needs" },
+  "cat.kindergarten": { ru: "Детские сады", kz: "Балабақшалар", en: "Kindergartens" },
 
   // Special needs subcategories
   "special.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
