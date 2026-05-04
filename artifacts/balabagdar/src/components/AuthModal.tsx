@@ -13,7 +13,7 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
-const TELEGRAM_BOT = "BalaBagdarBot";
+const TELEGRAM_BOT = "balabagdar_bot";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const { t } = useLanguage();
