@@ -70,20 +70,20 @@ router.post("/send-code", async (req, res) => {
     req.log.info({ phone, sent }, "Verification code generated");
 
     const isDev = process.env.NODE_ENV !== "production";
+    const deepLink = `https://t.me/balabagdar_bot?start=login_${phone}`;
 
     if (sent) {
       return res.json({ success: true, channel: "telegram" });
     }
 
     if (isDev) {
-      return res.json({ success: true, dev_code: code, channel: "dev" });
+      return res.json({ success: true, dev_code: code, channel: "dev", deepLink });
     }
 
-    const hasTelegramToken = !!process.env.TELEGRAM_BOT_TOKEN;
     return res.json({
       success: true,
       channel: "none",
-      needsLink: !hasTelegramToken ? false : true,
+      deepLink,
     });
   } catch (err) {
     req.log.error({ err }, "Failed to send code");

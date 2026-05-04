@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Phone, ArrowRight, Loader2, MessageCircle, AlertCircle, ExternalLink } from "lucide-react";
+import { X, Phone, ArrowRight, Loader2, MessageCircle } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
@@ -26,6 +26,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [devCode, setDevCode] = useState<string | null>(null);
   const [channel, setChannel] = useState<"telegram" | "dev" | "none" | null>(null);
+  const [deepLink, setDeepLink] = useState<string | null>(null);
   const [needsLink, setNeedsLink] = useState(false);
 
   useEffect(() => {
@@ -52,6 +53,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       const result = await api.auth.sendCode(digits());
       setChannel((result as any).channel || null);
       setNeedsLink(!!(result as any).needsLink);
+      setDeepLink((result as any).deepLink || null);
       setStep("code");
       if ((result as any).dev_code) {
         setDevCode((result as any).dev_code);
@@ -157,22 +159,22 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               )}
 
               {channel === "none" && !devCode && (
-                <div className="mt-3 p-3 rounded-xl bg-orange-50 border border-orange-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <AlertCircle size={15} className="text-orange-500 shrink-0" />
-                    <p className="text-xs font-bold text-orange-700">Telegram не привязан</p>
-                  </div>
-                  <p className="text-xs text-orange-600 mb-2">
-                    Напишите боту <strong>@{TELEGRAM_BOT}</strong> в Telegram, поделитесь номером — и вам придёт код.
+                <div className="mt-3 space-y-2">
+                  <p className="text-sm text-center text-foreground/70">
+                    Нажмите кнопку — бот <strong>сразу пришлёт вам код</strong>
                   </p>
                   <a
-                    href={`https://t.me/${TELEGRAM_BOT}`}
+                    href={deepLink || `https://t.me/${TELEGRAM_BOT}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#2AABEE] text-white font-bold text-base hover:brightness-105 active:scale-[0.98] transition-all"
                   >
-                    <ExternalLink size={12} /> Открыть @{TELEGRAM_BOT}
+                    <MessageCircle size={20} />
+                    Открыть Telegram → получить код
                   </a>
+                  <p className="text-xs text-center text-muted-foreground">
+                    После получения кода вернитесь и введите его ниже
+                  </p>
                 </div>
               )}
 
@@ -204,7 +206,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                   {loading ? <Loader2 size={18} className="animate-spin" /> : t("auth.confirm")}
                 </button>
                 <button
-                  onClick={() => { setStep("phone"); setCode(""); setDevCode(null); setChannel(null); }}
+                  onClick={() => { setStep("phone"); setCode(""); setDevCode(null); setChannel(null); setDeepLink(null); }}
                   className="w-full mt-2 text-muted-foreground font-bold text-sm py-2"
                 >
                   {t("auth.change_number")}
