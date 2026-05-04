@@ -77,6 +77,39 @@ router.get("/my-club", async (req, res) => {
   }
 });
 
+router.get("/mine", async (req, res) => {
+  try {
+    const session = await getSession(req);
+    if (!session) return res.status(401).json({ error: "Unauthorized" });
+
+    const bookings = await db
+      .select({
+        id: bookingsTable.id,
+        clubId: bookingsTable.clubId,
+        bookingDate: bookingsTable.bookingDate,
+        childName: bookingsTable.childName,
+        childAge: bookingsTable.childAge,
+        status: bookingsTable.status,
+        createdAt: bookingsTable.createdAt,
+        clubNameRu: clubsTable.nameRu,
+        clubNameKz: clubsTable.nameKz,
+        clubNameEn: clubsTable.nameEn,
+        clubAvatarUrl: clubsTable.avatarUrl,
+        clubCity: clubsTable.city,
+        clubCategory: clubsTable.category,
+      })
+      .from(bookingsTable)
+      .leftJoin(clubsTable, eq(bookingsTable.clubId, clubsTable.id))
+      .where(eq(bookingsTable.userId, session.userId))
+      .orderBy(desc(bookingsTable.createdAt));
+
+    return res.json(bookings);
+  } catch (err) {
+    req.log.error({ err }, "Failed to get my bookings");
+    return res.status(500).json({ error: "Internal error" });
+  }
+});
+
 router.patch("/:id/status", async (req, res) => {
   try {
     const session = await getSession(req);

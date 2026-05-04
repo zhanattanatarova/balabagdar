@@ -207,7 +207,13 @@ router.get("/me", async (req, res) => {
       .then((rows) => rows[0] || null);
 
     return res.json({
-      user: { id: user.id, phone: user.phone, displayName: user.displayName },
+      user: {
+        id: user.id,
+        phone: user.phone,
+        displayName: user.displayName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
       role: roleRecord?.role || null,
     });
   } catch (err) {
@@ -252,6 +258,56 @@ router.post("/assign-role", async (req, res) => {
     return res.json({ role });
   } catch (err) {
     req.log.error({ err }, "Failed to assign role");
+    return res.status(500).json({ error: "Internal error" });
+  }
+});
+
+router.put("/profile", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace("Bearer ", "");
+    if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+    const now = new Date();
+    const session = await db
+      .select()
+      .from(userSessionsTable)
+      .where(and(eq(userSessionsTable.token, token), gt(userSessionsTable.expiresAt, now)))
+      .limit(1)
+      .then((rows) => rows[0] || null);
+
+    if (!session) return res.status(401).json({ error: "Unauthorized" });
+
+    const { firstName, lastName } = req.body;
+
+    await db
+      .update(usersTable)
+      .set({
+        firstName: firstName || null,
+        lastName: lastName || null,
+        displayName: [firstName, lastName].filter(Boolean).join(" ") || null,
+        updatedAt: new Date(),
+      })
+      .where(eq(usersTable.id, session.userId));
+
+    const updated = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, session.userId))
+      .limit(1)
+      .then((rows) => rows[0]);
+
+    return res.json({
+      user: {
+        id: updated.id,
+        phone: updated.phone,
+        displayName: updated.displayName,
+        firstName: updated.firstName,
+        lastName: updated.lastName,
+      },
+    });
+  } catch (err) {
+    req.log.error({ err }, "Failed to update profile");
     return res.status(500).json({ error: "Internal error" });
   }
 });

@@ -42,6 +42,11 @@ export const api = {
         method: "POST",
         body: JSON.stringify({ role }),
       }),
+    updateProfile: (data: { firstName: string; lastName: string }) =>
+      request<{ user: any }>("/auth/profile", {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
     signOut: () =>
       request<{ success: boolean }>("/auth/signout", { method: "POST" }),
   },
@@ -61,6 +66,7 @@ export const api = {
   bookings: {
     create: (data: any) =>
       request<any>("/bookings", { method: "POST", body: JSON.stringify(data) }),
+    mine: () => request<any[]>("/bookings/mine"),
     myClub: () => request<any[]>("/bookings/my-club"),
     updateStatus: (id: string, status: string) =>
       request<any>(`/bookings/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
