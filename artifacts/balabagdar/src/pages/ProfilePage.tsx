@@ -82,8 +82,8 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (user) {
-      setFirstName((user as any).firstName || "");
-      setLastName((user as any).lastName || "");
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
     }
   }, [user?.id]);
 
@@ -112,9 +112,9 @@ const ProfilePage = () => {
     }
   };
 
-  const phone = (user as any)?.phone || "";
-  const displayName = (user as any)?.displayName;
-  const initials = [firstName, lastName].filter(Boolean).map(s => s[0]).join("").toUpperCase() || phone.slice(-2);
+  const phone = user?.phone ?? "";
+  const displayName = user?.displayName;
+  const initials = [firstName, lastName].filter(Boolean).map((s) => s[0]).join("").toUpperCase() || phone.slice(-2);
 
   return (
     <div className="pb-24 max-w-2xl mx-auto">

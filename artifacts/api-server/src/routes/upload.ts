@@ -5,11 +5,13 @@ import { userSessionsTable } from "@workspace/db";
 import { eq, and, gt } from "drizzle-orm";
 import { ObjectStorageService } from "../lib/objectStorage";
 
+type UserSession = typeof userSessionsTable.$inferSelect;
+
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 const storageService = new ObjectStorageService();
 
-async function getSession(req: any) {
+async function getSession(req: { headers: { authorization?: string } }): Promise<UserSession | null> {
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (!token) return null;
   const now = new Date();
@@ -29,9 +31,6 @@ router.post("/", upload.single("file"), async (req, res) => {
     const file = req.file;
     if (!file) return res.status(400).json({ error: "No file provided" });
 
-    const ext = file.originalname.split(".").pop() || "jpg";
-    const objectId = `${session.userId}_${Date.now()}.${ext}`;
-
     const uploadUrl = await storageService.getObjectEntityUploadURL();
 
     const response = await fetch(uploadUrl, {
@@ -45,8 +44,14 @@ router.post("/", upload.single("file"), async (req, res) => {
     }
 
     const objectPath = storageService.normalizeObjectEntityPath(uploadUrl);
-    const publicUrl = `/api/storage${objectPath}`;
 
+    // Set ACL to public so <img> tags can display the uploaded image without auth
+    await storageService.trySetObjectEntityAclPolicy(uploadUrl, {
+      owner: session.userId,
+      visibility: "public",
+    });
+
+    const publicUrl = `/api/storage${objectPath}`;
     return res.json({ url: publicUrl, objectPath });
   } catch (err) {
     req.log.error({ err }, "Failed to upload file");
