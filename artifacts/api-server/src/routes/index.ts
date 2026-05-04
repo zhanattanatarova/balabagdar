@@ -6,6 +6,7 @@ import clubsRouter from "./clubs";
 import bookingsRouter from "./bookings";
 import reviewsRouter from "./reviews";
 import uploadRouter from "./upload";
+import botRouter from "./bot";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use("/clubs", clubsRouter);
 router.use("/bookings", bookingsRouter);
 router.use("/reviews", reviewsRouter);
 router.use("/upload", uploadRouter);
+router.use("/bot", botRouter);
 
 export default router;

@@ -21,13 +21,13 @@ export const useUserRole = () => {
     }).catch(() => setLoading(false));
   }, [user?.id]);
 
-  const assignRole = async (newRole: AppRole) => {
-    if (!user) return;
+  const assignRole = async (newRole: AppRole): Promise<string | null> => {
     try {
       await api.auth.assignRole(newRole);
       setRole(newRole);
-    } catch (err) {
-      return err;
+      return null;
+    } catch (err: any) {
+      return err?.message || "Не удалось сохранить роль";
     }
   };
 

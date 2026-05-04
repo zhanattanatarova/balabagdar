@@ -35,6 +35,13 @@ export const phoneCodesTable = pgTable("phone_codes", {
   used: text("used").default("false"),
 });
 
+export const telegramLinksTable = pgTable("telegram_links", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  phone: text("phone").notNull().unique(),
+  chatId: text("chat_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof usersTable.$inferSelect;

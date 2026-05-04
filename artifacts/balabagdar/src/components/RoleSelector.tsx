@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, Building2, Loader2 } from "lucide-react";
+import { Users, Building2, Loader2, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
 import BrandLogo from "@/components/BrandLogo";
@@ -12,12 +12,18 @@ const RoleSelector = ({ onComplete }: RoleSelectorProps) => {
   const { t } = useLanguage();
   const { assignRole } = useUserRole();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSelect = async (role: AppRole) => {
     setLoading(true);
-    const error = await assignRole(role);
+    setError(null);
+    const err = await assignRole(role);
     setLoading(false);
-    if (!error) onComplete();
+    if (!err) {
+      onComplete();
+    } else {
+      setError(err);
+    }
   };
 
   return (
@@ -28,6 +34,13 @@ const RoleSelector = ({ onComplete }: RoleSelectorProps) => {
         </div>
         <h2 className="text-xl font-black text-center">{t("role.title")}</h2>
         <p className="text-sm text-muted-foreground text-center mt-1">{t("role.subtitle")}</p>
+
+        {error && (
+          <div className="mt-3 flex items-center gap-2 p-3 rounded-xl bg-destructive/10 text-destructive">
+            <AlertCircle size={16} className="shrink-0" />
+            <p className="text-xs font-medium">{error}</p>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex justify-center py-8">

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { usersTable, userRolesTable, userSessionsTable, phoneCodesTable } from "@workspace/db";
+import { usersTable, userRolesTable, userSessionsTable, phoneCodesTable, telegramLinksTable } from "@workspace/db";
 import { eq, and, gt } from "drizzle-orm";
 import crypto from "crypto";
 
@@ -14,6 +14,40 @@ function generateToken(): string {
   return crypto.randomBytes(32).toString("hex");
 }
 
+async function sendTelegramOtp(phone: string, code: string): Promise<boolean> {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) return false;
+
+  const link = await db
+    .select()
+    .from(telegramLinksTable)
+    .where(eq(telegramLinksTable.phone, phone))
+    .limit(1)
+    .then((rows) => rows[0] || null);
+
+  if (!link) return false;
+
+  try {
+    const text = `🔐 Ваш код для входа в BalaBagdar:\n\n*${code}*\n\nКод действителен 10 минут. Никому не сообщайте его.`;
+    const resp = await fetch(
+      `https://api.telegram.org/bot${botToken}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: link.chatId,
+          text,
+          parse_mode: "Markdown",
+        }),
+      }
+    );
+    const data = await resp.json() as any;
+    return data.ok === true;
+  } catch {
+    return false;
+  }
+}
+
 router.post("/send-code", async (req, res) => {
   try {
     const { phone } = req.body;
@@ -22,7 +56,7 @@ router.post("/send-code", async (req, res) => {
     }
 
     const code = generateCode();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
     await db.insert(phoneCodesTable).values({
       phone,
@@ -31,10 +65,26 @@ router.post("/send-code", async (req, res) => {
       used: "false",
     });
 
-    req.log.info({ phone }, "Verification code generated");
+    const sent = await sendTelegramOtp(phone, code);
+
+    req.log.info({ phone, sent }, "Verification code generated");
 
     const isDev = process.env.NODE_ENV !== "production";
-    return res.json({ success: true, ...(isDev ? { dev_code: code } : {}) });
+
+    if (sent) {
+      return res.json({ success: true, channel: "telegram" });
+    }
+
+    if (isDev) {
+      return res.json({ success: true, dev_code: code, channel: "dev" });
+    }
+
+    const hasTelegramToken = !!process.env.TELEGRAM_BOT_TOKEN;
+    return res.json({
+      success: true,
+      channel: "none",
+      needsLink: !hasTelegramToken ? false : true,
+    });
   } catch (err) {
     req.log.error({ err }, "Failed to send code");
     return res.status(500).json({ error: "Failed to send code" });
@@ -87,7 +137,7 @@ router.post("/verify-code", async (req, res) => {
     }
 
     const token = generateToken();
-    const sessionExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+    const sessionExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
     await db.insert(userSessionsTable).values({
       userId: user.id,
