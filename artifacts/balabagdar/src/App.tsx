@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/hooks/useLanguage";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import ClubDetailPage from "./pages/ClubDetailPage";
+import LegalPage from "./pages/LegalPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/dashboard" element={<Index />} />
             <Route path="/club/edit" element={<Index />} />
             <Route path="/club/:id" element={<ClubDetailPage />} />
+            <Route path="/legal" element={<LegalPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -58,6 +58,7 @@ const ClubEditPage = () => {
     whatsapp: "",
     telegram: "",
     instagram: "",
+    gis_url: "",
     age_min: 3,
     age_max: 18,
     price_from: 0,
@@ -86,6 +87,7 @@ const ClubEditPage = () => {
             whatsapp: c.whatsapp || "",
             telegram: c.telegram || "",
             instagram: c.instagram || "",
+            gis_url: c.gisUrl || c.gis_url || "",
             age_min: c.ageMin ?? c.age_min ?? 3,
             age_max: c.ageMax ?? c.age_max ?? 18,
             price_from: c.priceFrom ?? c.price_from ?? 0,
@@ -310,7 +312,8 @@ const ClubEditPage = () => {
           <div><label className={labelCls}>{t("edit.phone")}</label><input value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+7 777 123 4567" className={inputCls} /></div>
           <div><label className={labelCls}>💬 {t("edit.whatsapp")}</label><input value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} placeholder="+77771234567" className={inputCls} /></div>
           <div><label className={labelCls}>✈️ {t("edit.telegram")}</label><input value={form.telegram} onChange={(e) => update("telegram", e.target.value)} placeholder="@username" className={inputCls} /></div>
-          <div><label className={labelCls}>📸 Instagram</label><input value={form.instagram} onChange={(e) => update("instagram", e.target.value)} placeholder="@username" className={inputCls} /></div>
+          <div><label className={labelCls}>📸 {t("edit.instagram")}</label><input value={form.instagram} onChange={(e) => update("instagram", e.target.value)} placeholder="@username" className={inputCls} /></div>
+          <div><label className={labelCls}>🗺️ {t("edit.gis_url")}</label><input value={form.gis_url} onChange={(e) => update("gis_url", e.target.value)} placeholder="https://2gis.kz/almaty/firm/..." className={inputCls} /></div>
         </div>
 
         <div className="cartoon-card p-4 space-y-3">

@@ -19,6 +19,7 @@ export const clubsTable = pgTable("clubs", {
   whatsapp: text("whatsapp"),
   telegram: text("telegram"),
   instagram: text("instagram"),
+  gisUrl: text("gis_url"),
   ageMin: integer("age_min").default(3),
   ageMax: integer("age_max").default(18),
   priceFrom: integer("price_from").default(0),

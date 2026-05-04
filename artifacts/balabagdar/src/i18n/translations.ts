@@ -324,6 +324,40 @@ export const translations = {
   "common.logged_out": { ru: "Вы вышли", kz: "Сіз шықтыңыз", en: "You logged out" },
   "common.bye": { ru: "До встречи! 👋", kz: "Кездескенше! 👋", en: "See you! 👋" },
 
+  // Legal
+  "legal.header_sub": { ru: "Правовая информация", kz: "Құқықтық ақпарат", en: "Legal information" },
+  "legal.title": { ru: "Правовые условия", kz: "Заңды шарттар", en: "Legal terms" },
+  "legal.disclaimer_title": { ru: "⚠️ Важное уведомление", kz: "⚠️ Маңызды ескерту", en: "⚠️ Important notice" },
+  "legal.disclaimer_text": { ru: "BalaBagdar — информационная платформа для поиска детских кружков и центров. Мы не несём ответственности за качество услуг, безопасность и деятельность размещённых центров. Вся информация предоставляется в ознакомительных целях.", kz: "BalaBagdar — балалар үйірмелері мен орталықтарын іздеуге арналған ақпараттық платформа. Біз орналастырылған орталықтардың қызмет сапасы, қауіпсіздігі мен жұмысы үшін жауап бермейміз. Барлық ақпарат тану мақсатында ұсынылады.", en: "BalaBagdar is an informational platform for finding children's clubs and centers. We are not responsible for the quality of services, safety, or activities of listed centers. All information is provided for informational purposes only." },
+  "legal.platform_title": { ru: "Что такое BalaBagdar?", kz: "BalaBagdar дегеніміз не?", en: "What is BalaBagdar?" },
+  "legal.platform_text": { ru: "BalaBagdar — это ознакомительная платформа, которая помогает родителям найти информацию о детских кружках, центрах развития и спортивных секциях в Казахстане. Платформа не является организатором занятий, не продаёт услуги и не является посредником между клиентом и центром.", kz: "BalaBagdar — бұл ата-аналарға Қазақстандағы балалар үйірмелері, даму орталықтары және спорт секциялары туралы ақпарат табуға көмектесетін танымдық платформа. Платформа сабақтарды ұйымдастырушы емес, қызметтерді сатпайды және клиент пен орталық арасындағы делдал болып табылмайды.", en: "BalaBagdar is an informational platform that helps parents find information about children's clubs, development centers, and sports sections in Kazakhstan. The platform does not organize classes, sell services, or act as an intermediary between clients and centers." },
+  "legal.safety_title": { ru: "Безопасность детей", kz: "Балалардың қауіпсіздігі", en: "Children's safety" },
+  "legal.safety_text": { ru: "Мы настоятельно рекомендуем родителям самостоятельно проверять информацию о каждом центре перед записью ребёнка. BalaBagdar не гарантирует безопасность, квалификацию педагогов и соответствие нормам СанПиН центров, указанных на платформе.", kz: "Біз ата-аналарға баланы жазбас бұрын әр орталық туралы ақпаратты өздері тексеруін ұсынамыз. BalaBagdar платформада көрсетілген орталықтардың қауіпсіздігіне, педагогтардың біліктілігіне және СанПиН нормаларына сәйкестігіне кепілдік бермейді.", en: "We strongly recommend that parents independently verify information about each center before enrolling their child. BalaBagdar does not guarantee the safety, qualification of teachers, or compliance with sanitary standards of centers listed on the platform." },
+  "legal.verify_title": { ru: "Что нужно проверить самостоятельно", kz: "Өзіңіз тексеруіңіз керек нәрсе", en: "What to verify yourself" },
+  "legal.verify1": { ru: "Лицензия и документы центра", kz: "Орталықтың лицензиясы мен құжаттары", en: "Center's license and documents" },
+  "legal.verify2": { ru: "Квалификация и опыт педагогов", kz: "Педагогтардың біліктілігі мен тәжірибесі", en: "Qualifications and experience of teachers" },
+  "legal.verify3": { ru: "Условия и безопасность помещения", kz: "Үй-жайдың жағдайы мен қауіпсіздігі", en: "Premises conditions and safety" },
+  "legal.verify4": { ru: "Отзывы других родителей напрямую", kz: "Басқа ата-аналардың пікірлерін тікелей", en: "Reviews from other parents directly" },
+  "legal.liability_title": { ru: "Ограничение ответственности", kz: "Жауапкершілікті шектеу", en: "Limitation of liability" },
+  "legal.liability_text": { ru: "BalaBagdar не несёт ответственности за любой ущерб, возникший в результате использования информации с платформы. Все отзывы и рейтинги публикуются пользователями и отражают их личное мнение. Платформа оставляет за собой право удалять недостоверную информацию.", kz: "BalaBagdar платформадағы ақпаратты пайдалану нәтижесінде туындаған кез келген залал үшін жауап бермейді. Барлық пікірлер мен рейтингтер пайдаланушылармен жарияланады және олардың жеке пікірін білдіреді. Платформа жалған ақпаратты жоюға құқылы.", en: "BalaBagdar is not responsible for any damage arising from the use of information from the platform. All reviews and ratings are published by users and reflect their personal opinion. The platform reserves the right to remove false information." },
+  "legal.footer": { ru: "Казахстан", kz: "Қазақстан", en: "Kazakhstan" },
+
+  // Profile extras
+  "profile.menu": { ru: "Меню", kz: "Мәзір", en: "Menu" },
+  "profile.legal": { ru: "Правовые условия", kz: "Заңды шарттар", en: "Legal terms" },
+  "profile.contact_us_title": { ru: "Связаться с нами", kz: "Бізбен байланысу", en: "Contact us" },
+  "contact.title": { ru: "Связаться с нами", kz: "Бізбен байланысу", en: "Contact us" },
+  "contact.desc": { ru: "Напишите нам — мы ответим в течение дня", kz: "Бізге жазыңыз — біз бір күн ішінде жауап береміз", en: "Write to us — we'll reply within a day" },
+  "contact.telegram": { ru: "Написать в Telegram", kz: "Telegram-ға жазу", en: "Write on Telegram" },
+  "contact.whatsapp": { ru: "Написать в WhatsApp", kz: "WhatsApp-қа жазу", en: "Write on WhatsApp" },
+  "contact.email": { ru: "Написать на Email", kz: "Email-ге жазу", en: "Send an Email" },
+
+  // 2GIS
+  "club.gis": { ru: "2GIS", kz: "2GIS", en: "2GIS" },
+  "club.instagram_link": { ru: "Instagram", kz: "Instagram", en: "Instagram" },
+  "edit.gis_url": { ru: "Ссылка на 2GIS", kz: "2GIS сілтемесі", en: "2GIS link" },
+  "edit.instagram": { ru: "Instagram (@username)", kz: "Instagram (@username)", en: "Instagram (@username)" },
+
   // News
   "news.today_in": { ru: "Сегодня в", kz: "Бүгін", en: "Today in" },
   "news.title": { ru: "Новости\nгорода", kz: "Қала\nжаңалықтары", en: "City\nnews" },

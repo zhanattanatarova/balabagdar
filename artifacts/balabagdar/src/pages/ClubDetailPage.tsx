@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Star, MapPin, Phone, MessageCircle, Calendar, Clock, Loader2 } from "lucide-react";
+import { ArrowLeft, Star, MapPin, Phone, MessageCircle, Calendar, Clock, Loader2, ExternalLink } from "lucide-react";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
@@ -136,8 +136,15 @@ const ClubDetailPage = () => {
           )}
           {club.instagram && (
             <a href={`https://instagram.com/${club.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-pink-soft font-bold text-sm">
-              📸 Instagram
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm"
+              style={{ background: "linear-gradient(135deg, #f58529, #dd2a7b, #515bd4)", color: "white" }}>
+              📸 {t("club.instagram_link")}
+            </a>
+          )}
+          {(club.gisUrl || club.gis_url) && (
+            <a href={club.gisUrl || club.gis_url} target="_blank" rel="noopener noreferrer"
+              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-50 border-2 border-emerald-200 font-bold text-sm text-emerald-700">
+              <ExternalLink size={16} /> {t("club.gis")}
             </a>
           )}
         </div>
