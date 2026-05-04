@@ -130,7 +130,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full mt-2 py-2 text-xs font-bold text-primary hover:underline"
                 >
-                  <ExternalLink size={13} />
+                  <MessageCircle size={13} />
                   Привязать Telegram к номеру → @{TELEGRAM_BOT}
                 </a>
                 <button
