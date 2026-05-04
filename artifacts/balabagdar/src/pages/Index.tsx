@@ -11,9 +11,10 @@ import ClubEditPage from "./ClubEditPage";
 import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
-  const [showSplash, setShowSplash] = useState(true);
-  const [city, setCity] = useState("Астана");
   const location = useLocation();
+  const isHome = location.pathname === "/" || location.pathname === "";
+  const [showSplash, setShowSplash] = useState(isHome);
+  const [city, setCity] = useState("Астана");
 
   const handleSplashComplete = useCallback(() => {
     setShowSplash(false);
@@ -21,7 +22,7 @@ const Index = () => {
 
   const renderPage = () => {
     switch (location.pathname) {
-      case "/map": return <MapPage />;
+      case "/map": return <MapPage city={city} />;
       case "/news": return <NewsPage city={city} />;
       case "/profile": return <ProfilePage />;
       case "/notifications": return <NotificationsPage />;
