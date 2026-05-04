@@ -31,9 +31,10 @@ router.post("/send-code", async (req, res) => {
       used: "false",
     });
 
-    req.log.info({ phone, code }, "Verification code generated");
+    req.log.info({ phone }, "Verification code generated");
 
-    return res.json({ success: true, dev_code: code });
+    const isDev = process.env.NODE_ENV !== "production";
+    return res.json({ success: true, ...(isDev ? { dev_code: code } : {}) });
   } catch (err) {
     req.log.error({ err }, "Failed to send code");
     return res.status(500).json({ error: "Failed to send code" });

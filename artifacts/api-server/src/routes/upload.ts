@@ -34,7 +34,6 @@ router.post("/", upload.single("file"), async (req, res) => {
 
     const uploadUrl = await storageService.getObjectEntityUploadURL();
 
-    const fetch = (await import("node-fetch")).default as any;
     const response = await fetch(uploadUrl, {
       method: "PUT",
       body: file.buffer,
