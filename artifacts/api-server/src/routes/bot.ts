@@ -43,6 +43,14 @@ async function sendPendingCode(chatId: string, phone: string) {
 
 router.post("/webhook", async (req, res) => {
   try {
+    const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+    if (webhookSecret) {
+      const incoming = req.headers["x-telegram-bot-api-secret-token"];
+      if (incoming !== webhookSecret) {
+        return res.status(401).json({ ok: false });
+      }
+    }
+
     const update = req.body;
     const message = update?.message;
     if (!message) return res.json({ ok: true });
