@@ -652,6 +652,14 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
               </div>
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
+              {!citySearch && (
+                <button onClick={() => { setCity(""); setShowCityPicker(false); setCitySearch(""); }}
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${city === "" ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}>
+                  <MapPin size={16} className={city === "" ? "text-primary" : "text-muted-foreground"} />
+                  <span className={`text-sm ${city === "" ? "font-black text-foreground" : "font-bold"}`}>{t("common.all_cities")}</span>
+                  {city === "" && <Check size={16} className="text-primary ml-auto" />}
+                </button>
+              )}
               {filteredCities.map((c) => (
                 <button key={c} onClick={() => { setCity(c); setShowCityPicker(false); setCitySearch(""); }}
                   className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}>
@@ -673,7 +681,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           <button onClick={() => setShowCityPicker(true)}
             className="flex items-center gap-1.5 font-black text-lg px-4 py-2 rounded-full border-[3px]"
             style={{ background: "hsl(145, 85%, 38%)", color: "white", borderColor: "hsl(145, 90%, 28% / 0.5)" }}>
-            <BrandLogo size="sm" />{city}<ChevronDown size={18} className="text-primary-foreground" />
+            <BrandLogo size="sm" />{city || t("common.all_cities")}<ChevronDown size={18} className="text-primary-foreground" />
           </button>
         </div>
         <div className="relative">

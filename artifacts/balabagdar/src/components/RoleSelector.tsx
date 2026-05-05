@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Users, Building2, Loader2, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
+import { useNavigate } from "react-router-dom";
 import BrandLogo from "@/components/BrandLogo";
 
 interface RoleSelectorProps {
@@ -11,6 +12,7 @@ interface RoleSelectorProps {
 const RoleSelector = ({ onComplete }: RoleSelectorProps) => {
   const { t } = useLanguage();
   const { assignRole } = useUserRole();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +22,12 @@ const RoleSelector = ({ onComplete }: RoleSelectorProps) => {
     const err = await assignRole(role);
     setLoading(false);
     if (!err) {
-      onComplete();
+      if (role === "club_owner") {
+        onComplete();
+        navigate("/club/edit");
+      } else {
+        onComplete();
+      }
     } else {
       setError(err);
     }

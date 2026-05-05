@@ -318,6 +318,7 @@ export const translations = {
 
   // Common
   "common.search_city": { ru: "Поиск города...", kz: "Қала іздеу...", en: "Search city..." },
+  "common.all_cities": { ru: "Все города", kz: "Барлық қалалар", en: "All cities" },
   "common.back": { ru: "Назад", kz: "Артқа", en: "Back" },
   "common.cancel": { ru: "Отмена", kz: "Болдырмау", en: "Cancel" },
   "common.error": { ru: "Ошибка", kz: "Қате", en: "Error" },

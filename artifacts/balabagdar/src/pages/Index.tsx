@@ -14,7 +14,7 @@ const Index = () => {
   const location = useLocation();
   const isHome = location.pathname === "/" || location.pathname === "";
   const [showSplash, setShowSplash] = useState(isHome);
-  const [city, setCity] = useState("Астана");
+  const [city, setCity] = useState("");
 
   const handleSplashComplete = useCallback(() => {
     setShowSplash(false);
