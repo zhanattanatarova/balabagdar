@@ -1,11 +1,11 @@
-import { Router } from "express";
+import { Router, Request } from "express";
 import { db } from "@workspace/db";
 import { clubsTable, clubSchedulesTable, userSessionsTable } from "@workspace/db";
-import { eq, and, ilike, or, desc, gt } from "drizzle-orm";
+import { eq, and, desc, gt } from "drizzle-orm";
 
 const router = Router();
 
-async function getSession(req: any) {
+async function getSession(req: Request) {
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (!token) return null;
   const now = new Date();
@@ -19,11 +19,7 @@ async function getSession(req: any) {
 
 router.get("/", async (req, res) => {
   try {
-    const { city, category, search, limit = "50" } = req.query as Record<string, string>;
-
-    let query = db.select().from(clubsTable).where(eq(clubsTable.isActive, true)) as any;
-
-    if (city) query = query.where(and(eq(clubsTable.isActive, true), eq(clubsTable.city, city)));
+    const { city, category, subcategory, search, limit = "50" } = req.query as Record<string, string>;
 
     const clubs = await db
       .select()
@@ -31,8 +27,6 @@ router.get("/", async (req, res) => {
       .where(eq(clubsTable.isActive, true))
       .orderBy(desc(clubsTable.rating))
       .limit(parseInt(limit) || 50);
-
-    const { subcategory } = req.query as Record<string, string>;
     let filtered = clubs;
     if (city) filtered = filtered.filter((c) => c.city === city);
     if (category) filtered = filtered.filter((c) => c.category === category);

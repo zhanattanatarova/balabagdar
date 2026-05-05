@@ -41,7 +41,7 @@ async function sendTelegramOtp(phone: string, code: string): Promise<boolean> {
         }),
       }
     );
-    const data = await resp.json() as any;
+    const data = await resp.json() as { ok: boolean };
     return data.ok === true;
   } catch {
     return false;
