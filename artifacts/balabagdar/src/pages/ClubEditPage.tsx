@@ -148,6 +148,7 @@ const ClubEditPage = () => {
     phone: "",
     whatsapp: "",
     telegram: "",
+    instagram: "",
     gis_url: "",
     age_min: 3,
     age_max: 18,
@@ -179,6 +180,7 @@ const ClubEditPage = () => {
             phone: c.phone || "",
             whatsapp: c.whatsapp || "",
             telegram: c.telegram || "",
+            instagram: c.instagram || "",
             gis_url: c.gisUrl || c.gis_url || "",
             age_min: c.ageMin ?? c.age_min ?? 3,
             age_max: c.ageMax ?? c.age_max ?? 18,
@@ -527,6 +529,10 @@ const ClubEditPage = () => {
           <div>
             <label className={labelCls}>✈️ Telegram</label>
             <input value={form.telegram} onChange={(e) => update("telegram", e.target.value)} placeholder="@username" className={inputCls} />
+          </div>
+          <div>
+            <label className={labelCls}>📸 Instagram</label>
+            <input value={form.instagram} onChange={(e) => update("instagram", e.target.value)} placeholder="@username" className={inputCls} />
           </div>
           <div>
             <label className={labelCls}>💰 {t("edit.price")} (₸/мес)</label>
