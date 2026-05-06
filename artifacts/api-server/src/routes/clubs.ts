@@ -5,6 +5,40 @@ import { eq, and, desc, gt, sql } from "drizzle-orm";
 
 const router = Router();
 
+interface ScheduleInput {
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  max_slots?: number;
+}
+
+interface ClubBodyInput {
+  name_ru?: string;
+  name_kz?: string;
+  name_en?: string;
+  description_ru?: string;
+  description_kz?: string;
+  description_en?: string;
+  category?: string;
+  subcategory?: string;
+  city?: string;
+  address?: string;
+  phone?: string;
+  whatsapp?: string;
+  telegram?: string;
+  instagram?: string;
+  gis_url?: string;
+  age_min?: number;
+  age_max?: number;
+  price_from?: number;
+  price_currency?: string;
+  avatar_url?: string;
+  gallery?: string[];
+  instructor?: string;
+  teaching_languages?: string[];
+  schedules?: ScheduleInput[];
+}
+
 async function getSession(req: Request) {
   const token = req.headers.authorization?.replace("Bearer ", "");
   if (!token) return null;
@@ -14,7 +48,7 @@ async function getSession(req: Request) {
     .from(userSessionsTable)
     .where(and(eq(userSessionsTable.token, token), gt(userSessionsTable.expiresAt, now)))
     .limit(1)
-    .then((rows) => rows[0] || null);
+    .then((rows) => rows[0] ?? null);
 }
 
 router.get("/", async (req, res) => {
@@ -67,7 +101,7 @@ router.get("/my", async (req, res) => {
       .where(eq(clubsTable.userId, session.userId))
       .limit(1);
 
-    return res.json(clubs[0] || null);
+    return res.json(clubs[0] ?? null);
   } catch (err) {
     req.log.error({ err }, "Failed to get my club");
     return res.status(500).json({ error: "Internal error" });
@@ -81,7 +115,7 @@ router.get("/:id", async (req, res) => {
       .from(clubsTable)
       .where(eq(clubsTable.id, req.params.id))
       .limit(1)
-      .then((rows) => rows[0] || null);
+      .then((rows) => rows[0] ?? null);
 
     if (!club) return res.status(404).json({ error: "Club not found" });
 
@@ -103,16 +137,24 @@ router.post("/", async (req, res) => {
     const session = await getSession(req);
     if (!session) return res.status(401).json({ error: "Unauthorized" });
 
-    const { schedules, ...clubData } = req.body;
+    const { schedules, ...clubData } = req.body as ClubBodyInput & { schedules?: ScheduleInput[] };
 
-    const payload: any = {
+    const nameRu = clubData.name_ru?.trim() || null;
+    const nameKz = clubData.name_kz?.trim() || null;
+    const nameEn = clubData.name_en?.trim() || null;
+
+    if (!nameRu && !nameKz && !nameEn) {
+      return res.status(400).json({ error: "Club name is required in at least one language" });
+    }
+
+    const payload = {
       userId: session.userId,
-      nameRu: clubData.name_ru || null,
-      nameKz: clubData.name_kz || null,
-      nameEn: clubData.name_en || null,
-      descriptionRu: clubData.description_ru || null,
-      descriptionKz: clubData.description_kz || null,
-      descriptionEn: clubData.description_en || null,
+      nameRu,
+      nameKz,
+      nameEn,
+      descriptionRu: clubData.description_ru?.trim() || null,
+      descriptionKz: clubData.description_kz?.trim() || null,
+      descriptionEn: clubData.description_en?.trim() || null,
       category: clubData.category || "other",
       subcategory: clubData.subcategory || null,
       city: clubData.city || "Астана",
@@ -130,31 +172,22 @@ router.post("/", async (req, res) => {
       gallery: clubData.gallery || [],
     };
 
-    // Validate that at least one name is provided
-    if (!payload.nameRu && !payload.nameKz && !payload.nameEn) {
-      return res.status(400).json({ error: "Club name is required" });
-    }
-
-    // Use drizzle for main fields, then patch extra columns via raw SQL
     const inserted = await db.insert(clubsTable).values(payload).returning();
     const club = inserted[0];
 
-    // Patch instructor + teaching_languages via raw SQL (not in drizzle schema yet)
-    if (clubData.instructor !== undefined || clubData.teaching_languages !== undefined) {
-      const instructor = clubData.instructor || null;
-      const tlangs = JSON.stringify(clubData.teaching_languages || []);
-      const cid = club.id;
-      await db.execute(sql`UPDATE clubs SET instructor = ${instructor}, teaching_languages = ${tlangs}::json WHERE id = ${cid}`);
-    }
+    // Patch instructor + teaching_languages (columns added via ALTER TABLE, not in drizzle schema)
+    const instructor = clubData.instructor ?? null;
+    const tlangs = JSON.stringify(clubData.teaching_languages ?? []);
+    await db.execute(sql`UPDATE clubs SET instructor = ${instructor}, teaching_languages = ${tlangs}::json WHERE id = ${club.id}`);
 
     if (schedules && schedules.length > 0) {
       await db.insert(clubSchedulesTable).values(
-        schedules.map((s: any) => ({
+        schedules.map((s) => ({
           clubId: club.id,
           dayOfWeek: s.day_of_week,
           startTime: s.start_time,
           endTime: s.end_time,
-          maxSlots: s.max_slots || 10,
+          maxSlots: s.max_slots ?? 10,
         }))
       );
     }
@@ -176,19 +209,19 @@ router.put("/:id", async (req, res) => {
       .from(clubsTable)
       .where(and(eq(clubsTable.id, req.params.id), eq(clubsTable.userId, session.userId)))
       .limit(1)
-      .then((rows) => rows[0] || null);
+      .then((rows) => rows[0] ?? null);
 
     if (!existing) return res.status(404).json({ error: "Club not found" });
 
-    const { schedules, ...clubData } = req.body;
+    const { schedules, ...clubData } = req.body as ClubBodyInput & { schedules?: ScheduleInput[] };
 
-    const payload: any = {
-      nameRu: clubData.name_ru || null,
-      nameKz: clubData.name_kz || null,
-      nameEn: clubData.name_en || null,
-      descriptionRu: clubData.description_ru || null,
-      descriptionKz: clubData.description_kz || null,
-      descriptionEn: clubData.description_en || null,
+    const payload = {
+      nameRu: clubData.name_ru?.trim() || null,
+      nameKz: clubData.name_kz?.trim() || null,
+      nameEn: clubData.name_en?.trim() || null,
+      descriptionRu: clubData.description_ru?.trim() || null,
+      descriptionKz: clubData.description_kz?.trim() || null,
+      descriptionEn: clubData.description_en?.trim() || null,
       category: clubData.category || "other",
       subcategory: clubData.subcategory || null,
       city: clubData.city || "Астана",
@@ -209,22 +242,22 @@ router.put("/:id", async (req, res) => {
 
     await db.update(clubsTable).set(payload).where(eq(clubsTable.id, req.params.id));
 
-    // Patch instructor + teaching_languages via raw SQL
-    const instructor2 = clubData.instructor || null;
-    const tlangs2 = JSON.stringify(clubData.teaching_languages || []);
-    const pid = req.params.id;
-    await db.execute(sql`UPDATE clubs SET instructor = ${instructor2}, teaching_languages = ${tlangs2}::json WHERE id = ${pid}`);
+    // Patch instructor + teaching_languages (columns added via ALTER TABLE, not in drizzle schema)
+    const instructor = clubData.instructor ?? null;
+    const tlangs = JSON.stringify(clubData.teaching_languages ?? []);
+    const clubId = req.params.id;
+    await db.execute(sql`UPDATE clubs SET instructor = ${instructor}, teaching_languages = ${tlangs}::json WHERE id = ${clubId}`);
 
     await db.delete(clubSchedulesTable).where(eq(clubSchedulesTable.clubId, req.params.id));
 
     if (schedules && schedules.length > 0) {
       await db.insert(clubSchedulesTable).values(
-        schedules.map((s: any) => ({
+        schedules.map((s) => ({
           clubId: req.params.id,
           dayOfWeek: s.day_of_week,
           startTime: s.start_time,
           endTime: s.end_time,
-          maxSlots: s.max_slots || 10,
+          maxSlots: s.max_slots ?? 10,
         }))
       );
     }
@@ -246,6 +279,7 @@ router.get("/:id/schedules", async (req, res) => {
 
     return res.json(schedules);
   } catch (err) {
+    req.log.error({ err }, "Failed to get schedules");
     return res.status(500).json({ error: "Internal error" });
   }
 });
