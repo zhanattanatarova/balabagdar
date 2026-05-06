@@ -1,7 +1,7 @@
 import { Router, Request } from "express";
 import { db } from "@workspace/db";
 import { clubsTable, clubSchedulesTable, userSessionsTable } from "@workspace/db";
-import { eq, and, desc, gt } from "drizzle-orm";
+import { eq, and, desc, gt, sql } from "drizzle-orm";
 
 const router = Router();
 
@@ -19,7 +19,7 @@ async function getSession(req: Request) {
 
 router.get("/", async (req, res) => {
   try {
-    const { city, category, subcategory, search, limit = "50" } = req.query as Record<string, string>;
+    const { city, category, subcategory, search, age, limit = "50" } = req.query as Record<string, string>;
 
     const clubs = await db
       .select()
@@ -27,10 +27,17 @@ router.get("/", async (req, res) => {
       .where(eq(clubsTable.isActive, true))
       .orderBy(desc(clubsTable.rating))
       .limit(parseInt(limit) || 50);
+
     let filtered = clubs;
     if (city) filtered = filtered.filter((c) => c.city === city);
     if (category) filtered = filtered.filter((c) => c.category === category);
     if (subcategory) filtered = filtered.filter((c) => c.subcategory === subcategory);
+    if (age) {
+      const a = parseInt(age);
+      if (!isNaN(a)) {
+        filtered = filtered.filter((c) => (c.ageMin ?? 0) <= a && (c.ageMax ?? 99) >= a);
+      }
+    }
     if (search) {
       const s = search.toLowerCase();
       filtered = filtered.filter(
@@ -98,9 +105,9 @@ router.post("/", async (req, res) => {
 
     const { schedules, ...clubData } = req.body;
 
-    const payload = {
+    const payload: any = {
       userId: session.userId,
-      nameRu: clubData.name_ru,
+      nameRu: clubData.name_ru || null,
       nameKz: clubData.name_kz || null,
       nameEn: clubData.name_en || null,
       descriptionRu: clubData.description_ru || null,
@@ -123,8 +130,22 @@ router.post("/", async (req, res) => {
       gallery: clubData.gallery || [],
     };
 
+    // Validate that at least one name is provided
+    if (!payload.nameRu && !payload.nameKz && !payload.nameEn) {
+      return res.status(400).json({ error: "Club name is required" });
+    }
+
+    // Use drizzle for main fields, then patch extra columns via raw SQL
     const inserted = await db.insert(clubsTable).values(payload).returning();
     const club = inserted[0];
+
+    // Patch instructor + teaching_languages via raw SQL (not in drizzle schema yet)
+    if (clubData.instructor !== undefined || clubData.teaching_languages !== undefined) {
+      const instructor = clubData.instructor || null;
+      const tlangs = JSON.stringify(clubData.teaching_languages || []);
+      const cid = club.id;
+      await db.execute(sql`UPDATE clubs SET instructor = ${instructor}, teaching_languages = ${tlangs}::json WHERE id = ${cid}`);
+    }
 
     if (schedules && schedules.length > 0) {
       await db.insert(clubSchedulesTable).values(
@@ -161,8 +182,8 @@ router.put("/:id", async (req, res) => {
 
     const { schedules, ...clubData } = req.body;
 
-    const payload = {
-      nameRu: clubData.name_ru,
+    const payload: any = {
+      nameRu: clubData.name_ru || null,
       nameKz: clubData.name_kz || null,
       nameEn: clubData.name_en || null,
       descriptionRu: clubData.description_ru || null,
@@ -187,6 +208,12 @@ router.put("/:id", async (req, res) => {
     };
 
     await db.update(clubsTable).set(payload).where(eq(clubsTable.id, req.params.id));
+
+    // Patch instructor + teaching_languages via raw SQL
+    const instructor2 = clubData.instructor || null;
+    const tlangs2 = JSON.stringify(clubData.teaching_languages || []);
+    const pid = req.params.id;
+    await db.execute(sql`UPDATE clubs SET instructor = ${instructor2}, teaching_languages = ${tlangs2}::json WHERE id = ${pid}`);
 
     await db.delete(clubSchedulesTable).where(eq(clubSchedulesTable.clubId, req.params.id));
 

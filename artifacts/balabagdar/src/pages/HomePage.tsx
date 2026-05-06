@@ -232,6 +232,14 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
+  const [selectedAge, setSelectedAge] = useState<string | null>(null);
+
+  const AGE_FILTERS = [
+    { label: "0–3", age: "2" },
+    { label: "3–7", age: "5" },
+    { label: "7–12", age: "9" },
+    { label: "12+", age: "14" },
+  ];
 
   useEffect(() => {
     const fetchClubs = async () => {
@@ -240,6 +248,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         const params: Record<string, string> = { city };
         if (selectedCategory) params.category = selectedCategory;
         if (searchQuery.trim()) params.search = searchQuery.trim();
+        if (selectedAge) params.age = selectedAge;
 
         // Pass subcategory as API param for proper DB-level filtering
         const getSubcategory = () => {
@@ -265,7 +274,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery, selectedAge]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
@@ -696,6 +705,30 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       <div className="mx-4 mt-4 p-4 rounded-2xl bg-secondary/10 border-2 border-secondary/30">
         <h3 className="font-black text-sm">{t("home.free_banner_title")}</h3>
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{t("home.free_banner_text")}</p>
+      </div>
+
+      {/* Age filter */}
+      <div className="px-4 mt-4">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-black text-muted-foreground shrink-0">👶 Возраст:</span>
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-none">
+            <button
+              onClick={() => setSelectedAge(null)}
+              className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-black border-2 transition-all ${!selectedAge ? "border-primary bg-primary/10 text-primary" : "border-border bg-muted text-muted-foreground"}`}
+            >
+              Любой
+            </button>
+            {AGE_FILTERS.map((f) => (
+              <button
+                key={f.label}
+                onClick={() => setSelectedAge(selectedAge === f.age ? null : f.age)}
+                className={`shrink-0 px-3 py-1.5 rounded-xl text-xs font-black border-2 transition-all ${selectedAge === f.age ? "border-primary bg-primary/10 text-primary" : "border-border bg-muted text-muted-foreground"}`}
+              >
+                {f.label} лет
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Categories */}
