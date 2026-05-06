@@ -27,6 +27,8 @@ export const clubsTable = pgTable("clubs", {
   priceCurrency: text("price_currency").default("₸"),
   avatarUrl: text("avatar_url"),
   gallery: json("gallery").$type<string[]>().default([]),
+  instructor: text("instructor"),
+  teachingLanguages: json("teaching_languages").$type<string[]>().default([]),
   rating: real("rating"),
   reviewsCount: integer("reviews_count").default(0),
   isActive: boolean("is_active").default(true),

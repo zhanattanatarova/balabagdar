@@ -1,7 +1,7 @@
 import { Router, Request } from "express";
 import { db } from "@workspace/db";
 import { clubsTable, clubSchedulesTable, userSessionsTable } from "@workspace/db";
-import { eq, and, desc, gt, sql } from "drizzle-orm";
+import { eq, and, desc, gt } from "drizzle-orm";
 
 const router = Router();
 
@@ -170,15 +170,12 @@ router.post("/", async (req, res) => {
       priceCurrency: clubData.price_currency || "₸",
       avatarUrl: clubData.avatar_url || null,
       gallery: clubData.gallery || [],
+      instructor: clubData.instructor || null,
+      teachingLanguages: clubData.teaching_languages || [],
     };
 
     const inserted = await db.insert(clubsTable).values(payload).returning();
     const club = inserted[0];
-
-    // Patch instructor + teaching_languages (columns added via ALTER TABLE, not in drizzle schema)
-    const instructor = clubData.instructor ?? null;
-    const tlangs = JSON.stringify(clubData.teaching_languages ?? []);
-    await db.execute(sql`UPDATE clubs SET instructor = ${instructor}, teaching_languages = ${tlangs}::json WHERE id = ${club.id}`);
 
     if (schedules && schedules.length > 0) {
       await db.insert(clubSchedulesTable).values(
@@ -237,16 +234,12 @@ router.put("/:id", async (req, res) => {
       priceCurrency: clubData.price_currency || "₸",
       avatarUrl: clubData.avatar_url || null,
       gallery: clubData.gallery || [],
+      instructor: clubData.instructor || null,
+      teachingLanguages: clubData.teaching_languages || [],
       updatedAt: new Date(),
     };
 
     await db.update(clubsTable).set(payload).where(eq(clubsTable.id, req.params.id));
-
-    // Patch instructor + teaching_languages (columns added via ALTER TABLE, not in drizzle schema)
-    const instructor = clubData.instructor ?? null;
-    const tlangs = JSON.stringify(clubData.teaching_languages ?? []);
-    const clubId = req.params.id;
-    await db.execute(sql`UPDATE clubs SET instructor = ${instructor}, teaching_languages = ${tlangs}::json WHERE id = ${clubId}`);
 
     await db.delete(clubSchedulesTable).where(eq(clubSchedulesTable.clubId, req.params.id));
 
