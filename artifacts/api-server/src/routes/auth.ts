@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request } from "express";
 import { db } from "@workspace/db";
 import { usersTable, userRolesTable, userSessionsTable, phoneCodesTable, telegramLinksTable } from "@workspace/db";
 import { eq, and, gt } from "drizzle-orm";
@@ -12,6 +12,29 @@ function generateCode(): string {
 
 function generateToken(): string {
   return crypto.randomBytes(32).toString("hex");
+}
+
+async function hashPassword(password: string): Promise<string> {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = await new Promise<Buffer>((resolve, reject) => {
+    crypto.scrypt(password, salt, 64, (err, key) => {
+      if (err) reject(err);
+      else resolve(key);
+    });
+  });
+  return `${salt}:${hash.toString("hex")}`;
+}
+
+async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  const [salt, hash] = stored.split(":");
+  if (!salt || !hash) return false;
+  const derivedHash = await new Promise<Buffer>((resolve, reject) => {
+    crypto.scrypt(password, salt, 64, (err, key) => {
+      if (err) reject(err);
+      else resolve(key);
+    });
+  });
+  return crypto.timingSafeEqual(Buffer.from(hash, "hex"), derivedHash);
 }
 
 async function sendTelegramOtp(phone: string, code: string): Promise<boolean> {
@@ -34,11 +57,7 @@ async function sendTelegramOtp(phone: string, code: string): Promise<boolean> {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: link.chatId,
-          text,
-          parse_mode: "Markdown",
-        }),
+        body: JSON.stringify({ chat_id: link.chatId, text, parse_mode: "Markdown" }),
       }
     );
     const data = await resp.json() as { ok: boolean };
@@ -48,9 +67,176 @@ async function sendTelegramOtp(phone: string, code: string): Promise<boolean> {
   }
 }
 
+async function createSession(userId: string) {
+  const token = generateToken();
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  await db.insert(userSessionsTable).values({ userId, token, expiresAt });
+  return token;
+}
+
+async function getSessionUser(req: Request) {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (!token) return null;
+  const now = new Date();
+  const session = await db
+    .select()
+    .from(userSessionsTable)
+    .where(and(eq(userSessionsTable.token, token), gt(userSessionsTable.expiresAt, now)))
+    .limit(1)
+    .then((rows) => rows[0] || null);
+  if (!session) return null;
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, session.userId))
+    .limit(1)
+    .then((rows) => rows[0] || null);
+  return user;
+}
+
+async function getUserRole(userId: string) {
+  const roleRecord = await db
+    .select()
+    .from(userRolesTable)
+    .where(eq(userRolesTable.userId, userId))
+    .limit(1)
+    .then((rows) => rows[0] || null);
+  return roleRecord?.role || null;
+}
+
+function serializeUser(user: { id: string; phone: string | null; email: string | null; displayName: string | null; firstName: string | null; lastName: string | null }) {
+  return {
+    id: user.id,
+    phone: user.phone,
+    email: user.email,
+    displayName: user.displayName,
+    firstName: user.firstName,
+    lastName: user.lastName,
+  };
+}
+
+// ─── Email registration ───────────────────────────────────────────────────────
+
+router.post("/register-email", async (req, res) => {
+  try {
+    const { email, password } = req.body as { email: string; password: string };
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email и пароль обязательны" });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: "Некорректный email" });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Пароль должен быть не менее 6 символов" });
+    }
+
+    const existing = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email.toLowerCase()))
+      .limit(1)
+      .then((rows) => rows[0] || null);
+
+    if (existing) {
+      return res.status(409).json({ error: "Email уже зарегистрирован" });
+    }
+
+    const passwordHash = await hashPassword(password);
+    const inserted = await db
+      .insert(usersTable)
+      .values({ email: email.toLowerCase(), passwordHash })
+      .returning();
+    const user = inserted[0];
+
+    const token = await createSession(user.id);
+    return res.json({ success: true, token, user: serializeUser(user), role: null });
+  } catch (err) {
+    req.log.error({ err }, "Failed to register with email");
+    return res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
+// ─── Email login ──────────────────────────────────────────────────────────────
+
+router.post("/login-email", async (req, res) => {
+  try {
+    const { email, password } = req.body as { email: string; password: string };
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email и пароль обязательны" });
+    }
+
+    const user = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email.toLowerCase()))
+      .limit(1)
+      .then((rows) => rows[0] || null);
+
+    if (!user || !user.passwordHash) {
+      return res.status(401).json({ error: "Неверный email или пароль" });
+    }
+
+    const ok = await verifyPassword(password, user.passwordHash);
+    if (!ok) {
+      return res.status(401).json({ error: "Неверный email или пароль" });
+    }
+
+    const token = await createSession(user.id);
+    const role = await getUserRole(user.id);
+    return res.json({ success: true, token, user: serializeUser(user), role });
+  } catch (err) {
+    req.log.error({ err }, "Failed to login with email");
+    return res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
+// ─── Set credentials (after Telegram login) ───────────────────────────────────
+
+router.put("/set-credentials", async (req, res) => {
+  try {
+    const user = await getSessionUser(req);
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    const { email, password } = req.body as { email: string; password: string };
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email и пароль обязательны" });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: "Некорректный email" });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Пароль должен быть не менее 6 символов" });
+    }
+
+    const emailTaken = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email.toLowerCase()))
+      .limit(1)
+      .then((rows) => rows[0] || null);
+
+    if (emailTaken && emailTaken.id !== user.id) {
+      return res.status(409).json({ error: "Email уже занят другим аккаунтом" });
+    }
+
+    const passwordHash = await hashPassword(password);
+    await db
+      .update(usersTable)
+      .set({ email: email.toLowerCase(), passwordHash, updatedAt: new Date() })
+      .where(eq(usersTable.id, user.id));
+
+    return res.json({ success: true });
+  } catch (err) {
+    req.log.error({ err }, "Failed to set credentials");
+    return res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
+// ─── Phone OTP ────────────────────────────────────────────────────────────────
+
 router.post("/send-code", async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { phone } = req.body as { phone: string };
     if (!phone || phone.length < 10) {
       return res.status(400).json({ error: "Invalid phone number" });
     }
@@ -58,12 +244,7 @@ router.post("/send-code", async (req, res) => {
     const code = generateCode();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    await db.insert(phoneCodesTable).values({
-      phone,
-      code,
-      expiresAt,
-      used: "false",
-    });
+    await db.insert(phoneCodesTable).values({ phone, code, expiresAt, used: "false" });
 
     const sent = await sendTelegramOtp(phone, code);
 
@@ -75,16 +256,10 @@ router.post("/send-code", async (req, res) => {
     if (sent) {
       return res.json({ success: true, channel: "telegram" });
     }
-
     if (isDev) {
       return res.json({ success: true, dev_code: code, channel: "dev", deepLink });
     }
-
-    return res.json({
-      success: true,
-      channel: "none",
-      deepLink,
-    });
+    return res.json({ success: true, channel: "none", deepLink });
   } catch (err) {
     req.log.error({ err }, "Failed to send code");
     return res.status(500).json({ error: "Failed to send code" });
@@ -93,7 +268,7 @@ router.post("/send-code", async (req, res) => {
 
 router.post("/verify-code", async (req, res) => {
   try {
-    const { phone, code } = req.body;
+    const { phone, code } = req.body as { phone: string; code: string };
     if (!phone || !code) {
       return res.status(400).json({ error: "Phone and code are required" });
     }
@@ -129,52 +304,26 @@ router.post("/verify-code", async (req, res) => {
       .then((rows) => rows[0] || null);
 
     if (!user) {
-      const inserted = await db
-        .insert(usersTable)
-        .values({ phone })
-        .returning();
+      const inserted = await db.insert(usersTable).values({ phone }).returning();
       user = inserted[0];
     }
 
-    const token = generateToken();
-    const sessionExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const token = await createSession(user.id);
+    const role = await getUserRole(user.id);
 
-    await db.insert(userSessionsTable).values({
-      userId: user.id,
-      token,
-      expiresAt: sessionExpiresAt,
-    });
-
-    const roleRecord = await db
-      .select()
-      .from(userRolesTable)
-      .where(eq(userRolesTable.userId, user.id))
-      .limit(1)
-      .then((rows) => rows[0] || null);
-
-    return res.json({
-      success: true,
-      token,
-      user: {
-        id: user.id,
-        phone: user.phone,
-        displayName: user.displayName,
-      },
-      role: roleRecord?.role || null,
-    });
+    return res.json({ success: true, token, user: serializeUser(user), role });
   } catch (err) {
     req.log.error({ err }, "Failed to verify code");
     return res.status(500).json({ error: "Failed to verify code" });
   }
 });
 
+// ─── Me / Profile / Role / Signout ───────────────────────────────────────────
+
 router.get("/me", async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.replace("Bearer ", "");
-    if (!token) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    const token = req.headers.authorization?.replace("Bearer ", "");
+    if (!token) return res.status(401).json({ error: "Unauthorized" });
 
     const now = new Date();
     const session = await db
@@ -184,9 +333,7 @@ router.get("/me", async (req, res) => {
       .limit(1)
       .then((rows) => rows[0] || null);
 
-    if (!session) {
-      return res.status(401).json({ error: "Invalid or expired session" });
-    }
+    if (!session) return res.status(401).json({ error: "Invalid or expired session" });
 
     const user = await db
       .select()
@@ -195,27 +342,10 @@ router.get("/me", async (req, res) => {
       .limit(1)
       .then((rows) => rows[0] || null);
 
-    if (!user) {
-      return res.status(401).json({ error: "User not found" });
-    }
+    if (!user) return res.status(401).json({ error: "User not found" });
 
-    const roleRecord = await db
-      .select()
-      .from(userRolesTable)
-      .where(eq(userRolesTable.userId, user.id))
-      .limit(1)
-      .then((rows) => rows[0] || null);
-
-    return res.json({
-      user: {
-        id: user.id,
-        phone: user.phone,
-        displayName: user.displayName,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-      role: roleRecord?.role || null,
-    });
+    const role = await getUserRole(user.id);
+    return res.json({ user: serializeUser(user), role });
   } catch (err) {
     req.log.error({ err }, "Failed to get me");
     return res.status(500).json({ error: "Internal error" });
@@ -224,8 +354,7 @@ router.get("/me", async (req, res) => {
 
 router.post("/assign-role", async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.replace("Bearer ", "");
+    const token = req.headers.authorization?.replace("Bearer ", "");
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
     const now = new Date();
@@ -238,7 +367,7 @@ router.post("/assign-role", async (req, res) => {
 
     if (!session) return res.status(401).json({ error: "Unauthorized" });
 
-    const { role } = req.body;
+    const { role } = req.body as { role: string };
     if (!role || !["parent", "club_owner"].includes(role)) {
       return res.status(400).json({ error: "Invalid role" });
     }
@@ -250,11 +379,9 @@ router.post("/assign-role", async (req, res) => {
       .limit(1)
       .then((rows) => rows[0] || null);
 
-    if (existing) {
-      return res.json({ role: existing.role });
-    }
+    if (existing) return res.json({ role: existing.role });
 
-    await db.insert(userRolesTable).values({ userId: session.userId, role });
+    await db.insert(userRolesTable).values({ userId: session.userId, role: role as "parent" | "club_owner" });
     return res.json({ role });
   } catch (err) {
     req.log.error({ err }, "Failed to assign role");
@@ -264,22 +391,10 @@ router.post("/assign-role", async (req, res) => {
 
 router.put("/profile", async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.replace("Bearer ", "");
-    if (!token) return res.status(401).json({ error: "Unauthorized" });
+    const user = await getSessionUser(req);
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
 
-    const now = new Date();
-    const session = await db
-      .select()
-      .from(userSessionsTable)
-      .where(and(eq(userSessionsTable.token, token), gt(userSessionsTable.expiresAt, now)))
-      .limit(1)
-      .then((rows) => rows[0] || null);
-
-    if (!session) return res.status(401).json({ error: "Unauthorized" });
-
-    const { firstName, lastName } = req.body;
-
+    const { firstName, lastName } = req.body as { firstName?: string; lastName?: string };
     await db
       .update(usersTable)
       .set({
@@ -288,24 +403,16 @@ router.put("/profile", async (req, res) => {
         displayName: [firstName, lastName].filter(Boolean).join(" ") || null,
         updatedAt: new Date(),
       })
-      .where(eq(usersTable.id, session.userId));
+      .where(eq(usersTable.id, user.id));
 
     const updated = await db
       .select()
       .from(usersTable)
-      .where(eq(usersTable.id, session.userId))
+      .where(eq(usersTable.id, user.id))
       .limit(1)
       .then((rows) => rows[0]);
 
-    return res.json({
-      user: {
-        id: updated.id,
-        phone: updated.phone,
-        displayName: updated.displayName,
-        firstName: updated.firstName,
-        lastName: updated.lastName,
-      },
-    });
+    return res.json({ user: serializeUser(updated) });
   } catch (err) {
     req.log.error({ err }, "Failed to update profile");
     return res.status(500).json({ error: "Internal error" });
@@ -314,13 +421,12 @@ router.put("/profile", async (req, res) => {
 
 router.post("/signout", async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.replace("Bearer ", "");
+    const token = req.headers.authorization?.replace("Bearer ", "");
     if (token) {
       await db.delete(userSessionsTable).where(eq(userSessionsTable.token, token));
     }
     return res.json({ success: true });
-  } catch (err) {
+  } catch {
     return res.status(500).json({ error: "Internal error" });
   }
 });

@@ -26,24 +26,39 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 export const api = {
   auth: {
     sendCode: (phone: string) =>
-      request<{ success: boolean; dev_code?: string }>("/auth/send-code", {
+      request<{ success: boolean; dev_code?: string; channel: string; deepLink?: string }>("/auth/send-code", {
         method: "POST",
         body: JSON.stringify({ phone }),
       }),
     verifyCode: (phone: string, code: string) =>
-      request<{ success: boolean; token: string; user: any; role: string | null }>("/auth/verify-code", {
+      request<{ success: boolean; token: string; user: Record<string, unknown>; role: string | null }>("/auth/verify-code", {
         method: "POST",
         body: JSON.stringify({ phone, code }),
       }),
+    registerEmail: (email: string, password: string) =>
+      request<{ success: boolean; token: string; user: Record<string, unknown>; role: string | null }>("/auth/register-email", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }),
+    loginEmail: (email: string, password: string) =>
+      request<{ success: boolean; token: string; user: Record<string, unknown>; role: string | null }>("/auth/login-email", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }),
+    setCredentials: (email: string, password: string) =>
+      request<{ success: boolean }>("/auth/set-credentials", {
+        method: "PUT",
+        body: JSON.stringify({ email, password }),
+      }),
     me: () =>
-      request<{ user: any; role: string | null }>("/auth/me"),
+      request<{ user: Record<string, unknown>; role: string | null }>("/auth/me"),
     assignRole: (role: "parent" | "club_owner") =>
       request<{ role: string }>("/auth/assign-role", {
         method: "POST",
         body: JSON.stringify({ role }),
       }),
     updateProfile: (data: { firstName: string; lastName: string }) =>
-      request<{ user: any }>("/auth/profile", {
+      request<{ user: Record<string, unknown> }>("/auth/profile", {
         method: "PUT",
         body: JSON.stringify(data),
       }),

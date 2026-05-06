@@ -6,7 +6,9 @@ export const appRoleEnum = pgEnum("app_role", ["parent", "club_owner"]);
 
 export const usersTable = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  phone: text("phone").notNull().unique(),
+  phone: text("phone").unique(),
+  email: text("email").unique(),
+  passwordHash: text("password_hash"),
   displayName: text("display_name"),
   firstName: text("first_name"),
   lastName: text("last_name"),
