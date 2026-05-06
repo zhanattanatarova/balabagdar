@@ -232,6 +232,26 @@ router.put("/set-credentials", async (req, res) => {
   }
 });
 
+// ─── Check if phone exists ────────────────────────────────────────────────────
+
+router.post("/check-phone", async (req, res) => {
+  try {
+    const { phone } = req.body as { phone: string };
+    if (!phone) return res.status(400).json({ error: "Phone required" });
+    const user = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.phone, phone))
+      .limit(1)
+      .then((rows) => rows[0] || null);
+    const role = user ? await getUserRole(user.id) : null;
+    return res.json({ exists: !!user, hasRole: !!role, hasName: !!(user?.displayName) });
+  } catch (err) {
+    req.log.error({ err }, "Failed to check phone");
+    return res.status(500).json({ error: "Internal error" });
+  }
+});
+
 // ─── Phone OTP ────────────────────────────────────────────────────────────────
 
 router.post("/send-code", async (req, res) => {

@@ -25,6 +25,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
 export const api = {
   auth: {
+    checkPhone: (phone: string) =>
+      request<{ exists: boolean; hasRole: boolean; hasName: boolean }>("/auth/check-phone", {
+        method: "POST",
+        body: JSON.stringify({ phone }),
+      }),
     sendCode: (phone: string) =>
       request<{ success: boolean; dev_code?: string; channel: string; deepLink?: string }>("/auth/send-code", {
         method: "POST",

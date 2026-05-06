@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
-import { X, Phone, ArrowRight, Loader2, MessageCircle, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { X, Phone, ArrowRight, Loader2, MessageCircle, Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/hooks/useLanguage";
 import RoleSelector from "./RoleSelector";
-import { useUserRole } from "@/hooks/useUserRole";
 import { useAuth } from "@/hooks/useAuth";
 
 interface AuthModalProps {
@@ -15,12 +14,14 @@ interface AuthModalProps {
 
 const TELEGRAM_BOT = "balabagdar_bot";
 
-type Step = "method" | "phone" | "code" | "setup" | "email";
+// Шаги авторизации:
+// method → phone → code → name (только новые) → [RoleSelector только новые]
+// method → email
+type Step = "method" | "phone" | "code" | "name" | "email";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const { t } = useLanguage();
-  const { user, setUserFromLogin } = useAuth();
-  const { role } = useUserRole();
+  const { setUserFromLogin } = useAuth();
 
   const [step, setStep] = useState<Step>("method");
   const [phone, setPhone] = useState("+7 ");
@@ -28,10 +29,16 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [loading, setLoading] = useState(false);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
 
+  // Известно после check-phone
+  const [isReturning, setIsReturning] = useState(false);
+
   // Telegram OTP state
   const [devCode, setDevCode] = useState<string | null>(null);
   const [channel, setChannel] = useState<"telegram" | "dev" | "none" | null>(null);
-  const [deepLink, setDeepLink] = useState<string | null>(null);
+
+  // Name step (для новых пользователей)
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   // Email auth state
   const [emailMode, setEmailMode] = useState<"login" | "register">("login");
@@ -41,33 +48,22 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
-  // Setup (after Telegram) state
-  const [setupEmail, setSetupEmail] = useState("");
-  const [setupPassword, setSetupPassword] = useState("");
-  const [setupConfirm, setSetupConfirm] = useState("");
-  const [showSetupPass, setShowSetupPass] = useState(false);
-
-  useEffect(() => {
-    if (user && !role && open) setShowRoleSelector(true);
-  }, [user?.id, role, open]);
-
   if (!open) return null;
+
   if (showRoleSelector) {
-    return <RoleSelector onComplete={() => { setShowRoleSelector(false); onClose(); }} />;
+    return (
+      <RoleSelector
+        onComplete={() => {
+          setShowRoleSelector(false);
+          onClose();
+        }}
+      />
+    );
   }
 
   const digits = () => phone.replace(/\D/g, "");
 
-  const finishLogin = (result: { user: Record<string, unknown>; token: string; role: string | null }) => {
-    setUserFromLogin(result.user, result.token);
-    if (!result.role) {
-      setShowRoleSelector(true);
-    } else {
-      onClose();
-    }
-  };
-
-  // ─── Telegram flow ───────────────────────────────────────────────────────────
+  // ─── Telegram: ввод номера + отправка кода ───────────────────────────────────
 
   const handleSendCode = async () => {
     if (digits().length < 11) {
@@ -76,9 +72,12 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     }
     setLoading(true);
     try {
+      // Проверяем — новый или возвращающийся пользователь
+      const check = await api.auth.checkPhone(digits());
+      setIsReturning(check.exists && check.hasRole);
+
       const result = await api.auth.sendCode(digits());
       setChannel(result.channel as "telegram" | "dev" | "none");
-      setDeepLink(result.deepLink || null);
       setStep("code");
       if (result.dev_code) {
         setDevCode(result.dev_code);
@@ -90,8 +89,12 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error";
       toast({ title: t("common.error"), description: msg, variant: "destructive" });
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // ─── Telegram: проверка кода ─────────────────────────────────────────────────
 
   const handleVerify = async () => {
     if (code.length < 4) {
@@ -104,44 +107,41 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       setCode("");
       setDevCode(null);
       setChannel(null);
-      setUserFromLogin(result.user, result.token);
-      // After Telegram OTP, offer to set up email+password
-      setStep("setup");
+      setUserFromLogin(result.user as any, result.token);
+
+      if (result.role) {
+        // Возвращающийся пользователь с ролью → просто закрываем
+        onClose();
+      } else {
+        // Новый пользователь → просим имя → потом роль
+        setStep("name");
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error";
       toast({ title: t("common.error"), description: msg, variant: "destructive" });
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ─── Setup (after Telegram) ──────────────────────────────────────────────────
+  // ─── Имя нового пользователя ─────────────────────────────────────────────────
 
-  const handleSetupSave = async () => {
-    if (!setupEmail || !setupPassword) {
-      toast({ title: t("common.error"), description: t("auth.email_label") + " / " + t("auth.password_label"), variant: "destructive" });
-      return;
-    }
-    if (setupPassword !== setupConfirm) {
-      toast({ title: t("common.error"), description: t("auth.passwords_no_match"), variant: "destructive" });
+  const handleSaveName = async () => {
+    const fn = firstName.trim();
+    const ln = lastName.trim();
+    if (!fn) {
+      toast({ title: t("common.error"), description: "Введите ваше имя", variant: "destructive" });
       return;
     }
     setLoading(true);
     try {
-      await api.auth.setCredentials(setupEmail, setupPassword);
-      toast({ title: "✅ Логин сохранён" });
-      handleSetupDone();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error";
-      toast({ title: t("common.error"), description: msg, variant: "destructive" });
-    } finally { setLoading(false); }
-  };
-
-  const handleSetupDone = () => {
-    const meResult = { role: role || null } as { role: string | null };
-    if (!meResult.role) {
-      setShowRoleSelector(true);
-    } else {
-      onClose();
+      await api.auth.updateProfile({ firstName: fn, lastName: ln });
+    } catch {
+      // не критично, продолжаем
+    } finally {
+      setLoading(false);
     }
+    setShowRoleSelector(true);
   };
 
   // ─── Email flow ──────────────────────────────────────────────────────────────
@@ -157,41 +157,58 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     }
     setLoading(true);
     try {
-      const result = emailMode === "register"
-        ? await api.auth.registerEmail(email, password)
-        : await api.auth.loginEmail(email, password);
-      finishLogin(result);
+      const result =
+        emailMode === "register"
+          ? await api.auth.registerEmail(email, password)
+          : await api.auth.loginEmail(email, password);
+      setUserFromLogin(result.user as any, result.token);
+      if (result.role) {
+        onClose();
+      } else {
+        setStep("name");
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Error";
       toast({ title: t("common.error"), description: msg, variant: "destructive" });
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ─── Shared styles ───────────────────────────────────────────────────────────
+  // ─── Стили ───────────────────────────────────────────────────────────────────
 
-  const inputCls = "w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary";
-  const btnPrimary = "w-full mt-4 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50";
+  const inputCls =
+    "w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary";
+  const btnPrimary =
+    "w-full mt-4 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50";
   const btnGhost = "w-full mt-2 text-muted-foreground font-bold text-sm py-2";
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       <div className="absolute inset-0 bg-foreground/50 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-lg bg-card rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slide-up">
-        <div className="flex justify-center pt-3 pb-1 sm:hidden"><div className="w-10 h-1 rounded-full bg-border" /></div>
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+        <div className="flex justify-center pt-3 pb-1 sm:hidden">
+          <div className="w-10 h-1 rounded-full bg-border" />
+        </div>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted flex items-center justify-center"
+        >
           <X size={16} className="text-muted-foreground" />
         </button>
         <div className="px-6 pt-6 pb-8">
-          <div className="flex justify-center mb-4"><BrandLogo size="md" /></div>
+          <div className="flex justify-center mb-4">
+            <BrandLogo size="md" />
+          </div>
 
-          {/* ── METHOD SELECTION ── */}
+          {/* ── ВЫБОР МЕТОДА ── */}
           {step === "method" && (
             <>
               <h2 className="text-xl font-black text-center">{t("auth.title")}</h2>
               <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.choose_method")}</p>
               <div className="mt-6 space-y-3">
                 <button
-                  onClick={() => { setStep("phone"); }}
+                  onClick={() => setStep("phone")}
                   className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-border hover:border-primary transition-colors text-left"
                 >
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -221,13 +238,15 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             </>
           )}
 
-          {/* ── TELEGRAM: PHONE ── */}
+          {/* ── TELEGRAM: НОМЕР ── */}
           {step === "phone" && (
             <>
               <h2 className="text-xl font-black text-center">{t("auth.via_telegram")}</h2>
               <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.enter_phone")}</p>
               <div className="mt-6">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("auth.phone_label")}</label>
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  {t("auth.phone_label")}
+                </label>
                 <div className="relative mt-1.5">
                   <Phone size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input
@@ -236,6 +255,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder={t("auth.phone_placeholder")}
                     className={inputCls}
+                    autoFocus
                   />
                 </div>
                 <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-blue-sky">
@@ -252,17 +272,25 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                   Привязать Telegram к номеру → @{TELEGRAM_BOT}
                 </a>
                 <button onClick={handleSendCode} disabled={loading} className={btnPrimary}>
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : <>{t("auth.get_code")} <ArrowRight size={18} /></>}
+                  {loading ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <>{t("auth.get_code")} <ArrowRight size={18} /></>
+                  )}
                 </button>
-                <button onClick={() => setStep("method")} className={btnGhost}>{t("auth.back_to_method")}</button>
+                <button onClick={() => setStep("method")} className={btnGhost}>
+                  {t("auth.back_to_method")}
+                </button>
               </div>
             </>
           )}
 
-          {/* ── TELEGRAM: CODE ── */}
+          {/* ── TELEGRAM: КОД ── */}
           {step === "code" && (
             <>
-              <h2 className="text-xl font-black text-center">{t("auth.enter_code")}</h2>
+              <h2 className="text-xl font-black text-center">
+                {isReturning ? "Вход в аккаунт" : "Подтверждение номера"}
+              </h2>
               <p className="text-sm text-muted-foreground text-center mt-1">{phone}</p>
 
               {devCode && (
@@ -280,7 +308,9 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               {channel === "none" && !devCode && (
                 <div className="mt-3 flex items-center gap-2 p-3 rounded-xl bg-blue-sky">
                   <MessageCircle size={16} className="text-primary shrink-0" />
-                  <p className="text-xs text-foreground/70">Открылся Telegram — бот пришлёт код. Вернитесь и введите его ниже.</p>
+                  <p className="text-xs text-foreground/70">
+                    Открылся Telegram — бот пришлёт код. Вернитесь и введите его ниже.
+                  </p>
                 </div>
               )}
 
@@ -298,7 +328,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                         const arr = code.split("");
                         arr[i] = val;
                         setCode(arr.join(""));
-                        if (val && i < 3) (e.target.nextElementSibling as HTMLInputElement)?.focus();
+                        if (val && i < 3)
+                          (e.target.nextElementSibling as HTMLInputElement)?.focus();
                       }}
                       className="w-14 h-14 text-center text-2xl font-black rounded-xl bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
                     />
@@ -307,70 +338,64 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                 <button onClick={handleVerify} disabled={loading} className={btnPrimary}>
                   {loading ? <Loader2 size={18} className="animate-spin" /> : t("auth.confirm")}
                 </button>
-                <button onClick={() => { setStep("phone"); setCode(""); setDevCode(null); setChannel(null); setDeepLink(null); }} className={btnGhost}>
+                <button
+                  onClick={() => {
+                    setStep("phone");
+                    setCode("");
+                    setDevCode(null);
+                    setChannel(null);
+                  }}
+                  className={btnGhost}
+                >
                   {t("auth.change_number")}
                 </button>
               </div>
             </>
           )}
 
-          {/* ── SETUP (after Telegram) ── */}
-          {step === "setup" && (
+          {/* ── ИМЯ (только для новых пользователей) ── */}
+          {step === "name" && (
             <>
-              <h2 className="text-xl font-black text-center">{t("auth.setup_title")}</h2>
-              <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.setup_desc")}</p>
+              <h2 className="text-xl font-black text-center">Как вас зовут?</h2>
+              <p className="text-sm text-muted-foreground text-center mt-1">
+                Укажите имя, чтобы завершить регистрацию
+              </p>
               <div className="mt-6 space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("auth.email_label")}</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Имя *</label>
                   <div className="relative mt-1.5">
-                    <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input
-                      type="email"
-                      value={setupEmail}
-                      onChange={(e) => setSetupEmail(e.target.value)}
-                      placeholder={t("auth.email_placeholder")}
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Айгерим"
                       className={inputCls}
+                      autoFocus
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("auth.password_label")}</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Фамилия</label>
                   <div className="relative mt-1.5">
-                    <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input
-                      type={showSetupPass ? "text" : "password"}
-                      value={setupPassword}
-                      onChange={(e) => setSetupPassword(e.target.value)}
-                      placeholder={t("auth.password_placeholder")}
-                      className={inputCls + " pr-11"}
-                    />
-                    <button type="button" onClick={() => setShowSetupPass((p) => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      {showSetupPass ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("auth.confirm_password")}</label>
-                  <div className="relative mt-1.5">
-                    <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type="password"
-                      value={setupConfirm}
-                      onChange={(e) => setSetupConfirm(e.target.value)}
-                      placeholder={t("auth.confirm_password")}
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Сейткали"
                       className={inputCls}
                     />
                   </div>
                 </div>
               </div>
-              <button onClick={handleSetupSave} disabled={loading} className={btnPrimary}>
-                {loading ? <Loader2 size={18} className="animate-spin" /> : t("auth.setup_save")}
+              <button onClick={handleSaveName} disabled={loading} className={btnPrimary}>
+                {loading ? <Loader2 size={18} className="animate-spin" /> : <>Продолжить <ArrowRight size={18} /></>}
               </button>
-              <button onClick={handleSetupDone} className={btnGhost}>{t("auth.setup_skip")}</button>
             </>
           )}
 
-          {/* ── EMAIL FORM ── */}
+          {/* ── EMAIL ФОРМА ── */}
           {step === "email" && (
             <>
               <h2 className="text-xl font-black text-center">
@@ -379,7 +404,9 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.via_email")}</p>
               <div className="mt-6 space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("auth.email_label")}</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    {t("auth.email_label")}
+                  </label>
                   <div className="relative mt-1.5">
                     <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input
@@ -393,7 +420,9 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("auth.password_label")}</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    {t("auth.password_label")}
+                  </label>
                   <div className="relative mt-1.5">
                     <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                     <input
@@ -404,14 +433,20 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                       className={inputCls + " pr-11"}
                       autoComplete={emailMode === "login" ? "current-password" : "new-password"}
                     />
-                    <button type="button" onClick={() => setShowPass((p) => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <button
+                      type="button"
+                      onClick={() => setShowPass((p) => !p)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    >
                       {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
                 {emailMode === "register" && (
                   <div>
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t("auth.confirm_password")}</label>
+                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                      {t("auth.confirm_password")}
+                    </label>
                     <div className="relative mt-1.5">
                       <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       <input
@@ -422,7 +457,11 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                         className={inputCls + " pr-11"}
                         autoComplete="new-password"
                       />
-                      <button type="button" onClick={() => setShowConfirmPass((p) => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPass((p) => !p)}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      >
                         {showConfirmPass ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </div>
@@ -430,18 +469,24 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                 )}
               </div>
               <button onClick={handleEmailAuth} disabled={loading} className={btnPrimary}>
-                {loading
-                  ? <Loader2 size={18} className="animate-spin" />
-                  : <>{emailMode === "login" ? t("auth.login") : t("auth.register")} <ArrowRight size={18} /></>
-                }
+                {loading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <>
+                    {emailMode === "login" ? t("auth.login") : t("auth.register")}{" "}
+                    <ArrowRight size={18} />
+                  </>
+                )}
               </button>
               <button
-                onClick={() => setEmailMode((m) => m === "login" ? "register" : "login")}
+                onClick={() => setEmailMode((m) => (m === "login" ? "register" : "login"))}
                 className={btnGhost}
               >
                 {emailMode === "login" ? t("auth.no_account") : t("auth.have_account")}
               </button>
-              <button onClick={() => setStep("method")} className={btnGhost + " text-xs opacity-60"}>{t("auth.back_to_method")}</button>
+              <button onClick={() => setStep("method")} className={btnGhost + " text-xs opacity-60"}>
+                {t("auth.back_to_method")}
+              </button>
             </>
           )}
         </div>
