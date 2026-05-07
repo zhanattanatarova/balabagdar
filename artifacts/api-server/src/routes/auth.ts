@@ -245,10 +245,67 @@ router.post("/check-phone", async (req, res) => {
       .limit(1)
       .then((rows) => rows[0] || null);
     const role = user ? await getUserRole(user.id) : null;
-    return res.json({ exists: !!user, hasRole: !!role, hasName: !!(user?.displayName) });
+    return res.json({
+      exists: !!user,
+      hasRole: !!role,
+      hasName: !!(user?.displayName),
+      hasPassword: !!(user?.passwordHash),
+    });
   } catch (err) {
     req.log.error({ err }, "Failed to check phone");
     return res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── Login by phone + password (no OTP) ───────────────────────────────────────
+
+router.post("/login-phone-password", async (req, res) => {
+  try {
+    const { phone, password } = req.body as { phone: string; password: string };
+    if (!phone || !password) {
+      return res.status(400).json({ error: "Номер и пароль обязательны" });
+    }
+    const user = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.phone, phone))
+      .limit(1)
+      .then((rows) => rows[0] || null);
+    if (!user || !user.passwordHash) {
+      return res.status(401).json({ error: "Неверный номер или пароль" });
+    }
+    const ok = await verifyPassword(password, user.passwordHash);
+    if (!ok) {
+      return res.status(401).json({ error: "Неверный номер или пароль" });
+    }
+    const token = await createSession(user.id);
+    const role = await getUserRole(user.id);
+    return res.json({ success: true, token, user: serializeUser(user), role });
+  } catch (err) {
+    req.log.error({ err }, "Failed to login with phone+password");
+    return res.status(500).json({ error: "Ошибка сервера" });
+  }
+});
+
+// ─── Set password for phone-authenticated user ────────────────────────────────
+
+router.post("/set-phone-password", async (req, res) => {
+  try {
+    const user = await getSessionUser(req);
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+    const { password } = req.body as { password: string };
+    if (!password || password.length < 6) {
+      return res.status(400).json({ error: "Пароль должен быть не менее 6 символов" });
+    }
+    const passwordHash = await hashPassword(password);
+    await db
+      .update(usersTable)
+      .set({ passwordHash, updatedAt: new Date() })
+      .where(eq(usersTable.id, user.id));
+    return res.json({ success: true });
+  } catch (err) {
+    req.log.error({ err }, "Failed to set phone password");
+    return res.status(500).json({ error: "Ошибка сервера" });
   }
 });
 

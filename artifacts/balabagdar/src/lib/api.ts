@@ -26,9 +26,19 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 export const api = {
   auth: {
     checkPhone: (phone: string) =>
-      request<{ exists: boolean; hasRole: boolean; hasName: boolean }>("/auth/check-phone", {
+      request<{ exists: boolean; hasRole: boolean; hasName: boolean; hasPassword: boolean }>("/auth/check-phone", {
         method: "POST",
         body: JSON.stringify({ phone }),
+      }),
+    loginPhonePassword: (phone: string, password: string) =>
+      request<{ success: boolean; token: string; user: Record<string, unknown>; role: string | null }>("/auth/login-phone-password", {
+        method: "POST",
+        body: JSON.stringify({ phone, password }),
+      }),
+    setPhonePassword: (password: string) =>
+      request<{ success: boolean }>("/auth/set-phone-password", {
+        method: "POST",
+        body: JSON.stringify({ password }),
       }),
     sendCode: (phone: string) =>
       request<{ success: boolean; dev_code?: string; channel: string; deepLink?: string }>("/auth/send-code", {
