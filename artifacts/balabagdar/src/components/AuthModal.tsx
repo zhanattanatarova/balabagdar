@@ -14,33 +14,26 @@ interface AuthModalProps {
 
 const TELEGRAM_BOT = "balabagdar_bot";
 
-// Шаги авторизации:
-// method → phone → code → name (только новые) → [RoleSelector только новые]
-// method → email
-type Step = "method" | "phone" | "code" | "name" | "email";
+// phone → code → name (новые) → [RoleSelector]
+// email (альтернатива)
+type Step = "phone" | "code" | "name" | "email";
 
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const { t } = useLanguage();
   const { setUserFromLogin } = useAuth();
 
-  const [step, setStep] = useState<Step>("method");
-  const [phone, setPhone] = useState("+7 ");
+  const [step, setStep] = useState<Step>("phone");
+  const [phone, setPhone] = useState("+7");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
-
-  // Известно после check-phone
   const [isReturning, setIsReturning] = useState(false);
-
-  // Telegram OTP state
   const [devCode, setDevCode] = useState<string | null>(null);
-  const [channel, setChannel] = useState<"telegram" | "dev" | "none" | null>(null);
+  const [noTelegram, setNoTelegram] = useState(false);
 
-  // Name step (для новых пользователей)
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  // Email auth state
   const [emailMode, setEmailMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,56 +42,52 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
   if (!open) return null;
-
   if (showRoleSelector) {
-    return (
-      <RoleSelector
-        onComplete={() => {
-          setShowRoleSelector(false);
-          onClose();
-        }}
-      />
-    );
+    return <RoleSelector onComplete={() => { setShowRoleSelector(false); onClose(); }} />;
   }
 
   const digits = () => phone.replace(/\D/g, "");
 
-  // ─── Telegram: ввод номера + отправка кода ───────────────────────────────────
+  const handlePhoneInput = (val: string) => {
+    // Всегда начинаем с +7
+    if (!val.startsWith("+7")) {
+      setPhone("+7");
+      return;
+    }
+    // Только цифры после +7, не более 10 цифр (итого 11 с 7)
+    const rest = val.slice(2).replace(/\D/g, "").slice(0, 10);
+    setPhone("+7" + rest);
+  };
+
+  // ─── Отправка кода ────────────────────────────────────────────────────────────
 
   const handleSendCode = async () => {
     if (digits().length < 11) {
-      toast({ title: t("common.error"), description: t("auth.enter_phone"), variant: "destructive" });
+      toast({ title: "Введите номер телефона полностью", variant: "destructive" });
       return;
     }
     setLoading(true);
+    setNoTelegram(false);
     try {
-      // Проверяем — новый или возвращающийся пользователь
       const check = await api.auth.checkPhone(digits());
       setIsReturning(check.exists && check.hasRole);
-
       const result = await api.auth.sendCode(digits());
-      setChannel(result.channel as "telegram" | "dev" | "none");
+      setDevCode(result.dev_code || null);
+      if (result.channel === "none") setNoTelegram(true);
       setStep("code");
-      if (result.dev_code) {
-        setDevCode(result.dev_code);
-      } else if (result.channel === "telegram") {
-        toast({ title: t("auth.code_sent"), description: t("auth.check_telegram") });
-      } else if (result.channel === "none" && result.deepLink) {
-        window.open(result.deepLink, "_blank");
-      }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error";
-      toast({ title: t("common.error"), description: msg, variant: "destructive" });
+      const msg = err instanceof Error ? err.message : "Ошибка";
+      toast({ title: "Ошибка", description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  // ─── Telegram: проверка кода ─────────────────────────────────────────────────
+  // ─── Проверка кода ────────────────────────────────────────────────────────────
 
   const handleVerify = async () => {
     if (code.length < 4) {
-      toast({ title: t("common.error"), description: t("auth.enter_code"), variant: "destructive" });
+      toast({ title: "Введите 4-значный код", variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -106,70 +95,56 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       const result = await api.auth.verifyCode(digits(), code);
       setCode("");
       setDevCode(null);
-      setChannel(null);
       setUserFromLogin(result.user as any, result.token);
-
       if (result.role) {
-        // Возвращающийся пользователь с ролью → просто закрываем
         onClose();
       } else {
-        // Новый пользователь → просим имя → потом роль
         setStep("name");
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error";
-      toast({ title: t("common.error"), description: msg, variant: "destructive" });
+      const msg = err instanceof Error ? err.message : "Ошибка";
+      toast({ title: "Неверный код", description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  // ─── Имя нового пользователя ─────────────────────────────────────────────────
+  // ─── Сохранение имени ─────────────────────────────────────────────────────────
 
   const handleSaveName = async () => {
     const fn = firstName.trim();
     const ln = lastName.trim();
     if (!fn) {
-      toast({ title: t("common.error"), description: "Введите ваше имя", variant: "destructive" });
+      toast({ title: "Введите ваше имя", variant: "destructive" });
       return;
     }
     setLoading(true);
-    try {
-      await api.auth.updateProfile({ firstName: fn, lastName: ln });
-    } catch {
-      // не критично, продолжаем
-    } finally {
-      setLoading(false);
-    }
+    try { await api.auth.updateProfile({ firstName: fn, lastName: ln }); } catch {}
+    finally { setLoading(false); }
     setShowRoleSelector(true);
   };
 
-  // ─── Email flow ──────────────────────────────────────────────────────────────
+  // ─── Email вход ───────────────────────────────────────────────────────────────
 
   const handleEmailAuth = async () => {
     if (!email || !password) {
-      toast({ title: t("common.error"), description: "Заполните все поля", variant: "destructive" });
+      toast({ title: "Заполните все поля", variant: "destructive" });
       return;
     }
     if (emailMode === "register" && password !== confirmPassword) {
-      toast({ title: t("common.error"), description: t("auth.passwords_no_match"), variant: "destructive" });
+      toast({ title: t("auth.passwords_no_match"), variant: "destructive" });
       return;
     }
     setLoading(true);
     try {
-      const result =
-        emailMode === "register"
-          ? await api.auth.registerEmail(email, password)
-          : await api.auth.loginEmail(email, password);
+      const result = emailMode === "register"
+        ? await api.auth.registerEmail(email, password)
+        : await api.auth.loginEmail(email, password);
       setUserFromLogin(result.user as any, result.token);
-      if (result.role) {
-        onClose();
-      } else {
-        setStep("name");
-      }
+      if (result.role) { onClose(); } else { setStep("name"); }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Error";
-      toast({ title: t("common.error"), description: msg, variant: "destructive" });
+      const msg = err instanceof Error ? err.message : "Ошибка";
+      toast({ title: "Ошибка", description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -177,11 +152,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
 
   // ─── Стили ───────────────────────────────────────────────────────────────────
 
-  const inputCls =
-    "w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary";
-  const btnPrimary =
-    "w-full mt-4 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50";
-  const btnGhost = "w-full mt-2 text-muted-foreground font-bold text-sm py-2";
+  const inputCls = "w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary";
+  const btnPrimary = "w-full mt-4 bg-primary text-primary-foreground font-black text-base py-4 rounded-2xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50";
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
@@ -190,302 +162,241 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         <div className="flex justify-center pt-3 pb-1 sm:hidden">
           <div className="w-10 h-1 rounded-full bg-border" />
         </div>
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted flex items-center justify-center"
-        >
+        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted flex items-center justify-center">
           <X size={16} className="text-muted-foreground" />
         </button>
+
         <div className="px-6 pt-6 pb-8">
-          <div className="flex justify-center mb-4">
-            <BrandLogo size="md" />
-          </div>
+          <div className="flex justify-center mb-5"><BrandLogo size="md" /></div>
 
-          {/* ── ВЫБОР МЕТОДА ── */}
-          {step === "method" && (
-            <>
-              <h2 className="text-xl font-black text-center">{t("auth.title")}</h2>
-              <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.choose_method")}</p>
-              <div className="mt-6 space-y-3">
-                <button
-                  onClick={() => setStep("phone")}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-border hover:border-primary transition-colors text-left"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <MessageCircle size={24} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-black text-sm">{t("auth.via_telegram")}</p>
-                    <p className="text-xs text-muted-foreground">{t("auth.via_telegram_desc")}</p>
-                  </div>
-                  <ArrowRight size={18} className="text-muted-foreground ml-auto shrink-0" />
-                </button>
-
-                <button
-                  onClick={() => { setStep("email"); setEmailMode("login"); }}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-border hover:border-secondary transition-colors text-left"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0">
-                    <Mail size={24} className="text-secondary" />
-                  </div>
-                  <div>
-                    <p className="font-black text-sm">{t("auth.via_email")}</p>
-                    <p className="text-xs text-muted-foreground">{t("auth.via_email_desc")}</p>
-                  </div>
-                  <ArrowRight size={18} className="text-muted-foreground ml-auto shrink-0" />
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* ── TELEGRAM: НОМЕР ── */}
+          {/* ── ШАГ 1: НОМЕР ТЕЛЕФОНА ── */}
           {step === "phone" && (
             <>
-              <h2 className="text-xl font-black text-center">{t("auth.via_telegram")}</h2>
-              <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.enter_phone")}</p>
+              <h2 className="text-2xl font-black text-center">Вход / Регистрация</h2>
+              <p className="text-sm text-muted-foreground text-center mt-1">
+                Введите номер — код придёт в Telegram
+              </p>
               <div className="mt-6">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                  {t("auth.phone_label")}
-                </label>
-                <div className="relative mt-1.5">
-                  <Phone size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <div className="relative">
+                  <Phone size={20} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="tel"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={t("auth.phone_placeholder")}
+                    onChange={(e) => handlePhoneInput(e.target.value)}
+                    placeholder="+7 777 123 45 67"
                     className={inputCls}
                     autoFocus
+                    onKeyDown={(e) => e.key === "Enter" && handleSendCode()}
                   />
                 </div>
-                <div className="flex items-center gap-2 mt-3 p-3 rounded-xl bg-blue-sky">
-                  <MessageCircle size={16} className="text-primary shrink-0" />
-                  <p className="text-xs text-foreground/70">{t("auth.code_via_telegram")}</p>
+
+                {/* Подсказка про бота */}
+                <div className="mt-3 flex items-start gap-2.5 p-3 rounded-xl bg-primary/5 border border-primary/15">
+                  <MessageCircle size={16} className="text-primary shrink-0 mt-0.5" />
+                  <div className="text-xs text-foreground/70 leading-relaxed">
+                    Код придёт от бота{" "}
+                    <a
+                      href={`https://t.me/${TELEGRAM_BOT}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-black text-primary underline"
+                    >
+                      @{TELEGRAM_BOT}
+                    </a>
+                    . Если ещё не писали боту — нажмите на ссылку, напишите /start, и возвращайтесь.
+                  </div>
                 </div>
-                <a
-                  href={`https://t.me/${TELEGRAM_BOT}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full mt-2 py-2 text-xs font-bold text-primary hover:underline"
-                >
-                  <MessageCircle size={13} />
-                  Привязать Telegram к номеру → @{TELEGRAM_BOT}
-                </a>
+
                 <button onClick={handleSendCode} disabled={loading} className={btnPrimary}>
-                  {loading ? (
-                    <Loader2 size={18} className="animate-spin" />
-                  ) : (
-                    <>{t("auth.get_code")} <ArrowRight size={18} /></>
-                  )}
+                  {loading
+                    ? <Loader2 size={20} className="animate-spin" />
+                    : <>Получить код <ArrowRight size={20} /></>
+                  }
                 </button>
-                <button onClick={() => setStep("method")} className={btnGhost}>
-                  {t("auth.back_to_method")}
+
+                {/* Email — мелко внизу */}
+                <button
+                  onClick={() => setStep("email")}
+                  className="w-full mt-3 text-xs text-muted-foreground font-bold py-2 flex items-center justify-center gap-1.5 hover:text-foreground transition-colors"
+                >
+                  <Mail size={13} /> Войти через email
                 </button>
               </div>
             </>
           )}
 
-          {/* ── TELEGRAM: КОД ── */}
+          {/* ── ШАГ 2: КОД ── */}
           {step === "code" && (
             <>
-              <h2 className="text-xl font-black text-center">
-                {isReturning ? "Вход в аккаунт" : "Подтверждение номера"}
+              <h2 className="text-2xl font-black text-center">
+                {isReturning ? "Добро пожаловать!" : "Подтвердите номер"}
               </h2>
-              <p className="text-sm text-muted-foreground text-center mt-1">{phone}</p>
+              <p className="text-sm text-muted-foreground text-center mt-1">
+                {phone}
+              </p>
 
               {devCode && (
                 <div className="mt-3 p-3 rounded-xl bg-yellow-50 border border-yellow-200 text-center">
-                  <p className="text-xs font-bold text-yellow-700">Тестовый код (только в разработке):</p>
-                  <p className="text-2xl font-black tracking-widest text-primary mt-1">{devCode}</p>
+                  <p className="text-xs font-bold text-yellow-700">Тестовый код:</p>
+                  <p className="text-3xl font-black tracking-widest text-primary mt-1">{devCode}</p>
                 </div>
               )}
-              {channel === "telegram" && !devCode && (
-                <div className="mt-3 flex items-center gap-2 p-3 rounded-xl bg-blue-sky">
+
+              {!devCode && !noTelegram && (
+                <div className="mt-3 flex items-center gap-2 p-3 rounded-xl bg-primary/5 border border-primary/15">
                   <MessageCircle size={16} className="text-primary shrink-0" />
-                  <p className="text-xs text-foreground/70">Код отправлен в ваш Telegram</p>
+                  <p className="text-xs text-foreground/70">Код отправлен в Telegram от @{TELEGRAM_BOT}</p>
                 </div>
               )}
-              {channel === "none" && !devCode && (
-                <div className="mt-3 flex items-center gap-2 p-3 rounded-xl bg-blue-sky">
-                  <MessageCircle size={16} className="text-primary shrink-0" />
-                  <p className="text-xs text-foreground/70">
-                    Открылся Telegram — бот пришлёт код. Вернитесь и введите его ниже.
+
+              {noTelegram && (
+                <div className="mt-3 p-3 rounded-xl bg-orange-50 border border-orange-200">
+                  <p className="text-xs font-bold text-orange-700 mb-1">Бот ещё не знает ваш номер</p>
+                  <p className="text-xs text-orange-600">
+                    Напишите боту{" "}
+                    <a href={`https://t.me/${TELEGRAM_BOT}`} target="_blank" rel="noopener noreferrer" className="font-black underline">
+                      @{TELEGRAM_BOT}
+                    </a>{" "}
+                    команду <span className="font-black">/start</span> — он пришлёт код.
                   </p>
                 </div>
               )}
 
-              <div className="mt-4">
-                <div className="flex gap-2.5 justify-center">
+              <div className="mt-5">
+                <p className="text-xs font-bold text-center text-muted-foreground mb-3">Введите 4-значный код</p>
+                <div className="flex gap-3 justify-center">
                   {[0, 1, 2, 3].map((i) => (
                     <input
                       key={i}
+                      id={`otp-${i}`}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}
                       value={code[i] || ""}
+                      autoFocus={i === 0}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, "");
                         const arr = code.split("");
                         arr[i] = val;
                         setCode(arr.join(""));
-                        if (val && i < 3)
-                          (e.target.nextElementSibling as HTMLInputElement)?.focus();
+                        if (val && i < 3) {
+                          document.getElementById(`otp-${i + 1}`)?.focus();
+                        }
                       }}
-                      className="w-14 h-14 text-center text-2xl font-black rounded-xl bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                      onKeyDown={(e) => {
+                        if (e.key === "Backspace" && !code[i] && i > 0) {
+                          document.getElementById(`otp-${i - 1}`)?.focus();
+                        }
+                      }}
+                      className="w-16 h-16 text-center text-2xl font-black rounded-2xl bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   ))}
                 </div>
+
                 <button onClick={handleVerify} disabled={loading} className={btnPrimary}>
-                  {loading ? <Loader2 size={18} className="animate-spin" /> : t("auth.confirm")}
+                  {loading ? <Loader2 size={20} className="animate-spin" /> : "Подтвердить"}
                 </button>
                 <button
-                  onClick={() => {
-                    setStep("phone");
-                    setCode("");
-                    setDevCode(null);
-                    setChannel(null);
-                  }}
-                  className={btnGhost}
+                  onClick={() => { setStep("phone"); setCode(""); setDevCode(null); setNoTelegram(false); }}
+                  className="w-full mt-2 text-sm font-bold text-muted-foreground py-2"
                 >
-                  {t("auth.change_number")}
+                  ← Изменить номер
                 </button>
               </div>
             </>
           )}
 
-          {/* ── ИМЯ (только для новых пользователей) ── */}
+          {/* ── ШАГ 3: ИМЯ (только для новых) ── */}
           {step === "name" && (
             <>
-              <h2 className="text-xl font-black text-center">Как вас зовут?</h2>
-              <p className="text-sm text-muted-foreground text-center mt-1">
-                Укажите имя, чтобы завершить регистрацию
-              </p>
+              <h2 className="text-2xl font-black text-center">Как вас зовут?</h2>
+              <p className="text-sm text-muted-foreground text-center mt-1">Последний шаг — и вы в системе</p>
               <div className="mt-6 space-y-3">
-                <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Имя *</label>
-                  <div className="relative mt-1.5">
-                    <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="Айгерим"
-                      className={inputCls}
-                      autoFocus
-                    />
-                  </div>
+                <div className="relative">
+                  <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Имя *"
+                    className={inputCls}
+                    autoFocus
+                  />
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Фамилия</label>
-                  <div className="relative mt-1.5">
-                    <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Сейткали"
-                      className={inputCls}
-                    />
-                  </div>
+                <div className="relative">
+                  <User size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Фамилия"
+                    className={inputCls}
+                  />
                 </div>
               </div>
               <button onClick={handleSaveName} disabled={loading} className={btnPrimary}>
-                {loading ? <Loader2 size={18} className="animate-spin" /> : <>Продолжить <ArrowRight size={18} /></>}
+                {loading ? <Loader2 size={20} className="animate-spin" /> : <>Продолжить <ArrowRight size={20} /></>}
               </button>
             </>
           )}
 
-          {/* ── EMAIL ФОРМА ── */}
+          {/* ── EMAIL (альтернативный метод) ── */}
           {step === "email" && (
             <>
-              <h2 className="text-xl font-black text-center">
-                {emailMode === "login" ? t("auth.login") : t("auth.register")}
+              <h2 className="text-2xl font-black text-center">
+                {emailMode === "login" ? "Вход через email" : "Регистрация через email"}
               </h2>
-              <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.via_email")}</p>
               <div className="mt-6 space-y-3">
-                <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    {t("auth.email_label")}
-                  </label>
-                  <div className="relative mt-1.5">
-                    <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder={t("auth.email_placeholder")}
-                      className={inputCls}
-                      autoComplete="email"
-                    />
-                  </div>
+                <div className="relative">
+                  <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email"
+                    className={inputCls}
+                    autoComplete="email"
+                  />
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    {t("auth.password_label")}
-                  </label>
-                  <div className="relative mt-1.5">
-                    <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      type={showPass ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder={t("auth.password_placeholder")}
-                      className={inputCls + " pr-11"}
-                      autoComplete={emailMode === "login" ? "current-password" : "new-password"}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPass((p) => !p)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
-                    >
-                      {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
+                <div className="relative">
+                  <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type={showPass ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Пароль"
+                    className={inputCls + " pr-11"}
+                    autoComplete={emailMode === "login" ? "current-password" : "new-password"}
+                  />
+                  <button type="button" onClick={() => setShowPass((p) => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
                 {emailMode === "register" && (
-                  <div>
-                    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                      {t("auth.confirm_password")}
-                    </label>
-                    <div className="relative mt-1.5">
-                      <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <input
-                        type={showConfirmPass ? "text" : "password"}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder={t("auth.confirm_password")}
-                        className={inputCls + " pr-11"}
-                        autoComplete="new-password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPass((p) => !p)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
-                      >
-                        {showConfirmPass ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
+                  <div className="relative">
+                    <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      type={showConfirmPass ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Повторите пароль"
+                      className={inputCls + " pr-11"}
+                      autoComplete="new-password"
+                    />
+                    <button type="button" onClick={() => setShowConfirmPass((p) => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      {showConfirmPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                   </div>
                 )}
               </div>
               <button onClick={handleEmailAuth} disabled={loading} className={btnPrimary}>
-                {loading ? (
-                  <Loader2 size={18} className="animate-spin" />
-                ) : (
-                  <>
-                    {emailMode === "login" ? t("auth.login") : t("auth.register")}{" "}
-                    <ArrowRight size={18} />
-                  </>
-                )}
+                {loading ? <Loader2 size={20} className="animate-spin" /> : <>{emailMode === "login" ? "Войти" : "Зарегистрироваться"} <ArrowRight size={20} /></>}
               </button>
-              <button
-                onClick={() => setEmailMode((m) => (m === "login" ? "register" : "login"))}
-                className={btnGhost}
-              >
-                {emailMode === "login" ? t("auth.no_account") : t("auth.have_account")}
+              <button onClick={() => setEmailMode((m) => m === "login" ? "register" : "login")} className="w-full mt-2 text-sm font-bold text-muted-foreground py-2">
+                {emailMode === "login" ? "Нет аккаунта? Зарегистрироваться" : "Уже есть аккаунт? Войти"}
               </button>
-              <button onClick={() => setStep("method")} className={btnGhost + " text-xs opacity-60"}>
-                {t("auth.back_to_method")}
+              <button onClick={() => setStep("phone")} className="w-full mt-1 text-xs text-muted-foreground py-1.5">
+                ← Войти через Telegram
               </button>
             </>
           )}
