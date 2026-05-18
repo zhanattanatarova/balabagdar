@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Star, MapPin, ArrowRight, ExternalLink, Loader2, Navigation } from "lucide-react";
+import { Star, MapPin, ArrowRight, ExternalLink, Loader2, Navigation, LocateFixed } from "lucide-react";
 import { api } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -30,42 +30,44 @@ const CITY_COORDS: Record<string, { lat: number; lon: number; zoom: number }> = 
 
 interface Club {
   id: string;
-  nameRu?: string;
-  name_ru?: string;
-  nameKz?: string;
-  name_kz?: string;
-  nameEn?: string;
-  name_en?: string;
+  nameRu?: string; name_ru?: string;
+  nameKz?: string; name_kz?: string;
+  nameEn?: string; name_en?: string;
   address?: string;
   city?: string;
   phone?: string;
   rating?: number | null;
-  lat?: number | null;
-  lng?: number | null;
-  avatarUrl?: string;
-  avatar_url?: string;
-  gisUrl?: string;
-  gis_url?: string;
+  avatarUrl?: string; avatar_url?: string;
+  gisUrl?: string; gis_url?: string;
   category?: string;
 }
 
-interface MapPageProps {
-  city?: string;
+interface MapPageProps { city?: string; }
+
+// Haversine distance in km
+function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Geocode using Nominatim with Kazakhstan bias
+function formatDist(km: number): string {
+  if (km < 1) return `${Math.round(km * 1000)} м`;
+  return `${km.toFixed(1)} км`;
+}
+
 async function geocodeAddress(address: string, city: string): Promise<{ lat: number; lon: number } | null> {
   const query = `${address}, ${city}, Казахстан`;
   const cached = sessionStorage.getItem(`geo:${query}`);
-  if (cached) {
-    const parsed = JSON.parse(cached);
-    return parsed;
-  }
+  if (cached) return JSON.parse(cached);
   try {
     const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=kz`;
     const resp = await fetch(url, { headers: { "Accept-Language": "ru" } });
     const data = await resp.json();
-    if (data && data[0]) {
+    if (data?.[0]) {
       const result = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
       sessionStorage.setItem(`geo:${query}`, JSON.stringify(result));
       return result;
@@ -76,10 +78,7 @@ async function geocodeAddress(address: string, city: string): Promise<{ lat: num
 
 function open2gis(club: Club) {
   const gisUrl = club.gisUrl || club.gis_url;
-  if (gisUrl) {
-    window.open(gisUrl, "_blank", "noopener");
-    return;
-  }
+  if (gisUrl) { window.open(gisUrl, "_blank", "noopener"); return; }
   const name = club.nameRu || club.name_ru || club.nameKz || club.name_kz || "";
   const q = [name, club.address, club.city].filter(Boolean).join(" ");
   window.open(`https://2gis.kz/search/${encodeURIComponent(q)}`, "_blank", "noopener");
@@ -92,117 +91,133 @@ const CATEGORY_EMOJI: Record<string, string> = {
   kindergarten: "🏠", other: "✨",
 };
 
+const NEARBY_RADIUS_KM = 5;
+
 const MapPage = ({ city = "Астана" }: MapPageProps) => {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [geocoded, setGeocoded] = useState<Record<string, { lat: number; lon: number }>>({});
   const [selected, setSelected] = useState<Club | null>(null);
   const [geocoding, setGeocoding] = useState(false);
+
+  // Геолокация
+  const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [nearbyMode, setNearbyMode] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const userMarkerRef = useRef<Marker | null>(null);
+
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const mapDivRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { tField } = useLanguage();
 
-  const coords = CITY_COORDS[city] ?? { lat: 51.1801, lon: 71.4460, zoom: 13 };
+  const cityCoords = CITY_COORDS[city] ?? { lat: 51.1801, lon: 71.4460, zoom: 13 };
 
   const clubName = (c: Club) =>
     tField(c.nameRu || c.name_ru, c.nameKz || c.name_kz, c.nameEn || c.name_en) || "Кружок";
 
-  // Load clubs
+  // Расстояние от пользователя до клуба
+  const distanceTo = useCallback((club: Club): number | null => {
+    if (!userLocation) return null;
+    const gc = geocoded[club.id];
+    if (!gc) return null;
+    return haversine(userLocation.lat, userLocation.lon, gc.lat, gc.lon);
+  }, [userLocation, geocoded]);
+
+  // Загрузка кружков
   useEffect(() => {
     api.clubs.list({ city }).then(setClubs).catch(() => {});
   }, [city]);
 
-  // Geocode all club addresses sequentially (rate-limit friendly)
+  // Геокодинг адресов
   useEffect(() => {
     if (clubs.length === 0) return;
-    const clubsWithAddress = clubs.filter((c) => c.address && !geocoded[c.id]);
-    if (clubsWithAddress.length === 0) return;
-
+    const toGeocode = clubs.filter((c) => c.address && !geocoded[c.id]);
+    if (toGeocode.length === 0) return;
     setGeocoding(true);
     let cancelled = false;
-
     const run = async () => {
-      for (const club of clubsWithAddress) {
+      for (const club of toGeocode) {
         if (cancelled) break;
         const result = await geocodeAddress(club.address!, club.city || city);
-        if (result && !cancelled) {
-          setGeocoded((prev) => ({ ...prev, [club.id]: result }));
-        }
-        // Nominatim rate limit: 1 req/sec
+        if (result && !cancelled) setGeocoded((prev) => ({ ...prev, [club.id]: result }));
         await new Promise((r) => setTimeout(r, 1100));
       }
       if (!cancelled) setGeocoding(false);
     };
-
     run();
     return () => { cancelled = true; };
   }, [clubs, city]);
 
-  // Init map
+  // Инициализация карты
   useEffect(() => {
     if (!mapDivRef.current) return;
-
     import("leaflet").then((L) => {
       const leaflet = L.default ?? L;
-      if (!mapDivRef.current) return;
-      if (mapRef.current) {
-        mapRef.current.flyTo([coords.lat, coords.lon], coords.zoom, { duration: 0.8 });
-        return;
-      }
-
+      if (!mapDivRef.current || mapRef.current) return;
       const map = leaflet.map(mapDivRef.current, {
-        center: [coords.lat, coords.lon],
-        zoom: coords.zoom,
+        center: [cityCoords.lat, cityCoords.lon],
+        zoom: cityCoords.zoom,
         zoomControl: false,
         attributionControl: false,
       });
-
-      // CartoDB Positron — clean, modern tiles that work great for Kazakhstan
-      leaflet
-        .tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-          maxZoom: 19,
-          subdomains: "abcd",
-        })
-        .addTo(map);
-
+      leaflet.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+        maxZoom: 19, subdomains: "abcd",
+      }).addTo(map);
       leaflet.control.zoom({ position: "bottomright" }).addTo(map);
-
       mapRef.current = map;
     });
-
     return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
+      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
     };
   }, []);
 
-  // Fly to city when it changes
+  // Полёт к городу
   useEffect(() => {
     if (mapRef.current) {
-      mapRef.current.flyTo([coords.lat, coords.lon], coords.zoom, { duration: 0.8 });
+      mapRef.current.flyTo([cityCoords.lat, cityCoords.lon], cityCoords.zoom, { duration: 0.8 });
     }
-  }, [city, coords.lat, coords.lon, coords.zoom]);
+  }, [city, cityCoords.lat, cityCoords.lon, cityCoords.zoom]);
 
-  // Add/refresh markers when geocoded coords arrive
+  // Маркер пользователя
+  useEffect(() => {
+    if (!userLocation || !mapRef.current) return;
+    import("leaflet").then((L) => {
+      const leaflet = L.default ?? L;
+      userMarkerRef.current?.remove();
+      const icon = leaflet.divIcon({
+        className: "",
+        html: `<div style="
+          width:18px;height:18px;border-radius:50%;
+          background:#3b82f6;border:3px solid white;
+          box-shadow:0 0 0 4px rgba(59,130,246,.3);
+        "></div>`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+      });
+      userMarkerRef.current = leaflet.marker([userLocation.lat, userLocation.lon], { icon })
+        .addTo(mapRef.current!)
+        .bindPopup("Вы здесь");
+    });
+  }, [userLocation]);
+
+  // Маркеры кружков
   useEffect(() => {
     if (!mapRef.current) return;
     import("leaflet").then((L) => {
       const leaflet = L.default ?? L;
       if (!mapRef.current) return;
-
-      // Remove old markers
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
-
       clubs.forEach((club) => {
-        const coords = geocoded[club.id];
-        if (!coords || !mapRef.current) return;
-
+        const gc = geocoded[club.id];
+        if (!gc || !mapRef.current) return;
         const emoji = CATEGORY_EMOJI[club.category || "other"] || "✨";
         const isSelected = selected?.id === club.id;
+        const dist = distanceTo(club);
+        const isNear = nearbyMode ? (dist !== null && dist <= NEARBY_RADIUS_KM) : true;
+        if (nearbyMode && !isNear) return;
         const icon = leaflet.divIcon({
           className: "",
           html: `<div style="
@@ -215,32 +230,69 @@ const MapPage = ({ city = "Астана" }: MapPageProps) => {
             transform:${isSelected ? "scale(1.2)" : "scale(1)"};
             transition:all .2s;
           ">${emoji}</div>`,
-          iconSize: [36, 36],
-          iconAnchor: [18, 36],
+          iconSize: [36, 36], iconAnchor: [18, 36],
         });
-
-        const marker = leaflet
-          .marker([coords.lat, coords.lon], { icon })
+        const marker = leaflet.marker([gc.lat, gc.lon], { icon })
           .addTo(mapRef.current!)
           .on("click", () => {
             setSelected((prev) => (prev?.id === club.id ? null : club));
-            mapRef.current?.flyTo([coords.lat, coords.lon], 16, { duration: 0.5 });
+            mapRef.current?.flyTo([gc.lat, gc.lon], 16, { duration: 0.5 });
           });
-
         markersRef.current.push(marker);
       });
     });
-  }, [clubs, geocoded, selected?.id]);
+  }, [clubs, geocoded, selected?.id, nearbyMode, distanceTo]);
+
+  // Кнопка "Рядом" — запрос геолокации
+  const handleNearby = () => {
+    if (nearbyMode) {
+      setNearbyMode(false);
+      setLocationError(null);
+      return;
+    }
+    if (userLocation) {
+      setNearbyMode(true);
+      mapRef.current?.flyTo([userLocation.lat, userLocation.lon], 15, { duration: 0.8 });
+      return;
+    }
+    if (!navigator.geolocation) {
+      setLocationError("Геолокация не поддерживается браузером");
+      return;
+    }
+    setLocating(true);
+    setLocationError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const loc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        setUserLocation(loc);
+        setNearbyMode(true);
+        setLocating(false);
+        mapRef.current?.flyTo([loc.lat, loc.lon], 15, { duration: 0.8 });
+      },
+      (err) => {
+        setLocating(false);
+        if (err.code === 1) setLocationError("Разрешите доступ к геолокации в настройках браузера");
+        else setLocationError("Не удалось определить местоположение");
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    );
+  };
 
   const handleSelectClub = useCallback((club: Club) => {
     setSelected((prev) => (prev?.id === club.id ? null : club));
-    const c = geocoded[club.id];
-    if (c && mapRef.current) {
-      mapRef.current.flyTo([c.lat, c.lon], 16, { duration: 0.6 });
-    }
+    const gc = geocoded[club.id];
+    if (gc && mapRef.current) mapRef.current.flyTo([gc.lat, gc.lon], 16, { duration: 0.6 });
   }, [geocoded]);
 
-  const gisUrlExists = (c: Club) => !!(c.gisUrl || c.gis_url);
+  // Список кружков: в режиме рядом — фильтруем и сортируем по расстоянию
+  const displayedClubs = (() => {
+    if (!nearbyMode || !userLocation) return clubs;
+    return clubs
+      .map((c) => ({ club: c, dist: distanceTo(c) }))
+      .filter(({ dist }) => dist !== null && dist <= NEARBY_RADIUS_KM)
+      .sort((a, b) => (a.dist ?? 999) - (b.dist ?? 999))
+      .map(({ club }) => club);
+  })();
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
@@ -266,28 +318,58 @@ const MapPage = ({ city = "Астана" }: MapPageProps) => {
           }}
           className="flex items-center gap-1.5 text-xs font-black text-white bg-emerald-600 px-3 py-2 rounded-xl hover:bg-emerald-700 transition-colors"
         >
-          <ExternalLink size={13} /> Открыть в 2GIS
+          <ExternalLink size={13} /> 2GIS
         </button>
       </div>
 
-      {/* Map */}
+      {/* Фильтр "Рядом" */}
+      <div className="px-4 pb-3 flex items-center gap-2">
+        <button
+          onClick={handleNearby}
+          disabled={locating}
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-2xl text-sm font-black transition-all active:scale-[0.97] border-2 ${
+            nearbyMode
+              ? "bg-blue-500 border-blue-600 text-white shadow-md"
+              : "bg-card border-foreground/10 text-foreground hover:border-blue-400"
+          }`}
+        >
+          {locating
+            ? <Loader2 size={15} className="animate-spin" />
+            : <LocateFixed size={15} />
+          }
+          {nearbyMode ? `Рядом (до ${NEARBY_RADIUS_KM} км)` : "Рядом со мной"}
+        </button>
+        {nearbyMode && (
+          <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-xl border border-blue-200">
+            {displayedClubs.length} найдено
+          </span>
+        )}
+        {locationError && (
+          <span className="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-xl border border-red-200 flex-1">
+            {locationError}
+          </span>
+        )}
+      </div>
+
+      {/* Карта */}
       <div
         className="mx-4 rounded-2xl overflow-hidden border-[3px] border-foreground/8"
-        style={{ height: 340, boxShadow: "var(--shadow-cartoon-lg)" }}
+        style={{ height: 300, boxShadow: "var(--shadow-cartoon-lg)" }}
       >
         <div ref={mapDivRef} style={{ width: "100%", height: "100%" }} />
       </div>
 
-      {/* Legend */}
-      <div className="mx-4 mt-2 flex items-center gap-3 text-[10px] text-muted-foreground font-bold">
+      {/* Легенда */}
+      <div className="mx-4 mt-2 flex items-center gap-3 text-[10px] text-muted-foreground font-bold flex-wrap">
         <span>🟢 Кружок на карте</span>
+        {userLocation && <span className="text-blue-600">🔵 Вы здесь</span>}
         {geocoding && <span className="text-primary">⏳ Определяю адреса...</span>}
         {!geocoding && Object.keys(geocoded).length > 0 && (
-          <span className="text-primary">✅ {Object.keys(geocoded).length} из {clubs.filter(c => c.address).length} найдено</span>
+          <span className="text-primary">✅ {Object.keys(geocoded).length} из {clubs.filter(c => c.address).length} на карте</span>
         )}
       </div>
 
-      {/* Selected club popup */}
+      {/* Попап выбранного клуба */}
       {selected && (
         <div className="mx-4 mt-3 cartoon-card overflow-hidden animate-slide-up">
           <div className="flex gap-3 p-3 items-start">
@@ -299,6 +381,14 @@ const MapPage = ({ city = "Астана" }: MapPageProps) => {
             </div>
             <div className="flex-1 py-0.5 min-w-0">
               <h3 className="font-black text-sm truncate">{clubName(selected)}</h3>
+              {(() => {
+                const d = distanceTo(selected);
+                return d !== null ? (
+                  <p className="text-[10px] font-black text-blue-600 flex items-center gap-0.5">
+                    <LocateFixed size={9} /> {formatDist(d)} от вас
+                  </p>
+                ) : null;
+              })()}
               {selected.rating != null && (
                 <div className="flex items-center gap-1 mt-0.5">
                   <Star size={11} className="text-secondary fill-secondary" />
@@ -330,76 +420,101 @@ const MapPage = ({ city = "Астана" }: MapPageProps) => {
         </div>
       )}
 
-      {/* Club list */}
-      {clubs.length === 0 ? (
-        <div className="mx-4 mt-4 text-center py-8 text-muted-foreground text-sm font-bold cartoon-card">
-          <div className="text-3xl mb-2">🔍</div>
-          <p>Кружки в городе {city} ещё не добавлены</p>
-          <p className="text-xs mt-1 opacity-70">Станьте первым — добавьте кружок!</p>
-        </div>
-      ) : (
-        <div className="px-4 mt-4">
-          <h2 className="text-sm font-black mb-3">📋 Все кружки — {city} ({clubs.length})</h2>
-          <div className="flex flex-col gap-2">
-            {clubs.map((club) => {
-              const isSelected = selected?.id === club.id;
-              const hasCoords = !!geocoded[club.id];
-              const hasGis = gisUrlExists(club);
-              const emoji = CATEGORY_EMOJI[club.category || "other"] || "✨";
-              return (
-                <button
-                  key={club.id}
-                  onClick={() => handleSelectClub(club)}
-                  className={`flex items-center gap-3 p-3 rounded-2xl text-left transition-all active:scale-[0.98] border-[3px] ${
-                    isSelected ? "border-primary bg-primary/5" : "border-foreground/8 bg-card"
-                  }`}
-                  style={{ boxShadow: "var(--shadow-cartoon)" }}
-                >
-                  {/* Avatar / emoji */}
-                  <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border-2 border-foreground/5 bg-primary/10 flex items-center justify-center text-xl">
-                    {club.avatarUrl || club.avatar_url
-                      ? <img src={club.avatarUrl || club.avatar_url} alt="" className="w-full h-full object-cover" />
-                      : emoji
-                    }
-                  </div>
+      {/* Список кружков */}
+      <div className="px-4 mt-4">
+        {nearbyMode && displayedClubs.length === 0 ? (
+          <div className="text-center py-8 cartoon-card">
+            <div className="text-3xl mb-2">📍</div>
+            <p className="font-black text-sm">Рядом кружков не найдено</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              В радиусе {NEARBY_RADIUS_KM} км нет кружков с известными адресами
+            </p>
+            <button onClick={() => setNearbyMode(false)} className="mt-3 text-xs font-black text-primary underline">
+              Показать все
+            </button>
+          </div>
+        ) : clubs.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground text-sm font-bold cartoon-card">
+            <div className="text-3xl mb-2">🔍</div>
+            <p>Кружки в городе {city} ещё не добавлены</p>
+          </div>
+        ) : (
+          <>
+            <h2 className="text-sm font-black mb-3">
+              {nearbyMode
+                ? `📍 Рядом с вами — ${displayedClubs.length} кружков`
+                : `📋 Все кружки — ${city} (${clubs.length})`
+              }
+            </h2>
+            <div className="flex flex-col gap-2">
+              {displayedClubs.map((club) => {
+                const isSelected = selected?.id === club.id;
+                const hasCoords = !!geocoded[club.id];
+                const hasGis = !!(club.gisUrl || club.gis_url);
+                const emoji = CATEGORY_EMOJI[club.category || "other"] || "✨";
+                const dist = distanceTo(club);
+                return (
+                  <div
+                    key={club.id}
+                    onClick={() => handleSelectClub(club)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === "Enter" && handleSelectClub(club)}
+                    className={`flex items-center gap-3 p-3 rounded-2xl text-left transition-all active:scale-[0.98] border-[3px] cursor-pointer ${
+                      isSelected ? "border-primary bg-primary/5" : "border-foreground/8 bg-card"
+                    }`}
+                    style={{ boxShadow: "var(--shadow-cartoon)" }}
+                  >
+                    <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border-2 border-foreground/5 bg-primary/10 flex items-center justify-center text-xl">
+                      {club.avatarUrl || club.avatar_url
+                        ? <img src={club.avatarUrl || club.avatar_url} alt="" className="w-full h-full object-cover" />
+                        : emoji
+                      }
+                    </div>
 
-                  <div className="flex-1 min-w-0">
-                    <p className="font-black text-sm truncate">{clubName(club)}</p>
-                    {club.address && (
-                      <p className="text-[10px] text-muted-foreground font-bold truncate flex items-center gap-0.5">
-                        <MapPin size={9} className="shrink-0" />{club.address}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-2 mt-0.5">
-                      {hasCoords && (
-                        <span className="text-[9px] font-black text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">📍 На карте</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-black text-sm truncate">{clubName(club)}</p>
+                      {club.address && (
+                        <p className="text-[10px] text-muted-foreground font-bold truncate flex items-center gap-0.5">
+                          <MapPin size={9} className="shrink-0" />{club.address}
+                        </p>
                       )}
-                      {hasGis && (
-                        <span className="text-[9px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full">2GIS</span>
+                      <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                        {dist !== null && (
+                          <span className="text-[9px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                            <LocateFixed size={8} /> {formatDist(dist)}
+                          </span>
+                        )}
+                        {hasCoords && dist === null && (
+                          <span className="text-[9px] font-black text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">📍 На карте</span>
+                        )}
+                        {hasGis && (
+                          <span className="text-[9px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full">2GIS</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-1.5 shrink-0">
+                      {club.rating != null && (
+                        <div className="flex items-center gap-0.5 bg-yellow-50 px-2 py-0.5 rounded-full">
+                          <Star size={10} className="text-secondary fill-secondary" />
+                          <span className="text-xs font-black">{Number(club.rating).toFixed(1)}</span>
+                        </div>
                       )}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); open2gis(club); }}
+                        className="flex items-center gap-1 text-[10px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-lg"
+                      >
+                        <Navigation size={10} /> 2GIS
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    {club.rating != null && (
-                      <div className="flex items-center gap-0.5 bg-yellow-50 px-2 py-0.5 rounded-full">
-                        <Star size={10} className="text-secondary fill-secondary" />
-                        <span className="text-xs font-black">{Number(club.rating).toFixed(1)}</span>
-                      </div>
-                    )}
-                    <button
-                      onClick={(e) => { e.stopPropagation(); open2gis(club); }}
-                      className="flex items-center gap-1 text-[10px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-lg"
-                    >
-                      <Navigation size={10} /> 2GIS
-                    </button>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };
