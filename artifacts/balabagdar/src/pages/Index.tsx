@@ -8,6 +8,7 @@ import ProfilePage from "./ProfilePage";
 import NotificationsPage from "./NotificationsPage";
 import ClubDashboard from "./ClubDashboard";
 import ClubEditPage from "./ClubEditPage";
+import BoardPage from "./BoardPage";
 import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
@@ -24,6 +25,7 @@ const Index = () => {
     switch (location.pathname) {
       case "/map": return <MapPage city={city} />;
       case "/news": return <NewsPage city={city} />;
+      case "/board": return <BoardPage city={city} />;
       case "/profile": return <ProfilePage />;
       case "/notifications": return <NotificationsPage />;
       case "/dashboard": return <ClubDashboard />;

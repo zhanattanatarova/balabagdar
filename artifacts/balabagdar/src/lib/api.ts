@@ -110,6 +110,14 @@ export const api = {
     report: (id: string, reason = "") =>
       request<any>(`/reviews/${id}/report`, { method: "POST", body: JSON.stringify({ reason }) }),
   },
+  announcements: {
+    list: (params?: { city?: string; category?: string }) => {
+      const qs = new URLSearchParams(params as any).toString();
+      return request<any[]>(`/announcements${qs ? `?${qs}` : ""}`);
+    },
+    create: (data: { category: string; title: string; body: string; name: string; phone?: string; city: string }) =>
+      request<any>("/announcements", { method: "POST", body: JSON.stringify(data) }),
+  },
   upload: {
     file: async (file: File): Promise<string> => {
       const token = getToken();

@@ -7,6 +7,7 @@ import bookingsRouter from "./bookings";
 import reviewsRouter from "./reviews";
 import uploadRouter from "./upload";
 import botRouter from "./bot";
+import announcementsRouter from "./announcements";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use("/bookings", bookingsRouter);
 router.use("/reviews", reviewsRouter);
 router.use("/upload", uploadRouter);
 router.use("/bot", botRouter);
+router.use("/announcements", announcementsRouter);
 
 export default router;
