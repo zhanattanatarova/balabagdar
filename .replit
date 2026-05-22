@@ -48,4 +48,3 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-SEED_SECRET = "bala-seed-2026"
