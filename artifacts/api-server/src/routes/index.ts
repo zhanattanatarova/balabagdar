@@ -8,6 +8,7 @@ import reviewsRouter from "./reviews";
 import uploadRouter from "./upload";
 import botRouter from "./bot";
 import announcementsRouter from "./announcements";
+import adminRouter from "./admin";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use("/reviews", reviewsRouter);
 router.use("/upload", uploadRouter);
 router.use("/bot", botRouter);
 router.use("/announcements", announcementsRouter);
+router.use("/admin", adminRouter);
 
 export default router;

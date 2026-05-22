@@ -44,3 +44,8 @@ defaultBucketID = "replit-objstore-42dc061d-2b7d-41fe-abbf-51c35f8b449c"
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+SEED_SECRET = "bala-seed-2026"
