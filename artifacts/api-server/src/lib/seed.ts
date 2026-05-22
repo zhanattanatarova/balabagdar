@@ -1,8 +1,24 @@
 import { db } from "@workspace/db";
 import { usersTable, clubsTable } from "@workspace/db/schema";
+import { eq } from "drizzle-orm";
 import { logger } from "./logger";
 
-export async function seedProductionData() {
+export async function seedIfEmpty() {
+  try {
+    const existing = await db
+      .select({ id: clubsTable.id })
+      .from(clubsTable)
+      .where(eq(clubsTable.id, "89f20083-45e0-4d8c-b3d0-7f4fc892f464"))
+      .limit(1);
+    if (existing.length > 0) return;
+    logger.info("Seeding clubs data...");
+    await seedProductionData();
+  } catch (err) {
+    logger.error({ err }, "Seed check failed (non-fatal)");
+  }
+}
+
+async function seedProductionData() {
   try {
     await db
       .insert(usersTable)
