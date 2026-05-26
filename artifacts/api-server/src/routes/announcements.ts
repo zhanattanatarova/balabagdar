@@ -39,7 +39,8 @@ router.post("/", async (req, res) => {
     };
 
     if (!title?.trim() || !body?.trim() || !name?.trim() || !city?.trim()) {
-      return res.status(400).json({ error: "title, body, name and city are required" });
+      res.status(400).json({ error: "title, body, name and city are required" });
+      return;
     }
 
     const expiresAt = new Date();
