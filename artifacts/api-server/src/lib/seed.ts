@@ -10,7 +10,10 @@ export async function seedIfEmpty() {
       .from(clubsTable)
       .where(eq(clubsTable.id, "89f20083-45e0-4d8c-b3d0-7f4fc892f464"))
       .limit(1);
-    if (existing.length > 0) return;
+    if (existing.length > 0) {
+      logger.info("Seed: Baby Kids already present, skipping");
+      return;
+    }
     logger.info("Seeding clubs data...");
     await seedProductionData();
   } catch (err) {
@@ -20,6 +23,7 @@ export async function seedIfEmpty() {
 
 async function seedProductionData() {
   try {
+    // Insert user — ignore conflict on id or phone
     await db
       .insert(usersTable)
       .values({
@@ -30,24 +34,25 @@ async function seedProductionData() {
       })
       .onConflictDoNothing();
 
+    // Resolve the ACTUAL user id by phone (in case of id conflict on existing user)
+    const userRow = await db
+      .select({ id: usersTable.id })
+      .from(usersTable)
+      .where(eq(usersTable.phone, "77474807286"))
+      .limit(1);
+
+    if (userRow.length === 0) {
+      logger.error("Seed: could not resolve user by phone 77474807286 — aborting");
+      return;
+    }
+
+    const userId = userRow[0].id;
+    logger.info({ userId }, "Seed: using userId for clubs");
+
     const clubsData = [
       {
-        id: "6d9cb4c4-6ab3-495d-bf9f-d0acbc4b99e5",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
-        nameRu: "Аси",
-        category: "speech",
-        city: "Актау",
-        address: "15-101",
-        phone: "+77027772047",
-        ageMin: 0,
-        ageMax: 3,
-        priceFrom: 0,
-        avatarUrl: "/api/storage/objects/uploads/aefb06f3-302b-43ce-8178-81196d0ce3cd",
-        isActive: true,
-      },
-      {
         id: "89f20083-45e0-4d8c-b3d0-7f4fc892f464",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "Baby Kids",
         nameKz: "Baby Kids",
         category: "development",
@@ -65,7 +70,7 @@ async function seedProductionData() {
       },
       {
         id: "883cd05f-b813-4718-8983-2c5a13355ad0",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "Центр Шабыт",
         nameKz: "Шабыт орталығы",
         category: "kindergarten",
@@ -82,7 +87,7 @@ async function seedProductionData() {
       },
       {
         id: "0a67f10a-265f-4c6e-b56f-4bf0980669a2",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "Aqyl Junior — Образовательный центр",
         nameKz: "Aqyl Junior — Оқу орталығы",
         nameEn: "Aqyl Junior Learning Center",
@@ -100,7 +105,7 @@ async function seedProductionData() {
       },
       {
         id: "1e1cc406-8505-433d-933b-c6efa6d69d82",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "Сделай Шаг",
         nameKz: "Түзету және даму орталығы",
         category: "special",
@@ -117,7 +122,7 @@ async function seedProductionData() {
       },
       {
         id: "5488da99-d39e-446b-886f-0e99236a70a9",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "StudyMania — Английский язык",
         nameKz: "StudyMania — Ағылшын тілі",
         nameEn: "StudyMania English School",
@@ -135,7 +140,7 @@ async function seedProductionData() {
       },
       {
         id: "3ea8dd0b-fd1a-42aa-bc9f-3f160d462996",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "Центр развития Мадина",
         nameKz: "Мадина даму орталығы",
         category: "development",
@@ -153,7 +158,7 @@ async function seedProductionData() {
       },
       {
         id: "e2d7a6a8-1725-4977-9e03-433a9fd0a577",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "Art Shiko — Творческая студия",
         nameKz: "Art Shiko — Шығармашылық студиясы",
         category: "creativity",
@@ -170,7 +175,7 @@ async function seedProductionData() {
       },
       {
         id: "a99dbe26-b48e-4033-96a0-c8e234883cf2",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "KonysToys — Развивающие игрушки",
         nameKz: "KonysToys — Дамытушы ойыншықтар",
         category: "shops",
@@ -188,7 +193,7 @@ async function seedProductionData() {
       },
       {
         id: "e8e0e013-a4e7-4c03-a70a-26f04c99ec26",
-        userId: "87467a97-634f-4be2-8421-59f0d47aad4b",
+        userId,
         nameRu: "Balapan — Образовательный центр",
         nameKz: "Balapan білім орталығы",
         category: "development",
@@ -204,13 +209,36 @@ async function seedProductionData() {
         descriptionKz: "Balapan білім орталығы. Мектепке дайындық.",
         isActive: true,
       },
+      {
+        id: "6d9cb4c4-6ab3-495d-bf9f-d0acbc4b99e5",
+        userId,
+        nameRu: "Аси",
+        category: "speech",
+        city: "Актау",
+        address: "15-101",
+        phone: "+77027772047",
+        ageMin: 0,
+        ageMax: 3,
+        priceFrom: 0,
+        avatarUrl: "/api/storage/objects/uploads/aefb06f3-302b-43ce-8178-81196d0ce3cd",
+        isActive: true,
+      },
     ] as const;
 
+    let inserted = 0;
+    let skipped = 0;
     for (const club of clubsData) {
-      await db.insert(clubsTable).values(club as any).onConflictDoNothing();
+      try {
+        const res = await db.insert(clubsTable).values(club as any).onConflictDoNothing().returning({ id: clubsTable.id });
+        if (res.length > 0) inserted++;
+        else skipped++;
+      } catch (clubErr) {
+        logger.error({ clubErr, clubId: club.id, clubName: club.nameRu }, "Seed: failed to insert club (skipping)");
+        skipped++;
+      }
     }
 
-    logger.info("Production seed completed");
+    logger.info({ inserted, skipped }, "Production seed completed");
   } catch (err) {
     logger.error({ err }, "Seed error (non-fatal)");
   }

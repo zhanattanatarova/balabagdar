@@ -11,14 +11,23 @@ import ClubEditPage from "./ClubEditPage";
 import BoardPage from "./BoardPage";
 import BottomNav from "@/components/BottomNav";
 
+const CITY_KEY = "balabagdar_city";
+
 const Index = () => {
   const location = useLocation();
   const isHome = location.pathname === "/" || location.pathname === "";
   const [showSplash, setShowSplash] = useState(isHome);
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState<string>(
+    () => localStorage.getItem(CITY_KEY) ?? "Актау"
+  );
 
   const handleSplashComplete = useCallback(() => {
     setShowSplash(false);
+  }, []);
+
+  const handleSetCity = useCallback((c: string) => {
+    setCity(c);
+    localStorage.setItem(CITY_KEY, c);
   }, []);
 
   const renderPage = () => {
@@ -30,7 +39,7 @@ const Index = () => {
       case "/notifications": return <NotificationsPage />;
       case "/dashboard": return <ClubDashboard />;
       case "/club/edit": return <ClubEditPage />;
-      default: return <HomePage city={city} setCity={setCity} />;
+      default: return <HomePage city={city} setCity={handleSetCity} />;
     }
   };
 

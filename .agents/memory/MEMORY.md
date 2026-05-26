@@ -1,0 +1,1 @@
+- [Seed FK production bug](seed-fk-bug.md) — production user phone conflict causes FK failures; always resolve actual userId by phone after onConflictDoNothing insert
