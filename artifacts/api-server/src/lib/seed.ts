@@ -10,10 +10,10 @@ export async function seedIfEmpty() {
     const existing = await db
       .select({ id: clubsTable.id })
       .from(clubsTable)
-      .where(eq(clubsTable.id, "89f20083-45e0-4d8c-b3d0-7f4fc892f464"))
+      .where(eq(clubsTable.id, "a3b4a2bc-ec5c-481c-b8d7-ac7029f4d108"))
       .limit(1);
     if (existing.length > 0) {
-      logger.info("Seed: Baby Kids already present, skipping");
+      logger.info("Seed: Tolagai already present, skipping");
       return;
     }
     logger.info("Seeding clubs data...");
@@ -182,6 +182,24 @@ async function seedProductionData() {
       avatarUrl: "/avatars/balapan.png",
       descriptionRu: "Образовательный центр Balapan. Подготовка к школе.",
       descriptionKz: "Balapan білім орталығы. Мектепке дайындық.",
+      isActive: true,
+    },
+    {
+      id: "a3b4a2bc-ec5c-481c-b8d7-ac7029f4d108",
+      userId: PROD_USER_ID,
+      nameRu: "Tolagai — Детская гимнастика и акробатика",
+      nameKz: "Tolagai — Балалар гимнастикасы және акробатика",
+      category: "sports",
+      city: "Актау",
+      address: "ЖК Premier Aktau, 19 мкр, 44, 1 этаж",
+      phone: "+77752061123",
+      instagram: "https://www.instagram.com/tolagai_aktau/",
+      ageMin: 3,
+      ageMax: 18,
+      priceFrom: 0,
+      avatarUrl: "/avatars/tolagai.png",
+      descriptionRu: "Детская гимнастика и акробатика в Актау. ЖК Premier Aktau, 19 мкр, 44, 1 этаж.",
+      descriptionKz: "Ақтаудағы балалар гимнастикасы және акробатика. Premier Aktau ЖК, 19 мкр, 44, 1 қабат.",
       isActive: true,
     },
     {
