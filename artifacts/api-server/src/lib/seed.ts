@@ -10,10 +10,10 @@ export async function seedIfEmpty() {
     const existing = await db
       .select({ id: clubsTable.id })
       .from(clubsTable)
-      .where(eq(clubsTable.id, "a3b4a2bc-ec5c-481c-b8d7-ac7029f4d108"))
+      .where(eq(clubsTable.id, "c1b8f25b-c0fc-45ef-90f4-0181b4d05d7d"))
       .limit(1);
     if (existing.length > 0) {
-      logger.info("Seed: Tolagai already present, skipping");
+      logger.info("Seed: SensoryUm already present, skipping");
       return;
     }
 
@@ -203,6 +203,23 @@ async function seedData(userId: string) {
       avatarUrl: "/avatars/tolagai.png",
       descriptionRu: "Детская гимнастика и акробатика в Актау. ЖК Premier Aktau, 19 мкр, 44, 1 этаж.",
       descriptionKz: "Ақтаудағы балалар гимнастикасы және акробатика. Premier Aktau ЖК, 19 мкр, 44, 1 қабат.",
+      isActive: true,
+    },
+    {
+      id: "c1b8f25b-c0fc-45ef-90f4-0181b4d05d7d",
+      nameRu: "SensoryUm",
+      nameKz: "SensoryUm",
+      category: "development",
+      city: "Актау",
+      address: "14-50, 1 этаж",
+      phone: "+77052307515",
+      instagram: "https://www.instagram.com/sensoryum_afk_aktau/",
+      ageMin: 1,
+      ageMax: 12,
+      priceFrom: 0,
+      avatarUrl: "/avatars/sensoryum.png",
+      descriptionRu: "👶 Мини-сад: 1,6+\n📚 Мектепке дайындық\n⭐️ Ағылшын тілі\n💫 Жексенбілік топ\n🧠 Нейрокоррекция\n💪 АФК | Демалыс топтары",
+      descriptionKz: "👶 Мини-бақша: 1,6+\n📚 Мектепке дайындық\n⭐️ Ағылшын тілі\n💫 Жексенбілік топ\n🧠 Нейрокоррекция\n💪 АФК | Демалыс топтары",
       isActive: true,
     },
     {
