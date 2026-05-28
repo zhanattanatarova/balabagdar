@@ -111,6 +111,7 @@ async function seedData(userId: string) {
       nameKz: "StudyMania — Ағылшын тілі",
       nameEn: "StudyMania English School",
       category: "languages",
+      subcategory: "english",
       city: "Жанаозен",
       phone: "+77029797290",
       instagram: "https://www.instagram.com/studymania.ozen/",
@@ -278,6 +279,7 @@ async function seedData(userId: string) {
     { id: "a3b4a2bc-ec5c-481c-b8d7-ac7029f4d108", category: "sport", subcategory: "gymnastics" },
     { id: "1e1cc406-8505-433d-933b-c6efa6d69d82", category: "special", subcategory: "afk" },
     { id: "c1b8f25b-c0fc-45ef-90f4-0181b4d05d7d", category: "development", subcategory: "afk" },
+    { id: "5488da99-d39e-446b-886f-0e99236a70a9", category: "languages", subcategory: "english" },
   ];
   for (const fix of fixes) {
     try {

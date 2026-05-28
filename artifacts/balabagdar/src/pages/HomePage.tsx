@@ -246,11 +246,13 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       setLoadingClubs(true);
       try {
         const params: Record<string, string> = { city };
-        if (selectedCategory) params.category = selectedCategory;
         if (searchQuery.trim()) params.search = searchQuery.trim();
         if (selectedAge) params.age = selectedAge;
 
-        // Pass subcategory as API param for proper DB-level filtering
+        // Pass subcategory as API param for proper DB-level filtering.
+        // For languages: if a specific language is picked, search by subcategory
+        // across ALL categories (a club can be development + teach english).
+        // Otherwise filter by category only.
         const getSubcategory = () => {
           if (selectedCategory === "languages") return selectedLanguage;
           if (selectedCategory === "dance") return selectedDance;
@@ -264,6 +266,12 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           return null;
         };
         const subcategory = getSubcategory();
+        // When a specific language subcategory is selected, skip the category
+        // filter so clubs from any category (e.g. development) with that
+        // language subcategory are included.
+        const skipCategoryForSubcategory =
+          selectedCategory === "languages" && !!subcategory;
+        if (selectedCategory && !skipCategoryForSubcategory) params.category = selectedCategory;
         if (subcategory) params.subcategory = subcategory;
 
         const data = await api.clubs.list(params);
