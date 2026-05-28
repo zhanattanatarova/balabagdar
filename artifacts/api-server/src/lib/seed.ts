@@ -1,6 +1,6 @@
 import { db } from "@workspace/db";
 import { usersTable, clubsTable } from "@workspace/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { logger } from "./logger";
 
 const OWNER_PHONE = "77474807286";
@@ -13,7 +13,8 @@ export async function seedIfEmpty() {
       .where(eq(clubsTable.id, "efeeea53-0fe1-4765-8b59-8454b1d40043"))
       .limit(1);
     if (existing.length > 0) {
-      logger.info("Seed: Sisters Tuyakovy already present, skipping");
+      logger.info("Seed: all clubs present, running tag fixes only");
+      await applyFixes();
       return;
     }
 
@@ -36,6 +37,40 @@ export async function seedIfEmpty() {
   }
 }
 
+async function applyFixes() {
+  // Ensure tags column exists (idempotent migration for production)
+  try {
+    await db.execute(sql`ALTER TABLE clubs ADD COLUMN IF NOT EXISTS tags jsonb DEFAULT '[]'::jsonb`);
+  } catch (e) {
+    logger.warn({ e }, "Seed: tags column migration failed (non-fatal)");
+  }
+
+  const fixes: { id: string; category: string; subcategory: string | null; tags: string[] }[] = [
+    { id: "a3b4a2bc-ec5c-481c-b8d7-ac7029f4d108", category: "sport",       subcategory: "gymnastics", tags: ["gymnastics"] },
+    { id: "1e1cc406-8505-433d-933b-c6efa6d69d82", category: "special",     subcategory: "afk",        tags: ["afk", "speech", "aba", "sensory"] },
+    { id: "c1b8f25b-c0fc-45ef-90f4-0181b4d05d7d", category: "development", subcategory: "afk",        tags: ["school_prep", "english", "afk", "sensory"] },
+    { id: "5488da99-d39e-446b-886f-0e99236a70a9", category: "languages",   subcategory: "english",    tags: ["english"] },
+    { id: "89f20083-45e0-4d8c-b3d0-7f4fc892f464", category: "development", subcategory: null,          tags: ["school_prep", "early"] },
+    { id: "883cd05f-b813-4718-8983-2c5a13355ad0", category: "kindergarten",subcategory: null,          tags: ["early"] },
+    { id: "0a67f10a-265f-4c6e-b56f-4bf0980669a2", category: "development", subcategory: null,          tags: ["early", "school_prep", "english", "speech"] },
+    { id: "3ea8dd0b-fd1a-42aa-bc9f-3f160d462996", category: "development", subcategory: null,          tags: ["early", "school_prep"] },
+    { id: "e8e0e013-a4e7-4c03-a70a-26f04c99ec26", category: "development", subcategory: null,          tags: ["school_prep"] },
+    { id: "e2d7a6a8-1725-4977-9e03-433a9fd0a577", category: "creativity",  subcategory: null,          tags: ["drawing"] },
+    { id: "efeeea53-0fe1-4765-8b59-8454b1d40043", category: "creativity",  subcategory: null,          tags: ["drawing", "art_therapy"] },
+    { id: "6d9cb4c4-6ab3-495d-bf9f-d0acbc4b99e5", category: "speech",      subcategory: null,          tags: ["early", "speech"] },
+  ];
+  for (const fix of fixes) {
+    try {
+      await db.update(clubsTable)
+        .set({ category: fix.category, subcategory: fix.subcategory, tags: fix.tags } as any)
+        .where(eq(clubsTable.id, fix.id));
+    } catch (e) {
+      logger.warn({ e, id: fix.id }, "Seed: fix update failed (non-fatal)");
+    }
+  }
+  logger.info("Seed: tag fixes applied");
+}
+
 async function seedData(userId: string) {
   const clubs = [
     {
@@ -43,6 +78,7 @@ async function seedData(userId: string) {
       nameRu: "Baby Kids",
       nameKz: "Baby Kids",
       category: "development",
+      tags: ["school_prep", "early"],
       city: "Актау",
       address: "19-43 АФК",
       phone: "+77018862266",
@@ -60,6 +96,7 @@ async function seedData(userId: string) {
       nameRu: "Центр Шабыт",
       nameKz: "Шабыт орталығы",
       category: "kindergarten",
+      tags: ["early"],
       city: "Актау",
       address: "Толкын 2, 47 дом",
       phone: "+77012778857",
@@ -77,6 +114,7 @@ async function seedData(userId: string) {
       nameKz: "Aqyl Junior — Оқу орталығы",
       nameEn: "Aqyl Junior Learning Center",
       category: "development",
+      tags: ["early", "school_prep", "english", "speech"],
       city: "Актау",
       address: "11 мкр, 3 дом",
       phone: "+77017776600",
@@ -94,6 +132,7 @@ async function seedData(userId: string) {
       nameKz: "Түзету және даму орталығы",
       category: "special",
       subcategory: "afk",
+      tags: ["afk", "speech", "aba", "sensory"],
       city: "Актау",
       address: "19а мкр, 22",
       instagram: "https://www.instagram.com/sdelai_shag.aktau/",
@@ -112,6 +151,7 @@ async function seedData(userId: string) {
       nameEn: "StudyMania English School",
       category: "languages",
       subcategory: "english",
+      tags: ["english"],
       city: "Жанаозен",
       phone: "+77029797290",
       instagram: "https://www.instagram.com/studymania.ozen/",
@@ -128,6 +168,7 @@ async function seedData(userId: string) {
       nameRu: "Центр развития Мадина",
       nameKz: "Мадина даму орталығы",
       category: "development",
+      tags: ["early", "school_prep"],
       city: "Актау",
       address: "ЖК Акжелкен, мкр 32Б, 20",
       whatsapp: "+77085901060",
@@ -145,6 +186,7 @@ async function seedData(userId: string) {
       nameRu: "Art Shiko — Творческая студия",
       nameKz: "Art Shiko — Шығармашылық студиясы",
       category: "creativity",
+      tags: ["drawing"],
       city: "Актау",
       address: "16-64",
       phone: "+77752797486",
@@ -161,6 +203,7 @@ async function seedData(userId: string) {
       nameRu: "KonysToys — Развивающие игрушки",
       nameKz: "KonysToys — Дамытушы ойыншықтар",
       category: "shops",
+      tags: [],
       city: "Актау",
       address: "19 мкр, 25 дом",
       phone: "+77006614760",
@@ -178,6 +221,7 @@ async function seedData(userId: string) {
       nameRu: "Balapan — Образовательный центр",
       nameKz: "Balapan білім орталығы",
       category: "development",
+      tags: ["school_prep"],
       city: "Актау",
       address: "ЖК Отырар Сити, 20 мкр, 24/1",
       phone: "+77009613235",
@@ -196,6 +240,7 @@ async function seedData(userId: string) {
       nameKz: "Tolagai — Балалар гимнастикасы және акробатика",
       category: "sport",
       subcategory: "gymnastics",
+      tags: ["gymnastics"],
       city: "Актау",
       address: "ЖК Premier Aktau, 19 мкр, 44, 1 этаж",
       phone: "+77752061123",
@@ -214,6 +259,7 @@ async function seedData(userId: string) {
       nameKz: "SensoryUm",
       category: "development",
       subcategory: "afk",
+      tags: ["school_prep", "english", "afk", "sensory"],
       city: "Актау",
       address: "14-50, 1 этаж",
       phone: "+77052307515",
@@ -227,10 +273,25 @@ async function seedData(userId: string) {
       isActive: true,
     },
     {
+      id: "6d9cb4c4-6ab3-495d-bf9f-d0acbc4b99e5",
+      nameRu: "Аси",
+      category: "speech",
+      tags: ["early", "speech"],
+      city: "Актау",
+      address: "15-101",
+      phone: "+77027772047",
+      ageMin: 0,
+      ageMax: 3,
+      priceFrom: 0,
+      avatarUrl: "/api/storage/objects/uploads/aefb06f3-302b-43ce-8178-81196d0ce3cd",
+      isActive: true,
+    },
+    {
       id: "efeeea53-0fe1-4765-8b59-8454b1d40043",
       nameRu: "Мастерская сестёр Туяковых",
       nameKz: "Туяковых апалар шеберханасы",
       category: "creativity",
+      tags: ["drawing", "art_therapy"],
       city: "Актау",
       phone: "+77012975990",
       instagram: "https://www.instagram.com/sisters_tuyakovy/",
@@ -240,19 +301,6 @@ async function seedData(userId: string) {
       avatarUrl: "/avatars/sisters-tuyakovy.png",
       descriptionRu: "Арт-терапия и рисование в Актау. Творчество, которое объединяет.",
       descriptionKz: "Ақтаудағы арт-терапия және сурет салу. Шығармашылық — бәрін біріктіреді.",
-      isActive: true,
-    },
-    {
-      id: "6d9cb4c4-6ab3-495d-bf9f-d0acbc4b99e5",
-      nameRu: "Аси",
-      category: "speech",
-      city: "Актау",
-      address: "15-101",
-      phone: "+77027772047",
-      ageMin: 0,
-      ageMax: 3,
-      priceFrom: 0,
-      avatarUrl: "/api/storage/objects/uploads/aefb06f3-302b-43ce-8178-81196d0ce3cd",
       isActive: true,
     },
   ];
@@ -274,22 +322,6 @@ async function seedData(userId: string) {
     }
   }
 
-  // Fix category/subcategory for existing clubs (idempotent corrections)
-  const fixes = [
-    { id: "a3b4a2bc-ec5c-481c-b8d7-ac7029f4d108", category: "sport", subcategory: "gymnastics" },
-    { id: "1e1cc406-8505-433d-933b-c6efa6d69d82", category: "special", subcategory: "afk" },
-    { id: "c1b8f25b-c0fc-45ef-90f4-0181b4d05d7d", category: "development", subcategory: "afk" },
-    { id: "5488da99-d39e-446b-886f-0e99236a70a9", category: "languages", subcategory: "english" },
-  ];
-  for (const fix of fixes) {
-    try {
-      await db.update(clubsTable)
-        .set({ category: fix.category, subcategory: fix.subcategory } as any)
-        .where(eq(clubsTable.id, fix.id));
-    } catch (e) {
-      logger.warn({ e, id: fix.id }, "Seed: fix update failed (non-fatal)");
-    }
-  }
-
+  await applyFixes();
   logger.info({ inserted, skipped }, "Seed completed");
 }

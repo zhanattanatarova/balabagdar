@@ -14,6 +14,7 @@ export const clubsTable = pgTable("clubs", {
   descriptionEn: text("description_en"),
   category: text("category").notNull().default("other"),
   subcategory: text("subcategory"),
+  tags: json("tags").$type<string[]>().default([]),
   city: text("city").notNull().default("Астана"),
   address: text("address"),
   phone: text("phone"),

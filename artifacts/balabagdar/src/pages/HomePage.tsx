@@ -266,13 +266,15 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           return null;
         };
         const subcategory = getSubcategory();
-        // When a specific language subcategory is selected, skip the category
-        // filter so clubs from any category (e.g. development) with that
-        // language subcategory are included.
-        const skipCategoryForSubcategory =
-          selectedCategory === "languages" && !!subcategory;
-        if (selectedCategory && !skipCategoryForSubcategory) params.category = selectedCategory;
-        if (subcategory) params.subcategory = subcategory;
+        // When a specific subcategory/service is selected, use tag-based search
+        // (cross-category) so multi-service clubs appear regardless of their
+        // primary category. When only a category icon is selected (no subcategory),
+        // filter by category so all clubs in that category are shown.
+        if (subcategory) {
+          params.tag = subcategory;
+        } else if (selectedCategory) {
+          params.category = selectedCategory;
+        }
 
         const data = await api.clubs.list(params);
         setClubs(data || []);

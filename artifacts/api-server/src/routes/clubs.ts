@@ -53,7 +53,7 @@ async function getSession(req: Request) {
 
 router.get("/", async (req, res) => {
   try {
-    const { city, category, subcategory, search, age, limit = "50" } = req.query as Record<string, string>;
+    const { city, category, subcategory, tag, search, age, limit = "50" } = req.query as Record<string, string>;
 
     const clubs = await db
       .select()
@@ -66,6 +66,7 @@ router.get("/", async (req, res) => {
     if (city) filtered = filtered.filter((c) => c.city === city);
     if (category) filtered = filtered.filter((c) => c.category === category);
     if (subcategory) filtered = filtered.filter((c) => c.subcategory === subcategory);
+    if (tag) filtered = filtered.filter((c) => ((c.tags as string[]) || []).includes(tag) || c.subcategory === tag);
     if (age) {
       const a = parseInt(age);
       if (!isNaN(a)) {
