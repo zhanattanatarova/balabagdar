@@ -93,6 +93,7 @@ async function seedData(userId: string) {
       nameRu: "Сделай Шаг",
       nameKz: "Түзету және даму орталығы",
       category: "special",
+      subcategory: "afk",
       city: "Актау",
       address: "19а мкр, 22",
       instagram: "https://www.instagram.com/sdelai_shag.aktau/",
@@ -192,7 +193,8 @@ async function seedData(userId: string) {
       id: "a3b4a2bc-ec5c-481c-b8d7-ac7029f4d108",
       nameRu: "Tolagai — Детская гимнастика и акробатика",
       nameKz: "Tolagai — Балалар гимнастикасы және акробатика",
-      category: "sports",
+      category: "sport",
+      subcategory: "gymnastics",
       city: "Актау",
       address: "ЖК Premier Aktau, 19 мкр, 44, 1 этаж",
       phone: "+77752061123",
@@ -210,6 +212,7 @@ async function seedData(userId: string) {
       nameRu: "SensoryUm",
       nameKz: "SensoryUm",
       category: "development",
+      subcategory: "afk",
       city: "Актау",
       address: "14-50, 1 этаж",
       phone: "+77052307515",
@@ -269,5 +272,22 @@ async function seedData(userId: string) {
       skipped++;
     }
   }
+
+  // Fix category/subcategory for existing clubs (idempotent corrections)
+  const fixes = [
+    { id: "a3b4a2bc-ec5c-481c-b8d7-ac7029f4d108", category: "sport", subcategory: "gymnastics" },
+    { id: "1e1cc406-8505-433d-933b-c6efa6d69d82", category: "special", subcategory: "afk" },
+    { id: "c1b8f25b-c0fc-45ef-90f4-0181b4d05d7d", category: "development", subcategory: "afk" },
+  ];
+  for (const fix of fixes) {
+    try {
+      await db.update(clubsTable)
+        .set({ category: fix.category, subcategory: fix.subcategory } as any)
+        .where(eq(clubsTable.id, fix.id));
+    } catch (e) {
+      logger.warn({ e, id: fix.id }, "Seed: fix update failed (non-fatal)");
+    }
+  }
+
   logger.info({ inserted, skipped }, "Seed completed");
 }

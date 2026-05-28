@@ -456,10 +456,10 @@ const MapPage = ({ city = "Астана" }: MapPageProps) => {
                 return (
                   <div
                     key={club.id}
-                    onClick={() => handleSelectClub(club)}
+                    onClick={() => navigate(`/club/${club.id}`)}
                     role="button"
                     tabIndex={0}
-                    onKeyDown={(e) => e.key === "Enter" && handleSelectClub(club)}
+                    onKeyDown={(e) => e.key === "Enter" && navigate(`/club/${club.id}`)}
                     className={`flex items-center gap-3 p-3 rounded-2xl text-left transition-all active:scale-[0.98] border-[3px] cursor-pointer ${
                       isSelected ? "border-primary bg-primary/5" : "border-foreground/8 bg-card"
                     }`}
