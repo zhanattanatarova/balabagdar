@@ -59,6 +59,7 @@ async function applyFixes() {
     { id: "efeeea53-0fe1-4765-8b59-8454b1d40043", category: "creativity",  subcategory: null,          tags: ["drawing", "art_therapy"] },
     { id: "6d9cb4c4-6ab3-495d-bf9f-d0acbc4b99e5", category: "speech",      subcategory: null,          tags: ["early", "speech"] },
     { id: "85cd3ed2-4a6a-459d-89e4-2a3f2ce6d2f9", category: "development", subcategory: "afk",         tags: ["school_prep", "afk", "speech", "english", "early", "dombra"] },
+    { id: "322a3c25-4fec-4fb1-b071-177d39828b87", category: "development", subcategory: null,           tags: ["school_prep", "early", "english", "chinese"] },
   ];
   for (const fix of fixes) {
     try {
@@ -321,6 +322,22 @@ async function seedData(userId: string) {
       avatarUrl: "/avatars/smart-bala.png",
       descriptionRu: "Продлёнка, мини-сад (логопед, дефектолог, АФК), английский и русский языки, домбыра.",
       descriptionKz: "Сабақтан кейінгі топ, мини-бақша (логопед, дефектолог, АФК), ағылшын, орыс тілдері, домбыра.",
+      isActive: true,
+    },
+    {
+      id: "322a3c25-4fec-4fb1-b071-177d39828b87",
+      nameRu: "Junior IQ",
+      nameKz: "Junior IQ",
+      category: "development",
+      tags: ["school_prep", "early", "english", "chinese"],
+      city: "Актау",
+      phone: "+77056892202",
+      instagram: "https://www.instagram.com/junioriq.aktau/",
+      ageMin: 2,
+      ageMax: 12,
+      priceFrom: 0,
+      descriptionRu: "Мини-сад, подготовка к школе, продлёнка. Английский и китайский языки.",
+      descriptionKz: "Мини-бақша, мектепке дайындық, продлёнка. Ағылшын және қытай тілдері.",
       isActive: true,
     },
   ];
