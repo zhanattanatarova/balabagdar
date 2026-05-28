@@ -10,10 +10,10 @@ export async function seedIfEmpty() {
     const existing = await db
       .select({ id: clubsTable.id })
       .from(clubsTable)
-      .where(eq(clubsTable.id, "c1b8f25b-c0fc-45ef-90f4-0181b4d05d7d"))
+      .where(eq(clubsTable.id, "efeeea53-0fe1-4765-8b59-8454b1d40043"))
       .limit(1);
     if (existing.length > 0) {
-      logger.info("Seed: SensoryUm already present, skipping");
+      logger.info("Seed: Sisters Tuyakovy already present, skipping");
       return;
     }
 
@@ -220,6 +220,22 @@ async function seedData(userId: string) {
       avatarUrl: "/avatars/sensoryum.png",
       descriptionRu: "👶 Мини-сад: 1,6+\n📚 Мектепке дайындық\n⭐️ Ағылшын тілі\n💫 Жексенбілік топ\n🧠 Нейрокоррекция\n💪 АФК | Демалыс топтары",
       descriptionKz: "👶 Мини-бақша: 1,6+\n📚 Мектепке дайындық\n⭐️ Ағылшын тілі\n💫 Жексенбілік топ\n🧠 Нейрокоррекция\n💪 АФК | Демалыс топтары",
+      isActive: true,
+    },
+    {
+      id: "efeeea53-0fe1-4765-8b59-8454b1d40043",
+      nameRu: "Мастерская сестёр Туяковых",
+      nameKz: "Туяковых апалар шеберханасы",
+      category: "creativity",
+      city: "Актау",
+      phone: "+77012975990",
+      instagram: "https://www.instagram.com/sisters_tuyakovy/",
+      ageMin: 4,
+      ageMax: 99,
+      priceFrom: 0,
+      avatarUrl: "/avatars/sisters-tuyakovy.png",
+      descriptionRu: "Арт-терапия и рисование в Актау. Творчество, которое объединяет.",
+      descriptionKz: "Ақтаудағы арт-терапия және сурет салу. Шығармашылық — бәрін біріктіреді.",
       isActive: true,
     },
     {
