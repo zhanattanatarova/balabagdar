@@ -58,6 +58,7 @@ async function applyFixes() {
     { id: "e2d7a6a8-1725-4977-9e03-433a9fd0a577", category: "creativity",  subcategory: null,          tags: ["drawing"] },
     { id: "efeeea53-0fe1-4765-8b59-8454b1d40043", category: "creativity",  subcategory: null,          tags: ["drawing", "art_therapy"] },
     { id: "6d9cb4c4-6ab3-495d-bf9f-d0acbc4b99e5", category: "speech",      subcategory: null,          tags: ["early", "speech"] },
+    { id: "85cd3ed2-4a6a-459d-89e4-2a3f2ce6d2f9", category: "development", subcategory: "afk",         tags: ["school_prep", "afk", "speech", "english", "early", "dombra"] },
   ];
   for (const fix of fixes) {
     try {
@@ -301,6 +302,25 @@ async function seedData(userId: string) {
       avatarUrl: "/avatars/sisters-tuyakovy.png",
       descriptionRu: "Арт-терапия и рисование в Актау. Творчество, которое объединяет.",
       descriptionKz: "Ақтаудағы арт-терапия және сурет салу. Шығармашылық — бәрін біріктіреді.",
+      isActive: true,
+    },
+    {
+      id: "85cd3ed2-4a6a-459d-89e4-2a3f2ce6d2f9",
+      nameRu: "Smart Bala",
+      nameKz: "Smart Bala",
+      category: "development",
+      subcategory: "afk",
+      tags: ["school_prep", "afk", "speech", "english", "early", "dombra"],
+      city: "Актау",
+      address: "8-17",
+      phone: "+77078822742",
+      instagram: "https://www.instagram.com/smart_bala_aktau/",
+      ageMin: 2,
+      ageMax: 12,
+      priceFrom: 0,
+      avatarUrl: "/avatars/smart-bala.png",
+      descriptionRu: "Продлёнка, мини-сад (логопед, дефектолог, АФК), английский и русский языки, домбыра.",
+      descriptionKz: "Сабақтан кейінгі топ, мини-бақша (логопед, дефектолог, АФК), ағылшын, орыс тілдері, домбыра.",
       isActive: true,
     },
   ];
