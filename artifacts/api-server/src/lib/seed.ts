@@ -7,17 +7,6 @@ const OWNER_PHONE = "77474807286";
 
 export async function seedIfEmpty() {
   try {
-    const existing = await db
-      .select({ id: clubsTable.id })
-      .from(clubsTable)
-      .where(eq(clubsTable.id, "efeeea53-0fe1-4765-8b59-8454b1d40043"))
-      .limit(1);
-    if (existing.length > 0) {
-      logger.info("Seed: all clubs present, running tag fixes only");
-      await applyFixes();
-      return;
-    }
-
     const userRow = await db
       .select({ id: usersTable.id })
       .from(usersTable)
@@ -30,7 +19,6 @@ export async function seedIfEmpty() {
     }
 
     const userId = userRow[0].id;
-    logger.info({ userId }, "Seeding clubs data...");
     await seedData(userId);
   } catch (err) {
     logger.error({ err }, "Seed check failed (non-fatal)");
