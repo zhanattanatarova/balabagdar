@@ -17,14 +17,21 @@ export const useUserRole = () => {
     }
 
     const fetchRole = async () => {
+      setLoading(true);
       const { data } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", user.id)
-        .limit(1)
-        .single();
+        .eq("user_id", user.id);
 
-      setRole((data?.role as AppRole) || null);
+      const roles = (data || []).map((r: any) => r.role as AppRole);
+      const picked: AppRole | null = roles.includes("admin")
+        ? "admin"
+        : roles.includes("club_owner")
+        ? "club_owner"
+        : roles.includes("parent")
+        ? "parent"
+        : null;
+      setRole(picked);
       setLoading(false);
     };
 
@@ -32,12 +39,20 @@ export const useUserRole = () => {
   }, [user]);
 
   const assignRole = async (newRole: AppRole) => {
-    if (!user) return;
+    if (!user) return null;
     const { error } = await supabase
       .from("user_roles")
       .insert({ user_id: user.id, role: newRole });
-    if (!error) setRole(newRole);
-    return error;
+    if (error) {
+      // Duplicate — role already exists, treat as success
+      if ((error as any).code === "23505") {
+        setRole(newRole);
+        return null;
+      }
+      return error;
+    }
+    setRole(newRole);
+    return null;
   };
 
   return { role, loading, assignRole };
