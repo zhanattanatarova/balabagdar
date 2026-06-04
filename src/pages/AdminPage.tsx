@@ -63,11 +63,10 @@ const AdminPage = () => {
   };
 
   const submit = async () => {
-    if (!form.name || !form.city) {
-      toast({ title: "Заполните название и город", variant: "destructive" });
+    if (!form.name || !form.city || !form.phone) {
+      toast({ title: "Заполните название, город и телефон владельца", variant: "destructive" });
       return;
     }
-    if (!form.email || !form.password) fillAuto();
     setSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke("admin-create-club", {
@@ -120,19 +119,19 @@ const AdminPage = () => {
             <Select label="Категория" value={form.category} options={CATEGORIES} onChange={(v) => setForm({ ...form, category: v })} />
           </div>
           <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
-          <Field label="Телефон" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
+          <Field label="Телефон владельца* (для входа через Telegram)" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
           <Field label="Instagram URL" value={form.instagram_url} onChange={(v) => setForm({ ...form, instagram_url: v })} />
           <Field label="2GIS URL" value={form.twogis_url} onChange={(v) => setForm({ ...form, twogis_url: v })} />
           <Field label="Цена от (₸)" value={form.price_from} onChange={(v) => setForm({ ...form, price_from: v })} />
           <Field label="Описание" value={form.description} onChange={(v) => setForm({ ...form, description: v })} multiline />
 
           <div className="pt-2 border-t-2 border-dashed border-border" />
-          <p className="text-xs font-bold uppercase text-muted-foreground">Доступ владельца кружка</p>
+          <p className="text-xs font-bold uppercase text-muted-foreground">Доступ владельца (необязательно)</p>
+          <p className="text-xs text-muted-foreground">Оставьте пустым — владелец войдёт через Telegram по указанному телефону. Или задайте email+пароль для запасного входа.</p>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Email логин" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
-            <Field label="Пароль" value={form.password} onChange={(v) => setForm({ ...form, password: v })} />
+            <Field label="Email (опц.)" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+            <Field label="Пароль (опц.)" value={form.password} onChange={(v) => setForm({ ...form, password: v })} />
           </div>
-          <button onClick={fillAuto} className="text-xs font-bold text-primary">Сгенерировать автоматически</button>
 
           <button onClick={submit} disabled={submitting}
             className="w-full mt-3 bg-primary text-primary-foreground font-bold py-3.5 rounded-xl border-[3px] border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] disabled:opacity-50 flex items-center justify-center gap-2">
