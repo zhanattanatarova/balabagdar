@@ -19,9 +19,12 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const { user } = useAuth();
   const { role } = useUserRole();
   const navigate = useNavigate();
+  const [mode, setMode] = useState<"telegram" | "email">("telegram");
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("+7 ");
   const [code, setCode] = useState("");
+  const [emailLogin, setEmailLogin] = useState("");
+  const [emailPass, setEmailPass] = useState("");
   const [loading, setLoading] = useState(false);
   const [botUrl, setBotUrl] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
@@ -141,7 +144,46 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
         <div className="px-6 pt-6 pb-8">
           <div className="flex justify-center mb-4"><BrandLogo size="md" /></div>
 
-          {step === "phone" && (
+          <div className="flex gap-2 p-1 bg-muted rounded-full mb-4">
+            <button onClick={() => setMode("telegram")}
+              className={`flex-1 py-2 rounded-full text-sm font-bold transition ${mode === "telegram" ? "bg-card shadow" : "text-muted-foreground"}`}>
+              Telegram
+            </button>
+            <button onClick={() => setMode("email")}
+              className={`flex-1 py-2 rounded-full text-sm font-bold transition ${mode === "email" ? "bg-card shadow" : "text-muted-foreground"}`}>
+              Email · Кружки
+            </button>
+          </div>
+
+          {mode === "email" && (
+            <>
+              <h2 className="text-xl font-black text-center">Вход для кружков</h2>
+              <p className="text-sm text-muted-foreground text-center mt-1">Email и пароль, выданные администратором</p>
+              <div className="mt-5 space-y-3">
+                <input type="email" value={emailLogin} onChange={(e) => setEmailLogin(e.target.value)} placeholder="email@balabagdar.kz"
+                  className="w-full px-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold focus:outline-none focus:ring-2 focus:ring-primary" />
+                <input type="password" value={emailPass} onChange={(e) => setEmailPass(e.target.value)} placeholder="Пароль"
+                  className="w-full px-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold focus:outline-none focus:ring-2 focus:ring-primary" />
+                <button disabled={loading} onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const { error } = await supabase.auth.signInWithPassword({ email: emailLogin, password: emailPass });
+                    if (error) throw error;
+                    toast({ title: "Вход выполнен" });
+                    onClose();
+                    navigate("/dashboard");
+                  } catch (err: any) {
+                    toast({ title: t("common.error"), description: err.message, variant: "destructive" });
+                  } finally { setLoading(false); }
+                }}
+                  className="w-full bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50">
+                  {loading ? <Loader2 size={18} className="animate-spin" /> : <>Войти <ArrowRight size={18} /></>}
+                </button>
+              </div>
+            </>
+          )}
+
+          {mode === "telegram" && step === "phone" && (
             <>
               <h2 className="text-xl font-black text-center">{t("auth.title")}</h2>
               <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.enter_phone")}</p>
@@ -164,7 +206,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
             </>
           )}
 
-          {step === "code" && (
+          {mode === "telegram" && step === "code" && (
             <>
               <h2 className="text-xl font-black text-center">{t("auth.enter_code")}</h2>
               <p className="text-sm text-muted-foreground text-center mt-1">{phone}</p>
