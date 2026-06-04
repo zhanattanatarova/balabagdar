@@ -1,4 +1,4 @@
-import { Home, MapPin, Calendar, User, Building2 } from "lucide-react";
+import { Home, MapPin, Calendar, User, Building2, Megaphone } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -13,6 +13,7 @@ const BottomNav = () => {
   const tabs = [
     { path: "/", icon: Home, label: t("nav.home") },
     { path: "/map", icon: MapPin, label: t("nav.map") },
+    { path: "/board", icon: Megaphone, label: t("nav.board") },
     { path: "/news", icon: Calendar, label: t("nav.events") },
     ...(role === "club_owner"
       ? [{ path: "/dashboard", icon: Building2, label: t("nav.dashboard") }]
