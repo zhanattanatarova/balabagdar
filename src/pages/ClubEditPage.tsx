@@ -60,6 +60,7 @@ const ClubEditPage = () => {
     whatsapp: "",
     telegram: "",
     instagram: "",
+    twogis_url: "",
     age_min: 3,
     age_max: 18,
     price_from: 0,
@@ -84,6 +85,7 @@ const ClubEditPage = () => {
           whatsapp: c.whatsapp || "",
           telegram: c.telegram || "",
           instagram: c.instagram || "",
+          twogis_url: c.twogis_url || "",
           age_min: c.age_min ?? 3,
           age_max: c.age_max ?? 18,
           price_from: c.price_from ?? 0,
@@ -322,6 +324,7 @@ const ClubEditPage = () => {
           <div><label className={labelCls}>💬 {t("edit.whatsapp")}</label><input value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} placeholder="+77771234567" className={inputCls} /></div>
           <div><label className={labelCls}>✈️ {t("edit.telegram")}</label><input value={form.telegram} onChange={(e) => update("telegram", e.target.value)} placeholder="@username" className={inputCls} /></div>
           <div><label className={labelCls}>📸 Instagram</label><input value={form.instagram} onChange={(e) => update("instagram", e.target.value)} placeholder="@username" className={inputCls} /></div>
+          <div><label className={labelCls}>🗺️ 2GIS (ссылка на филиал)</label><input value={form.twogis_url} onChange={(e) => update("twogis_url", e.target.value)} placeholder="https://2gis.kz/aktau/firm/..." className={inputCls} /></div>
         </div>
 
         {/* Age & Price */}

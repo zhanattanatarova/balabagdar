@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          body: string
+          category: string
+          city: string
+          created_at: string
+          expires_at: string
+          id: string
+          name: string
+          phone: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          body?: string
+          category?: string
+          city?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          body?: string
+          category?: string
+          city?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           booking_date: string
@@ -137,6 +179,7 @@ export type Database = {
           rating: number | null
           reviews_count: number | null
           telegram: string | null
+          twogis_url: string | null
           updated_at: string
           user_id: string
           whatsapp: string | null
@@ -165,6 +208,7 @@ export type Database = {
           rating?: number | null
           reviews_count?: number | null
           telegram?: string | null
+          twogis_url?: string | null
           updated_at?: string
           user_id: string
           whatsapp?: string | null
@@ -193,6 +237,7 @@ export type Database = {
           rating?: number | null
           reviews_count?: number | null
           telegram?: string | null
+          twogis_url?: string | null
           updated_at?: string
           user_id?: string
           whatsapp?: string | null

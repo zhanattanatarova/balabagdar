@@ -4,6 +4,7 @@ import SplashScreen from "./SplashScreen";
 import HomePage from "./HomePage";
 import MapPage from "./MapPage";
 import NewsPage from "./NewsPage";
+import BoardPage from "./BoardPage";
 import ProfilePage from "./ProfilePage";
 import NotificationsPage from "./NotificationsPage";
 import ClubDashboard from "./ClubDashboard";
@@ -21,8 +22,9 @@ const Index = () => {
 
   const renderPage = () => {
     switch (location.pathname) {
-      case "/map": return <MapPage />;
+      case "/map": return <MapPage city={city} />;
       case "/news": return <NewsPage city={city} />;
+      case "/board": return <BoardPage city={city} />;
       case "/profile": return <ProfilePage />;
       case "/notifications": return <NotificationsPage />;
       case "/dashboard": return <ClubDashboard />;

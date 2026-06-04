@@ -6,7 +6,8 @@ export const translations = {
   "nav.map": { ru: "Карта", kz: "Карта", en: "Map" },
   "nav.events": { ru: "События", kz: "Оқиғалар", en: "Events" },
   "nav.profile": { ru: "Профиль", kz: "Профиль", en: "Profile" },
-  "nav.dashboard": { ru: "Кабинет", kz: "Кабинет", en: "Dashboard" },
+ "nav.dashboard": { ru: "Кабинет", kz: "Кабинет", en: "Dashboard" },
+ "nav.board": { ru: "Доска", kz: "Тақта", en: "Board" },
 
   // Auth
   "auth.title": { ru: "Вход в BalaBagdar", kz: "BalaBagdar-ға кіру", en: "Sign in to BalaBagdar" },
