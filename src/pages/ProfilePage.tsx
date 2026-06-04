@@ -33,6 +33,13 @@ const ProfilePage = () => {
   return (
     <div className="pb-24 max-w-6xl mx-auto">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+      {showRoleSelector && (
+        <RoleSelector onComplete={(selectedRole) => {
+          setRoleDismissed(true);
+          if (selectedRole === "club_owner") navigate("/club/edit");
+        }} />
+      )}
+
 
       <div className="pt-8 pb-10 flex flex-col items-center rounded-b-[2rem]" style={{ background: "var(--gradient-header)" }}>
         <div className="border-4 border-primary-foreground/30 rounded-full" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
