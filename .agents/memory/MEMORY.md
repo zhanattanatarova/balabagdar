@@ -1,2 +1,0 @@
-- [Seed FK production bug](seed-fk-bug.md) — production user phone conflict causes FK failures; always resolve actual userId by phone after onConflictDoNothing insert
-- [BalaBagdar artifact recovery](balabagdar-artifact-recovery.md) — re-register orphaned web artifact via verifyAndReplaceArtifactToml; restart api-server to fix /api 502; no Vite proxy needed
