@@ -4,6 +4,7 @@ import SplashScreen from "./SplashScreen";
 import HomePage from "./HomePage";
 import MapPage from "./MapPage";
 import NewsPage from "./NewsPage";
+import BoardPage from "./BoardPage";
 import ProfilePage from "./ProfilePage";
 import NotificationsPage from "./NotificationsPage";
 import ClubDashboard from "./ClubDashboard";
