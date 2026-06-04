@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, Phone, ArrowRight, Loader2, MessageCircle, RefreshCw } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import { toast } from "@/hooks/use-toast";
@@ -17,6 +18,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const { role } = useUserRole();
+  const navigate = useNavigate();
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("+7 ");
   const [code, setCode] = useState("");
@@ -30,7 +32,6 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     return () => { if (retryTimerRef.current) clearInterval(retryTimerRef.current); };
   }, []);
 
-  // After login, check if user needs role selection
   useEffect(() => {
     if (user && !role && open) {
       setShowRoleSelector(true);
@@ -40,7 +41,12 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   if (!open) return null;
 
   if (showRoleSelector) {
-    return <RoleSelector onComplete={() => { setShowRoleSelector(false); onClose(); }} />;
+    return <RoleSelector onComplete={(selectedRole) => {
+      setShowRoleSelector(false);
+      onClose();
+      if (selectedRole === "club_owner") navigate("/club/edit");
+      else navigate("/profile");
+    }} />;
   }
 
   const digits = () => phone.replace(/\D/g, "");

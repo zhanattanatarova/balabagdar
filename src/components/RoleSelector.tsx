@@ -5,7 +5,7 @@ import { useUserRole, AppRole } from "@/hooks/useUserRole";
 import BrandLogo from "@/components/BrandLogo";
 
 interface RoleSelectorProps {
-  onComplete: () => void;
+  onComplete: (role: AppRole) => void;
 }
 
 const RoleSelector = ({ onComplete }: RoleSelectorProps) => {
@@ -17,7 +17,7 @@ const RoleSelector = ({ onComplete }: RoleSelectorProps) => {
     setLoading(true);
     const error = await assignRole(role);
     setLoading(false);
-    if (!error) onComplete();
+    if (!error) onComplete(role);
   };
 
   return (
