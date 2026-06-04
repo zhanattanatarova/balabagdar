@@ -81,14 +81,18 @@ Deno.serve(async (req) => {
     const { data: club, error: clubErr } = await admin
       .from("clubs")
       .insert({
-        owner_id: newUserId,
-        name,
+        user_id: newUserId,
+        name_ru: name,
+        name_kz: name,
+        name_en: name,
         city,
         category: category ?? "development",
         phone: phone ?? null,
         address: address ?? null,
-        description: description ?? null,
-        instagram_url: instagram_url ?? null,
+        description_ru: description ?? null,
+        description_kz: description ?? null,
+        description_en: description ?? null,
+        instagram: instagram_url ?? null,
         twogis_url: twogis_url ?? null,
         price_from: price_from ?? null,
       })
