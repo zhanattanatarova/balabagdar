@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, Phone, ArrowRight, Loader2, MessageCircle, RefreshCw } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import { toast } from "@/hooks/use-toast";
