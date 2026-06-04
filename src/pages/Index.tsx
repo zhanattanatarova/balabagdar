@@ -22,8 +22,9 @@ const Index = () => {
 
   const renderPage = () => {
     switch (location.pathname) {
-      case "/map": return <MapPage />;
+      case "/map": return <MapPage city={city} />;
       case "/news": return <NewsPage city={city} />;
+      case "/board": return <BoardPage city={city} />;
       case "/profile": return <ProfilePage />;
       case "/notifications": return <NotificationsPage />;
       case "/dashboard": return <ClubDashboard />;
