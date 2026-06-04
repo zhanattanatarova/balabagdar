@@ -1,7 +1,0 @@
-project_id = "zeitvmduhywhamhcaheh"
-
-[functions.send-code]
-verify_jwt = false
-
-[functions.verify-code]
-verify_jwt = false
