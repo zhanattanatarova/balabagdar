@@ -12,7 +12,7 @@ import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
-  const [city, setCity] = useState("Астана");
+  const [city, setCity] = useState("Актау");
   const location = useLocation();
 
   const handleSplashComplete = useCallback(() => {
