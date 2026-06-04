@@ -17,7 +17,7 @@ interface AuthModalProps {
 const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
-  const { role } = useUserRole();
+  const { role, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"telegram" | "email">("telegram");
   const [step, setStep] = useState<"phone" | "code">("phone");
@@ -36,10 +36,10 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   }, []);
 
   useEffect(() => {
-    if (user && !role && open) {
+    if (user && !roleLoading && !role && open) {
       setShowRoleSelector(true);
     }
-  }, [user, role, open]);
+  }, [user, role, roleLoading, open]);
 
   if (!open) return null;
 
