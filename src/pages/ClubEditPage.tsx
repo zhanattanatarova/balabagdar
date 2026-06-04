@@ -60,6 +60,7 @@ const ClubEditPage = () => {
     whatsapp: "",
     telegram: "",
     instagram: "",
+    twogis_url: "",
     age_min: 3,
     age_max: 18,
     price_from: 0,
