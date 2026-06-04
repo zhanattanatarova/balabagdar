@@ -85,7 +85,7 @@ const ClubEditPage = () => {
           whatsapp: c.whatsapp || "",
           telegram: c.telegram || "",
           instagram: c.instagram || "",
-          twogis_url: (c as any).twogis_url || "",
+          twogis_url: c.twogis_url || "",
           age_min: c.age_min ?? 3,
           age_max: c.age_max ?? 18,
           price_from: c.price_from ?? 0,
