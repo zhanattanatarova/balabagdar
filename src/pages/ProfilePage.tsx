@@ -7,13 +7,16 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthModal from "@/components/AuthModal";
+import RoleSelector from "@/components/RoleSelector";
 
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
-  const { role } = useUserRole();
+  const { role, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
+  const [roleDismissed, setRoleDismissed] = useState(false);
+  const showRoleSelector = !!user && !roleLoading && !role && !roleDismissed;
 
   const phone = user?.user_metadata?.phone || user?.email?.replace("@phone.balahub.kz", "") || "";
 
