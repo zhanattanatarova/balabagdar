@@ -38,8 +38,8 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const {
-      email,
-      password,
+      email: emailIn,
+      password: passIn,
       name,
       city,
       category,
@@ -51,9 +51,17 @@ Deno.serve(async (req) => {
       price_from,
     } = body ?? {};
 
-    if (!email || !password || !name || !city) {
-      return json({ error: "email, password, name, city are required" }, 400);
+    if (!name || !city) {
+      return json({ error: "name and city are required" }, 400);
     }
+    if (!emailIn && !phone) {
+      return json({ error: "Provide email or phone" }, 400);
+    }
+
+    // Auto-generate email from phone if not provided (matches Telegram auth pattern)
+    const cleanPhone = (phone ?? "").replace(/\D/g, "");
+    const email = emailIn || `${cleanPhone}@phone.balahub.kz`;
+    const password = passIn || (Math.random().toString(36).slice(-10) + "A1!");
     if (String(password).length < 6) return json({ error: "password too short" }, 400);
 
     // Create auth user (email confirmed)
