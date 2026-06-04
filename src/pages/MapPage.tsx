@@ -1,6 +1,21 @@
-import { useEffect, useState } from "react";
-import { MapPin, Star, Phone, ExternalLink, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+
+// Fix default marker icons (Vite asset URLs)
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+// @ts-ignore
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 interface Club {
   id: string;
@@ -13,12 +28,84 @@ interface Club {
   avatar_url: string | null;
   twogis_url?: string | null;
   city: string;
+  lat?: number;
+  lng?: number;
+}
+
+const CITY_CENTERS: Record<string, [number, number]> = {
+  "Актау": [43.6532, 51.1973],
+  "Алматы": [43.2389, 76.8897],
+  "Астана": [51.1605, 71.4704],
+  "Шымкент": [42.3417, 69.5901],
+  "Жанаозен": [43.3406, 52.8597],
+  "Караганда": [49.8047, 73.1094],
+  "Актобе": [50.2839, 57.1660],
+  "Атырау": [47.0945, 51.9238],
+  "Тараз": [42.9000, 71.3667],
+  "Павлодар": [52.2873, 76.9674],
+  "Семей": [50.4111, 80.2275],
+  "Костанай": [53.2198, 63.6354],
+  "Кызылорда": [44.8488, 65.4823],
+  "Уральск": [51.2333, 51.3667],
+  "Петропавловск": [54.8657, 69.1387],
+  "Темиртау": [50.0547, 72.9646],
+  "Туркестан": [43.2974, 68.2517],
+  "Кокшетау": [53.2858, 69.3954],
+  "Талдыкорган": [45.0156, 78.3739],
+  "Экибастуз": [51.7244, 75.3225],
+  "Усть-Каменогорск": [49.9787, 82.6147],
+};
+
+const CITY_SLUG: Record<string, string> = {
+  "Астана": "astana", "Алматы": "almaty", "Шымкент": "shymkent",
+  "Актау": "aktau", "Жанаозен": "zhanaozen", "Караганда": "karaganda",
+  "Актобе": "aktobe", "Атырау": "atyrau", "Тараз": "taraz",
+  "Павлодар": "pavlodar", "Семей": "semey", "Костанай": "kostanay",
+  "Кызылорда": "kyzylorda", "Уральск": "oral", "Петропавловск": "petropavl",
+  "Темиртау": "temirtau", "Туркестан": "turkistan", "Кокшетау": "kokshetau",
+  "Талдыкорган": "taldykorgan", "Экибастуз": "ekibastuz", "Усть-Каменогорск": "ust-kamenogorsk",
+};
+
+// Geocode using Nominatim with localStorage cache
+async function geocode(query: string): Promise<[number, number] | null> {
+  const key = `geo:${query}`;
+  try {
+    const cached = localStorage.getItem(key);
+    if (cached) return JSON.parse(cached);
+  } catch {}
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`,
+      { headers: { "Accept-Language": "ru" } }
+    );
+    const data = await res.json();
+    if (data?.[0]) {
+      const coords: [number, number] = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      try { localStorage.setItem(key, JSON.stringify(coords)); } catch {}
+      return coords;
+    }
+  } catch {}
+  return null;
+}
+
+function FitBounds({ points }: { points: [number, number][] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (points.length > 0) {
+      const bounds = L.latLngBounds(points);
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+    }
+  }, [points, map]);
+  return null;
 }
 
 const MapPage = ({ city }: { city: string }) => {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
+  const [geocoding, setGeocoding] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
+  const [userPos, setUserPos] = useState<[number, number] | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -28,59 +115,135 @@ const MapPage = ({ city }: { city: string }) => {
         .select("id,name_ru,address,phone,rating,age_min,age_max,avatar_url,twogis_url,city")
         .eq("is_active", true)
         .eq("city", city);
-      setClubs((data as any) || []);
+      const list = ((data as any) || []) as Club[];
+      setClubs(list);
       setLoading(false);
+
+      // Geocode addresses progressively
+      setGeocoding(true);
+      for (const club of list) {
+        if (!club.address) continue;
+        const coords = await geocode(`${club.address}, ${club.city}, Казахстан`);
+        if (coords) {
+          setClubs((prev) => prev.map((c) => (c.id === club.id ? { ...c, lat: coords[0], lng: coords[1] } : c)));
+        }
+        await new Promise((r) => setTimeout(r, 250)); // Nominatim rate limit ~1 req/s, be polite
+      }
+      setGeocoding(false);
     };
     load();
   }, [city]);
 
-  // 2GIS widget URL — works without API key
-  const cityForGis = city.toLowerCase()
-    .replace("астана", "astana")
-    .replace("алматы", "almaty")
-    .replace("шымкент", "shymkent")
-    .replace("актау", "aktau")
-    .replace("жанаозен", "zhanaozen")
-    .replace("караганда", "karaganda")
-    .replace("актобе", "aktobe")
-    .replace("атырау", "atyrau")
-    .replace("тараз", "taraz")
-    .replace("павлодар", "pavlodar")
-    .replace("семей", "semey")
-    .replace("костанай", "kostanay")
-    .replace("кызылорда", "kyzylorda")
-    .replace("уральск", "oral")
-    .replace("петропавловск", "petropavl")
-    .replace("темиртау", "temirtau")
-    .replace("туркестан", "turkistan")
-    .replace("кокшетау", "kokshetau")
-    .replace("талдыкорган", "taldykorgan")
-    .replace("экибастуз", "ekibastuz")
-    .replace("усть-каменогорск", "ust-kamenogorsk");
+  const center = CITY_CENTERS[city] || [48.0196, 66.9237];
+  const markers = useMemo(() => clubs.filter((c) => c.lat && c.lng) as Required<Pick<Club, "lat" | "lng">> & Club[], [clubs]);
 
-  const mapSrc = `https://2gis.kz/${cityForGis}?utm_source=balabagdar`;
+  const handleLocate = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const p: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+        setUserPos(p);
+        mapRef.current?.setView(p, 14);
+      },
+      () => {},
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  };
+
+  const cityGisUrl = `https://2gis.kz/${CITY_SLUG[city] || "astana"}`;
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
-      <div className="px-4 pt-5 pb-3">
-        <h1 className="text-lg font-black">🗺️ Карта кружков</h1>
-        <p className="text-xs text-muted-foreground font-bold">{city} · {clubs.length} кружков</p>
+      <div className="px-4 pt-5 pb-3 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-lg font-black">🗺️ Карта кружков</h1>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs font-bold inline-flex items-center gap-1 text-muted-foreground">
+              <MapPin size={12} /> {city}
+            </span>
+            {geocoding && (
+              <span className="text-[10px] font-bold text-primary inline-flex items-center gap-1">
+                <Loader2 size={10} className="animate-spin" /> геокодинг…
+              </span>
+            )}
+          </div>
+        </div>
+        <a
+          href={cityGisUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 bg-primary text-primary-foreground font-black text-xs px-3 py-2 rounded-xl"
+          style={{ boxShadow: "var(--shadow-cartoon)" }}
+        >
+          <ExternalLink size={12} /> 2GIS
+        </a>
       </div>
 
-      <div className="mx-4 rounded-2xl overflow-hidden border-[3px] border-foreground/8 bg-muted" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
-        <iframe
-          title="2GIS"
-          src={mapSrc}
-          className="w-full"
-          style={{ height: "55vh", minHeight: 320, border: 0 }}
-          loading="lazy"
-        />
+      <div className="px-4 mb-3">
+        <button
+          onClick={handleLocate}
+          className="inline-flex items-center gap-2 bg-card border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full"
+          style={{ boxShadow: "var(--shadow-cartoon)" }}
+        >
+          <Navigation size={14} /> Рядом со мной
+        </button>
+      </div>
+
+      <div
+        className="mx-4 rounded-2xl overflow-hidden border-[3px] border-foreground/8 bg-muted"
+        style={{ boxShadow: "var(--shadow-cartoon-lg)", height: "55vh", minHeight: 360 }}
+      >
+        <MapContainer
+          center={center}
+          zoom={12}
+          style={{ height: "100%", width: "100%" }}
+          ref={(m) => {
+            if (m) mapRef.current = m;
+          }}
+        >
+          <TileLayer
+            attribution='&copy; OpenStreetMap'
+            url="https://{s}.tile.openstreetmap.org/{z}/{y}/{x}.png"
+          />
+          {markers.map((club) => (
+            <Marker
+              key={club.id}
+              position={[club.lat!, club.lng!]}
+              eventHandlers={{ click: () => setSelected(club.id) }}
+            >
+              <Popup>
+                <div className="font-bold text-sm">{club.name_ru}</div>
+                {club.address && <div className="text-xs opacity-70">{club.address}</div>}
+                {club.phone && (
+                  <a href={`tel:${club.phone}`} className="text-xs text-primary font-bold block mt-1">
+                    {club.phone}
+                  </a>
+                )}
+              </Popup>
+            </Marker>
+          ))}
+          {userPos && (
+            <Marker
+              position={userPos}
+              icon={L.divIcon({
+                className: "",
+                html: '<div style="width:18px;height:18px;border-radius:50%;background:#3b82f6;border:3px solid white;box-shadow:0 0 0 2px #3b82f6"></div>',
+                iconSize: [18, 18],
+              })}
+            />
+          )}
+          <FitBounds points={markers.map((m) => [m.lat!, m.lng!])} />
+        </MapContainer>
       </div>
 
       <div className="px-4 mt-5">
-        <h2 className="section-title mb-3">📋 Все кружки в {city}</h2>
+        <h2 className="section-title mb-3 flex items-center gap-2">
+          <MapIcon size={16} /> Все кружки — {city} ({clubs.length})
+        </h2>
         {loading ? (
-          <div className="flex justify-center py-10"><Loader2 className="animate-spin text-primary" /></div>
+          <div className="flex justify-center py-10">
+            <Loader2 className="animate-spin text-primary" />
+          </div>
         ) : clubs.length === 0 ? (
           <div className="text-center py-10 text-sm text-muted-foreground font-bold">
             Пока нет кружков в этом городе
@@ -88,16 +251,30 @@ const MapPage = ({ city }: { city: string }) => {
         ) : (
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
             {clubs.map((club) => (
-              <div key={club.id}
-                onClick={() => setSelected(club.id === selected ? null : club.id)}
+              <div
+                key={club.id}
+                onClick={() => {
+                  setSelected(club.id === selected ? null : club.id);
+                  if (club.lat && club.lng) mapRef.current?.setView([club.lat, club.lng], 15);
+                }}
                 className={`p-3 rounded-2xl text-left transition-all border-[3px] cursor-pointer ${
-                  selected === club.id ? "border-primary bg-yellow-light" : "border-foreground/8 bg-card"}`}
-                style={{ boxShadow: "var(--shadow-cartoon)" }}>
+                  selected === club.id ? "border-primary bg-yellow-light" : "border-foreground/8 bg-card"
+                }`}
+                style={{ boxShadow: "var(--shadow-cartoon)" }}
+              >
                 <div className="flex items-center gap-3">
                   {club.avatar_url ? (
-                    <img src={club.avatar_url} alt="" className="w-13 h-13 rounded-xl object-cover border-2 border-foreground/5" style={{ width: 52, height: 52 }} />
+                    <img
+                      src={club.avatar_url}
+                      alt=""
+                      className="rounded-xl object-cover border-2 border-foreground/5"
+                      style={{ width: 52, height: 52 }}
+                    />
                   ) : (
-                    <div className="rounded-xl bg-muted flex items-center justify-center" style={{ width: 52, height: 52 }}>
+                    <div
+                      className="rounded-xl bg-muted flex items-center justify-center"
+                      style={{ width: 52, height: 52 }}
+                    >
                       <MapPin size={20} className="text-muted-foreground" />
                     </div>
                   )}
@@ -115,12 +292,20 @@ const MapPage = ({ city }: { city: string }) => {
                 {selected === club.id && (
                   <div className="mt-3 pt-3 border-t border-border flex flex-wrap gap-2">
                     {club.phone && (
-                      <a href={`tel:${club.phone}`} className="flex items-center gap-1 text-xs font-black bg-primary text-primary-foreground px-3 py-2 rounded-xl">
+                      <a
+                        href={`tel:${club.phone}`}
+                        className="flex items-center gap-1 text-xs font-black bg-primary text-primary-foreground px-3 py-2 rounded-xl"
+                      >
                         <Phone size={12} /> Позвонить
                       </a>
                     )}
                     {club.twogis_url && (
-                      <a href={club.twogis_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl">
+                      <a
+                        href={club.twogis_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl"
+                      >
                         <ExternalLink size={12} /> Открыть в 2GIS
                       </a>
                     )}
