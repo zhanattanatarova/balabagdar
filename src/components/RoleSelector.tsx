@@ -3,6 +3,7 @@ import { Users, Building2, Loader2 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useUserRole, AppRole } from "@/hooks/useUserRole";
 import BrandLogo from "@/components/BrandLogo";
+import { toast } from "@/hooks/use-toast";
 
 interface RoleSelectorProps {
   onComplete: (role: AppRole) => void;
@@ -17,7 +18,12 @@ const RoleSelector = ({ onComplete }: RoleSelectorProps) => {
     setLoading(true);
     const error = await assignRole(role);
     setLoading(false);
-    if (!error) onComplete(role);
+    if (error) {
+      console.error("assignRole error:", error);
+      toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+      return;
+    }
+    onComplete(role);
   };
 
   return (
