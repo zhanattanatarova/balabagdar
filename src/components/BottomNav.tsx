@@ -15,9 +15,6 @@ const BottomNav = () => {
     { path: "/map", icon: MapPin, label: t("nav.map") },
     { path: "/board", icon: Megaphone, label: t("nav.board") },
     { path: "/news", icon: Calendar, label: t("nav.events") },
-    ...(role === "club_owner"
-      ? [{ path: "/dashboard", icon: Building2, label: t("nav.dashboard") }]
-      : []),
     { path: "/profile", icon: User, label: t("nav.profile") },
   ];
 
