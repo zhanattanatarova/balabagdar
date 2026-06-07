@@ -1,0 +1,1 @@
+CREATE POLICY "Deny all client access" ON public.phone_auth_secrets FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);
