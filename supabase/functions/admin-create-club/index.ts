@@ -43,6 +43,7 @@ Deno.serve(async (req) => {
       name,
       city,
       category,
+      categories,
       phone,
       address,
       description,
@@ -50,6 +51,11 @@ Deno.serve(async (req) => {
       twogis_url,
       price_from,
     } = body ?? {};
+
+    const catList: string[] = Array.isArray(categories) && categories.length
+      ? categories.filter((c: any) => typeof c === "string" && c.trim())
+      : (category ? [category] : []);
+    const primaryCategory = catList[0] ?? "development";
 
     if (!name || !city) {
       return json({ error: "name and city are required" }, 400);
