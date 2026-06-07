@@ -160,6 +160,7 @@ export type Database = {
           age_max: number | null
           age_min: number | null
           avatar_url: string | null
+          categories: string[]
           category: string
           city: string
           created_at: string
@@ -189,6 +190,7 @@ export type Database = {
           age_max?: number | null
           age_min?: number | null
           avatar_url?: string | null
+          categories?: string[]
           category?: string
           city?: string
           created_at?: string
@@ -218,6 +220,7 @@ export type Database = {
           age_max?: number | null
           age_min?: number | null
           avatar_url?: string | null
+          categories?: string[]
           category?: string
           city?: string
           created_at?: string
