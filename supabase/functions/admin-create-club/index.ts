@@ -55,7 +55,8 @@ Deno.serve(async (req) => {
     const catList: string[] = Array.isArray(categories) && categories.length
       ? categories.filter((c: any) => typeof c === "string" && c.trim())
       : (category ? [category] : []);
-    const primaryCategory = catList[0] ?? "development";
+    // top-level group of the first id (e.g. "sport.football" -> "sport")
+    const primaryCategory = (catList[0] ?? "development").split(".")[0];
 
     if (!name || !city) {
       return json({ error: "name and city are required" }, 400);
