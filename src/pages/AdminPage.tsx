@@ -78,6 +78,10 @@ const AdminPage = () => {
       toast({ title: "Заполните название, город и телефон владельца", variant: "destructive" });
       return;
     }
+    if (form.categories.length === 0) {
+      toast({ title: "Выберите хотя бы одну категорию", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke("admin-create-club", {
