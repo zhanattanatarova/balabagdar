@@ -244,6 +244,24 @@ export type Database = {
         }
         Relationships: []
       }
+      phone_auth_secrets: {
+        Row: {
+          created_at: string
+          password: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          password: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          password?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       phone_verifications: {
         Row: {
           code: string
