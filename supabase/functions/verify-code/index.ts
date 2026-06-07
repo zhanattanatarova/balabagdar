@@ -5,10 +5,16 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-function generatePassword(): string {
-  const bytes = new Uint8Array(32);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("") + "A1!";
+function emailFromPhone(phone: string): string {
+  const cleanPhone = phone.replace(/\D/g, "");
+  return `${cleanPhone}@phone.balahub.kz`;
+}
+
+function json(status: number, body: any) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 }
 
 Deno.serve(async (req) => {
@@ -17,13 +23,17 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { phone, code } = await req.json();
+    const { phone, code, password, mode } = await req.json();
 
     if (!phone || !code) {
-      return new Response(JSON.stringify({ error: "Phone and code required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json(400, { error: "Phone and code required" });
+    }
+
+    // mode: "register" | "reset"
+    const flow: "register" | "reset" = mode === "reset" ? "reset" : "register";
+
+    if (!password || typeof password !== "string" || password.length < 6) {
+      return json(400, { error: "Password must be at least 6 characters" });
     }
 
     const supabase = createClient(
@@ -31,7 +41,7 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Find valid verification code
+    // Verify code
     const { data: verification, error: findError } = await supabase
       .from("phone_verifications")
       .select("*")
@@ -44,96 +54,60 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (findError || !verification) {
-      return new Response(JSON.stringify({ error: "Invalid or expired code" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json(400, { error: "Invalid or expired code" });
     }
 
-    // Mark as verified
     await supabase
       .from("phone_verifications")
       .update({ verified: true })
       .eq("id", verification.id);
 
-    const cleanPhone = phone.replace(/\D/g, "");
-    const email = `${cleanPhone}@phone.balahub.kz`;
+    const email = emailFromPhone(phone);
 
-    // Look up existing user by email
-    const { data: existing } = await supabase.auth.admin.listUsers({
-      page: 1,
-      perPage: 1,
-    });
-    // Use getUserByEmail-style lookup via listUsers filter is not available; we query our secrets table by email-derived user
-    // Instead: try to find user via profiles -> phone, or by listing. Simpler: attempt to create; if exists, fetch the existing.
-
-    // Try to fetch stored password by finding the user via auth admin
+    // Find existing user by email
     let userId: string | null = null;
-    {
-      // Use admin API: list users filtered manually
-      const { data: list } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
-      const found = list?.users?.find((u: any) => u.email === email);
-      if (found) userId = found.id;
-    }
+    const { data: list } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    const found = list?.users?.find((u: any) => u.email === email);
+    if (found) userId = found.id;
 
-    let password: string;
-    let isNewUser = false;
-
-    if (userId) {
-      // Existing user — fetch stored password
-      const { data: secret } = await supabase
-        .from("phone_auth_secrets")
-        .select("password")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      if (secret?.password) {
-        password = secret.password;
-      } else {
-        // Legacy user without stored password: rotate to a new random one
-        password = generatePassword();
-        const { error: updErr } = await supabase.auth.admin.updateUserById(userId, { password });
-        if (updErr) {
-          console.error("Password rotation error:", updErr);
-          return new Response(JSON.stringify({ error: "Login failed" }), {
-            status: 500,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        await supabase
-          .from("phone_auth_secrets")
-          .upsert({ user_id: userId, password }, { onConflict: "user_id" });
+    if (flow === "register") {
+      if (userId) {
+        return json(409, { error: "already_registered" });
       }
-    } else {
-      // New user — create with fresh random password
-      password = generatePassword();
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
         email,
         password,
         email_confirm: true,
         user_metadata: { phone },
       });
-
       if (createError || !newUser?.user) {
         console.error("Create user error:", createError);
-        return new Response(JSON.stringify({ error: "Failed to create account" }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return json(500, { error: "Failed to create account" });
       }
-
       userId = newUser.user.id;
-      isNewUser = true;
 
       await supabase
         .from("phone_auth_secrets")
-        .insert({ user_id: userId, password });
+        .upsert({ user_id: userId, password }, { onConflict: "user_id" });
 
       await supabase.from("profiles").insert({
         user_id: userId,
         phone,
         display_name: `User ${phone.slice(-4)}`,
       });
+    } else {
+      // reset
+      if (!userId) {
+        return json(404, { error: "not_registered" });
+      }
+      const { error: updErr } = await supabase.auth.admin.updateUserById(userId, { password });
+      if (updErr) {
+        console.error("Password update error:", updErr);
+        return json(500, { error: "Failed to update password" });
+      }
+      await supabase
+        .from("phone_auth_secrets")
+        .upsert({ user_id: userId, password }, { onConflict: "user_id" });
     }
 
     // Sign in
@@ -144,25 +118,17 @@ Deno.serve(async (req) => {
 
     if (sessionError || !sessionData?.session) {
       console.error("Session error:", sessionError);
-      return new Response(JSON.stringify({ error: "Login failed" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json(500, { error: "Login failed" });
     }
 
-    return new Response(JSON.stringify({
+    return json(200, {
       success: true,
       session: sessionData.session,
       user: sessionData.user,
-      isNewUser,
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      isNewUser: flow === "register",
     });
   } catch (error) {
     console.error("Error:", error);
-    return new Response(JSON.stringify({ error: "Internal error" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json(500, { error: "Internal error" });
   }
 });
