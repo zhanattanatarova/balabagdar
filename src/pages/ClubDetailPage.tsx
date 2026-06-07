@@ -142,6 +142,24 @@ const ClubDetailPage = () => {
         </div>
       </div>
 
+      {/* Categories / sections offered */}
+      {Array.isArray(club.categories) && club.categories.length > 0 && (
+        <div className="px-4 mt-4">
+          <h2 className="font-black text-sm mb-2">Направления</h2>
+          <div className="flex flex-wrap gap-1.5">
+            {club.categories.map((id: string) => {
+              const key = id.includes(".") ? id : `cat.${id}`;
+              const label = t(key as any);
+              return (
+                <span key={id} className="px-2.5 py-1 rounded-full bg-primary/15 border-2 border-primary/40 text-[11px] font-bold text-foreground">
+                  {label === key ? id : label}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* About */}
       {description && (
         <div className="px-4 mt-4">
