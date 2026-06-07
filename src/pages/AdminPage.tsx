@@ -90,7 +90,7 @@ const AdminPage = () => {
       setCreds((prev) => [{ name: form.name, email: c.email, password: c.password, city: form.city }, ...prev]);
       toast({ title: "Кружок создан", description: `${c.email} / ${c.password}` });
       setForm({
-        name: "", city: form.city, category: "development",
+        name: "", city: form.city, categories: ["development"],
         email: "", password: "", phone: "", address: "", description: "",
         instagram_url: "", twogis_url: "", price_from: "",
       });
