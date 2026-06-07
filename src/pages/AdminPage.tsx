@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Copy, Plus, ArrowLeft } from "lucide-react";
+import { Loader2, Copy, Plus, ArrowLeft, ChevronDown } from "lucide-react";
+import { TAXONOMY } from "@/lib/categoriesTaxonomy";
 
 type Credential = { name: string; email: string; password: string; city: string };
 
 const CITIES = ["Актау", "Алматы", "Астана", "Шымкент", "Караганда", "Атырау", "Актобе", "Уральск", "Костанай", "Павлодар"];
-const CATEGORIES = ["development", "sport", "art", "music", "languages", "dance", "robotics", "science", "academic"];
 
 const AdminPage = () => {
   const { user, loading: authLoading } = useAuth();
