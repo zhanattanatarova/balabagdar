@@ -22,7 +22,7 @@ const AdminPage = () => {
   const [form, setForm] = useState({
     name: "",
     city: "Актау",
-    categories: ["development"] as string[],
+    categories: [] as string[],
     email: "",
     password: "",
     phone: "",
