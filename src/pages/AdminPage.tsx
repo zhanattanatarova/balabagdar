@@ -20,7 +20,7 @@ const AdminPage = () => {
   const [form, setForm] = useState({
     name: "",
     city: "Актау",
-    category: "development",
+    categories: ["development"] as string[],
     email: "",
     password: "",
     phone: "",
@@ -30,6 +30,15 @@ const AdminPage = () => {
     twogis_url: "",
     price_from: "",
   });
+
+  const toggleCategory = (c: string) => {
+    setForm((f) => ({
+      ...f,
+      categories: f.categories.includes(c)
+        ? f.categories.filter((x) => x !== c)
+        : [...f.categories, c],
+    }));
+  };
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/");
