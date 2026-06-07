@@ -15,6 +15,7 @@ const CITIES = ["Актау", "Алматы", "Астана", "Шымкент", 
 const AdminPage = () => {
   const { user, loading: authLoading } = useAuth();
   const { role, loading: roleLoading } = useUserRole();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [creds, setCreds] = useState<Credential[]>([]);
