@@ -241,49 +241,50 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         .eq("city", city)
         .eq("is_active", true);
 
+      // Build the list of namespaced category ids to match on the `categories` array.
+      const subMap: Record<string, string | null> = {
+        languages: selectedLanguage,
+        dance: selectedDance,
+        sport: selectedSport,
+        health: selectedHealth,
+        tutors: selectedTutors,
+        creativity: selectedCreativity,
+        music: selectedMusic,
+        development: selectedDevelopment,
+        special: selectedSpecial,
+      };
+
       if (selectedCategory) {
-        query = query.eq("category", selectedCategory);
+        const sub = subMap[selectedCategory];
+        if (sub) {
+          // Specific subcategory selected — exact namespaced id.
+          const id = `${selectedCategory}.${sub}`;
+          query = query.contains("categories", [id]);
+        } else {
+          // Whole group — match top-level id, any of its subs, OR legacy `category` column.
+          const ids = [selectedCategory];
+          const groupSubs: Record<string, string[]> = {
+            languages: languageOptions.map((o) => o.id),
+            dance: danceOptions.map((o) => o.id),
+            sport: sportOptions.map((o) => o.id),
+            health: healthOptions.map((o) => o.id),
+            tutors: tutorsOptions.map((o) => o.id),
+            creativity: creativityOptions.map((o) => o.id),
+            music: musicOptions.map((o) => o.id),
+            development: developmentOptions.map((o) => o.id),
+            special: specialOptions.map((o) => o.id),
+          };
+          for (const s of groupSubs[selectedCategory] ?? []) ids.push(`${selectedCategory}.${s}`);
+          // overlaps: clubs whose categories array shares any id with `ids`
+          query = query.or(
+            `categories.ov.{${ids.join(",")}},category.eq.${selectedCategory}`,
+          );
+        }
       }
 
       if (searchQuery.trim()) {
         const sq = `%${searchQuery.trim()}%`;
         query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},address.ilike.${sq}`);
-      } else if (selectedCategory === "languages" && selectedLanguage) {
-        const langName = t(`lang.${selectedLanguage}` as any);
-        const sq = `%${langName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
-      } else if (selectedCategory === "dance" && selectedDance) {
-        const danceName = t(`dance.${selectedDance}` as any);
-        const sq = `%${danceName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
-      } else if (selectedCategory === "sport" && selectedSport) {
-        const sportName = t(`sport.${selectedSport}` as any);
-        const sq = `%${sportName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
-      } else if (selectedCategory === "health" && selectedHealth) {
-        const healthName = t(`health.${selectedHealth}` as any);
-        const sq = `%${healthName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
-      } else if (selectedCategory === "tutors" && selectedTutors) {
-        const subName = t(`tutors.${selectedTutors}` as any);
-        const sq = `%${subName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
-      } else if (selectedCategory === "creativity" && selectedCreativity) {
-        const subName = t(`creativity.${selectedCreativity}` as any);
-        const sq = `%${subName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
-      } else if (selectedCategory === "music" && selectedMusic) {
-        const subName = t(`music.${selectedMusic}` as any);
-        const sq = `%${subName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
-      } else if (selectedCategory === "development" && selectedDevelopment) {
-        const subName = t(`development.${selectedDevelopment}` as any);
-        const sq = `%${subName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
-      } else if (selectedCategory === "special" && selectedSpecial) {
-        const subName = t(`special.${selectedSpecial}` as any);
-        const sq = `%${subName}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},description_ru.ilike.${sq},description_kz.ilike.${sq},description_en.ilike.${sq}`);
       }
 
       const { data } = await query
