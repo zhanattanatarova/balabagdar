@@ -123,9 +123,26 @@ const AdminPage = () => {
           <h2 className="text-lg font-black flex items-center gap-2"><Plus size={20} /> Новый кружок</h2>
 
           <Field label="Название*" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
-          <div className="grid grid-cols-2 gap-3">
+          <div>
             <Select label="Город*" value={form.city} options={CITIES} onChange={(v) => setForm({ ...form, city: v })} />
-            <Select label="Категория" value={form.category} options={CATEGORIES} onChange={(v) => setForm({ ...form, category: v })} />
+          </div>
+          <div>
+            <label className="text-xs font-bold uppercase text-muted-foreground">Категории (можно несколько)</label>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {CATEGORIES.map((c) => {
+                const active = form.categories.includes(c);
+                return (
+                  <button
+                    type="button"
+                    key={c}
+                    onClick={() => toggleCategory(c)}
+                    className={`px-3 py-1.5 rounded-full border-2 text-xs font-bold transition-colors ${active ? "bg-primary text-primary-foreground border-foreground" : "bg-muted border-border hover:border-primary"}`}
+                  >
+                    {c}
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
           <Field label="Телефон владельца* (для входа через Telegram)" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
