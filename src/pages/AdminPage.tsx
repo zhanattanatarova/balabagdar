@@ -92,7 +92,7 @@ const AdminPage = () => {
       setCreds((prev) => [{ name: form.name, email: c.email, password: c.password, city: form.city }, ...prev]);
       toast({ title: "Кружок создан", description: `${c.email} / ${c.password}` });
       setForm({
-        name: "", city: form.city, categories: ["development"],
+        name: "", city: form.city, categories: [],
         email: "", password: "", phone: "", address: "", description: "",
         instagram_url: "", twogis_url: "", price_from: "",
       });
@@ -129,22 +129,47 @@ const AdminPage = () => {
             <Select label="Город*" value={form.city} options={CITIES} onChange={(v) => setForm({ ...form, city: v })} />
           </div>
           <div>
-            <label className="text-xs font-bold uppercase text-muted-foreground">Категории (можно несколько)</label>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {CATEGORIES.map((c) => {
-                const active = form.categories.includes(c);
+            <label className="text-xs font-bold uppercase text-muted-foreground">Категории и направления (можно несколько)</label>
+            <p className="text-xs text-muted-foreground mt-1">Отметьте все виды занятий, которые есть в центре — например «АФК», «Английский язык», «Подготовка к школе», «Логопед». Это поможет родителям найти вас по фильтрам.</p>
+            <div className="mt-3 space-y-3">
+              {TAXONOMY.map((group) => {
+                const groupLabel = t(`cat.${group.id}` as any);
+                const groupActive = form.categories.includes(group.id);
                 return (
-                  <button
-                    type="button"
-                    key={c}
-                    onClick={() => toggleCategory(c)}
-                    className={`px-3 py-1.5 rounded-full border-2 text-xs font-bold transition-colors ${active ? "bg-primary text-primary-foreground border-foreground" : "bg-muted border-border hover:border-primary"}`}
-                  >
-                    {c}
-                  </button>
+                  <div key={group.id} className="border-2 border-border rounded-2xl p-3 bg-muted/40">
+                    <button
+                      type="button"
+                      onClick={() => toggleCategory(group.id)}
+                      className={`px-3 py-1.5 rounded-full border-2 text-xs font-black transition-colors ${groupActive ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border hover:border-primary"}`}
+                    >
+                      {group.emoji} {groupLabel} {groupActive && "✓"}
+                    </button>
+                    {group.subs.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {group.subs.map((s) => {
+                          const id = `${group.id}.${s}`;
+                          const active = form.categories.includes(id);
+                          const label = t(`${group.id}.${s}` as any);
+                          return (
+                            <button
+                              type="button"
+                              key={id}
+                              onClick={() => toggleCategory(id)}
+                              className={`px-2.5 py-1 rounded-full border text-[11px] font-bold transition-colors ${active ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border hover:border-primary"}`}
+                            >
+                              {label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
+            {form.categories.length === 0 && (
+              <p className="text-xs text-destructive mt-2">Выберите хотя бы одно направление</p>
+            )}
           </div>
           <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
           <Field label="Телефон владельца* (для входа через Telegram)" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
