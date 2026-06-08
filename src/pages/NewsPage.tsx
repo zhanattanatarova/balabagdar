@@ -35,7 +35,11 @@ const NewsPage = ({ city }: { city: string }) => {
               ))}
             </h1>
           </div>
-          <button className="w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+          <button
+            onClick={() => navigate("/profile")}
+            aria-label="Settings"
+            className="w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30 active:scale-95 transition-all cursor-pointer"
+          >
             <Settings size={18} className="text-primary-foreground" />
           </button>
         </div>
