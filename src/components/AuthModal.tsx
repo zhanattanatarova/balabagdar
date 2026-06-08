@@ -336,7 +336,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                 </>
               )}
             </>
-          )}
+
         </div>
       </div>
     </div>
