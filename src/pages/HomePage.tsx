@@ -310,8 +310,33 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       }
 
       if (searchQuery.trim()) {
-        const sq = `%${searchQuery.trim()}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},address.ilike.${sq}`);
+        const raw = searchQuery.trim();
+        const sq = `%${raw}%`;
+        const orParts = [
+          `name_ru.ilike.${sq}`,
+          `name_kz.ilike.${sq}`,
+          `name_en.ilike.${sq}`,
+          `address.ilike.${sq}`,
+          `description_ru.ilike.${sq}`,
+          `description_kz.ilike.${sq}`,
+          `description_en.ilike.${sq}`,
+        ];
+        if (matchedCategoryIds.length > 0) {
+          orParts.push(`categories.ov.{${matchedCategoryIds.join(",")}}`);
+          // also match legacy `category` text column on top-level group ids
+          const topIds = matchedCategoryIds.filter((id) => !id.includes("."));
+          for (const id of topIds) orParts.push(`category.eq.${id}`);
+        }
+        query = query.or(orParts.join(","));
+      }
+
+      if (ageFilter !== "all") {
+        const ranges: Record<string, [number, number]> = {
+          "0-3": [0, 3], "3-7": [3, 7], "7-12": [7, 12], "12+": [12, 99],
+        };
+        const [lo, hi] = ranges[ageFilter];
+        // club overlaps requested range: age_min <= hi AND age_max >= lo
+        query = query.lte("age_min", hi).gte("age_max", lo);
       }
 
       const { data } = await query
@@ -323,7 +348,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery, ageFilter, matchedCategoryIds]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
