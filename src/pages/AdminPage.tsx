@@ -50,8 +50,9 @@ const AdminPage = () => {
   const [uploadingGallery, setUploadingGallery] = useState(false);
 
   const uploadFile = async (file: File): Promise<string> => {
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `admin/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    if (!user) throw new Error("Не авторизован");
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${user.id}/admin/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const { error } = await supabase.storage.from("club-media").upload(path, file, {
       cacheControl: "3600",
       upsert: false,
