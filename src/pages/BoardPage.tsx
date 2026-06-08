@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Plus, Phone, MapPin, X, Loader2, Tag } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, Phone, MapPin, X, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
@@ -18,11 +18,13 @@ interface Announcement {
 }
 
 const categories = [
-  { value: "other", label: "Другое" },
-  { value: "class", label: "Набор в группу" },
-  { value: "event", label: "Мероприятие" },
-  { value: "sale", label: "Акция" },
-  { value: "vacancy", label: "Вакансия" },
+  { value: "all", label: "Все", emoji: "" },
+  { value: "masterclass", label: "Мастер-класс", emoji: "🎉" },
+  { value: "job_seek", label: "Ищу работу", emoji: "💼" },
+  { value: "specialist", label: "Нужен специалист", emoji: "🔍" },
+  { value: "nanny", label: "Ищу няню", emoji: "👶" },
+  { value: "opening", label: "Мы открылись", emoji: "🎊" },
+  { value: "other", label: "Другое", emoji: "📌" },
 ];
 
 const cities = [
@@ -38,6 +40,7 @@ const BoardPage = ({ city }: { city: string }) => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activeCat, setActiveCat] = useState("all");
   const [form, setForm] = useState({
     title: "",
     body: "",
@@ -60,13 +63,23 @@ const BoardPage = ({ city }: { city: string }) => {
 
   useEffect(() => { load(); }, []);
 
-  const filtered = items.filter((i) => !city || i.city === city);
+  const filtered = useMemo(
+    () => items.filter((i) =>
+      (!city || i.city === city) && (activeCat === "all" || i.category === activeCat)
+    ),
+    [items, city, activeCat]
+  );
 
-  const handleCreate = async () => {
+  const openCreate = () => {
     if (!user) {
       toast({ title: "Войдите в аккаунт", description: "Чтобы разместить объявление, нужна авторизация", variant: "destructive" });
       return;
     }
+    setOpen(true);
+  };
+
+  const handleCreate = async () => {
+    if (!user) return;
     if (!form.title.trim() || !form.body.trim()) {
       toast({ title: "Заполните поля", description: "Заголовок и текст обязательны", variant: "destructive" });
       return;
@@ -89,18 +102,45 @@ const BoardPage = ({ city }: { city: string }) => {
   };
 
   return (
-    <div className="pb-24 max-w-3xl mx-auto">
+    <div className="pb-32 max-w-3xl mx-auto">
       <div className="px-4 pt-5 pb-3 flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-black">📌 Доска объявлений</h1>
-          <p className="text-xs text-muted-foreground font-bold">{city}</p>
+          <h1 className="text-lg font-black flex items-center gap-2">
+            <span className="text-xl">📣</span> Доска объявлений
+          </h1>
+          <p className="text-xs text-muted-foreground font-bold mt-0.5">
+            {city || "Актау"} · объявления активны 30 дней
+          </p>
         </div>
         <button
-          onClick={() => setOpen(true)}
-          className="flex items-center gap-1.5 bg-primary text-primary-foreground font-black text-xs px-4 py-2.5 rounded-full"
+          onClick={openCreate}
+          className="flex items-center gap-1.5 bg-primary text-primary-foreground font-black text-xs px-4 py-2.5 rounded-full shadow-md"
         >
           <Plus size={14} /> Добавить
         </button>
+      </div>
+
+      {/* Category pills */}
+      <div className="px-4 pb-4 overflow-x-auto no-scrollbar">
+        <div className="flex gap-2 w-max">
+          {categories.map((c) => {
+            const active = activeCat === c.value;
+            return (
+              <button
+                key={c.value}
+                onClick={() => setActiveCat(c.value)}
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-black border-2 transition-all ${
+                  active
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card text-foreground border-border"
+                }`}
+              >
+                {c.emoji && <span className="mr-1">{c.emoji}</span>}
+                {c.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="px-4 space-y-3">
@@ -108,32 +148,45 @@ const BoardPage = ({ city }: { city: string }) => {
           <div className="flex justify-center py-10"><Loader2 className="animate-spin text-primary" /></div>
         )}
         {!loading && filtered.length === 0 && (
-          <div className="text-center py-10 text-sm text-muted-foreground font-bold">
-            Пока нет объявлений в этом городе
+          <div className="cartoon-card flex flex-col items-center justify-center text-center py-14 px-6">
+            <div className="text-5xl mb-4">📬</div>
+            <h3 className="font-black text-lg">Пока нет объявлений</h3>
+            <p className="text-sm text-muted-foreground font-bold mt-1">
+              Будьте первым — добавьте объявление!
+            </p>
+            <button
+              onClick={openCreate}
+              className="mt-5 flex items-center gap-2 bg-primary text-primary-foreground font-black text-sm px-6 py-3 rounded-full shadow-md"
+            >
+              <Plus size={16} /> Добавить объявление
+            </button>
           </div>
         )}
-        {filtered.map((a) => (
-          <div key={a.id} className="cartoon-card p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-yellow-light flex items-center gap-1">
-                <Tag size={10} />{categories.find((c) => c.value === a.category)?.label || a.category}
-              </span>
-              <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1">
-                <MapPin size={10} /> {a.city}
-              </span>
+        {!loading && filtered.map((a) => {
+          const cat = categories.find((c) => c.value === a.category);
+          return (
+            <div key={a.id} className="cartoon-card p-4">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-yellow-light">
+                  {cat?.emoji} {cat?.label || a.category}
+                </span>
+                <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1">
+                  <MapPin size={10} /> {a.city}
+                </span>
+              </div>
+              <h3 className="font-black text-base">{a.title}</h3>
+              <p className="text-sm mt-2 whitespace-pre-line font-medium">{a.body}</p>
+              <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
+                <span className="text-xs font-bold text-muted-foreground">{a.name}</span>
+                {a.phone && (
+                  <a href={`tel:${a.phone}`} className="flex items-center gap-1 text-xs font-black text-primary">
+                    <Phone size={12} /> {a.phone}
+                  </a>
+                )}
+              </div>
             </div>
-            <h3 className="font-black text-base">{a.title}</h3>
-            <p className="text-sm mt-2 whitespace-pre-line font-medium">{a.body}</p>
-            <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
-              <span className="text-xs font-bold text-muted-foreground">{a.name}</span>
-              {a.phone && (
-                <a href={`tel:${a.phone}`} className="flex items-center gap-1 text-xs font-black text-primary">
-                  <Phone size={12} /> {a.phone}
-                </a>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {open && (
@@ -147,7 +200,7 @@ const BoardPage = ({ city }: { city: string }) => {
               <div>
                 <label className="text-xs font-bold text-muted-foreground">Категория</label>
                 <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold">
-                  {categories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  {categories.filter((c) => c.value !== "all").map((c) => <option key={c.value} value={c.value}>{c.emoji} {c.label}</option>)}
                 </select>
               </div>
               <div>
