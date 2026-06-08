@@ -14,7 +14,7 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
-type MainMode = "phone";
+
 type PhoneFlow = "login" | "register" | "reset";
 type PhoneStep = "phone" | "code";
 
@@ -26,7 +26,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const { role, loading: roleLoading } = useUserRole();
   const navigate = useNavigate();
 
-  const [mode, setMode] = useState<MainMode>("phone");
+  
   const [flow, setFlow] = useState<PhoneFlow>("login");
   const [step, setStep] = useState<PhoneStep>("phone");
   const [phone, setPhone] = useState("+7 ");
