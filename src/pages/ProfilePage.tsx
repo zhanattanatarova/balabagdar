@@ -1,4 +1,4 @@
-import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle, Building2 } from "lucide-react";
+import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle, Building2, FileText } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,7 +27,8 @@ const ProfilePage = () => {
   ];
 
   const settingsItems = [
-    { icon: MessageCircle, label: t("profile.contact_us"), color: "bg-primary/10", iconColor: "text-primary" },
+    { icon: MessageCircle, label: t("profile.contact_us"), color: "bg-primary/10", iconColor: "text-primary", onClick: () => toast({ title: t("profile.contact_us") }) },
+    { icon: FileText, label: "Правовая информация", color: "bg-muted", iconColor: "text-foreground", onClick: () => navigate("/legal") },
   ];
 
   return (
@@ -105,8 +106,9 @@ const ProfilePage = () => {
         <h3 className="text-sm font-black mb-2 px-1">{t("profile.settings")}</h3>
         <div className="cartoon-card p-1">
           {settingsItems.map((item) => (
-            <button key={item.label} onClick={() => toast({ title: item.label })}
+            <button key={item.label} onClick={item.onClick}
               className="flex items-center gap-3 p-3 text-left w-full hover:bg-muted/50 rounded-xl transition-colors">
+
               <div className={`w-9 h-9 rounded-xl ${item.color} flex items-center justify-center shrink-0`}>
                 <item.icon size={18} className={item.iconColor} />
               </div>
