@@ -10,7 +10,19 @@ import { TAXONOMY } from "@/lib/categoriesTaxonomy";
 
 type Credential = { name: string; email: string; password: string; city: string };
 
-const CITIES = ["Актау", "Алматы", "Астана", "Шымкент", "Караганда", "Атырау", "Актобе", "Уральск", "Костанай", "Павлодар"];
+const CITIES = [
+  "Алматы", "Астана", "Шымкент",
+  "Актау", "Актобе", "Аркалык", "Атырау", "Балхаш", "Жанаозен", "Жезказган",
+  "Караганда", "Кокшетау", "Костанай", "Кызылорда", "Павлодар",
+  "Петропавловск", "Риддер", "Рудный", "Сатпаев", "Семей",
+  "Талдыкорган", "Тараз", "Темиртау", "Туркестан", "Уральск",
+  "Усть-Каменогорск", "Экибастуз", "Жетысай", "Капшагай", "Каскелен",
+  "Кентау", "Лисаковск", "Степногорск", "Талгар", "Шахтинск",
+  "Щучинск", "Аксай", "Аксу", "Алга", "Арысь",
+  "Есик", "Жаркент", "Зыряновск", "Кандыагаш", "Шу",
+  "Текели", "Ушарал", "Хромтау", "Шардара", "Шемонаиха",
+  "Сарань", "Каратау", "Жанатас", "Аральск", "Казалинск"
+].sort((a, b) => a.localeCompare(b, "ru"));
 
 const AdminPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -38,8 +50,9 @@ const AdminPage = () => {
   const [uploadingGallery, setUploadingGallery] = useState(false);
 
   const uploadFile = async (file: File): Promise<string> => {
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `admin/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    if (!user) throw new Error("Не авторизован");
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `${user.id}/admin/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const { error } = await supabase.storage.from("club-media").upload(path, file, {
       cacheControl: "3600",
       upsert: false,
