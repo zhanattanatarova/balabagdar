@@ -16,6 +16,7 @@ const events: { titleKey: TranslationKey; dateKey: TranslationKey; rating: numbe
 
 const NewsPage = ({ city }: { city: string }) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const titleLines = t("news.title").split("\n");
 
   return (
