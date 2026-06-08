@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
 import iconCreativity from "@/assets/icon-creativity.png";
 import iconSport from "@/assets/icon-sport.png";
@@ -233,6 +234,30 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
+  const [ageFilter, setAgeFilter] = useState<"all" | "0-3" | "3-7" | "7-12" | "12+">("all");
+
+  // Map a search query to matching club category ids by scanning translations.
+  const matchedCategoryIds = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [] as string[];
+    const ids = new Set<string>();
+    for (const [key, val] of Object.entries(translations)) {
+      const v = val as Record<string, string>;
+      const hit = (v.ru || "").toLowerCase().includes(q)
+        || (v.kz || "").toLowerCase().includes(q)
+        || (v.en || "").toLowerCase().includes(q);
+      if (!hit) continue;
+      if (key.startsWith("cat.")) {
+        ids.add(key.slice(4));
+      } else if (key.includes(".") && !key.endsWith(".title") && !key.endsWith(".all")) {
+        // e.g. "sport.gymnastics" — stored as namespaced id on clubs
+        const [group] = key.split(".");
+        const known = ["sport","dance","languages","tutors","creativity","music","development","special","health"];
+        if (known.includes(group)) ids.add(key);
+      }
+    }
+    return Array.from(ids);
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchClubs = async () => {
@@ -285,8 +310,33 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       }
 
       if (searchQuery.trim()) {
-        const sq = `%${searchQuery.trim()}%`;
-        query = query.or(`name_ru.ilike.${sq},name_kz.ilike.${sq},name_en.ilike.${sq},address.ilike.${sq}`);
+        const raw = searchQuery.trim();
+        const sq = `%${raw}%`;
+        const orParts = [
+          `name_ru.ilike.${sq}`,
+          `name_kz.ilike.${sq}`,
+          `name_en.ilike.${sq}`,
+          `address.ilike.${sq}`,
+          `description_ru.ilike.${sq}`,
+          `description_kz.ilike.${sq}`,
+          `description_en.ilike.${sq}`,
+        ];
+        if (matchedCategoryIds.length > 0) {
+          orParts.push(`categories.ov.{${matchedCategoryIds.join(",")}}`);
+          // also match legacy `category` text column on top-level group ids
+          const topIds = matchedCategoryIds.filter((id) => !id.includes("."));
+          for (const id of topIds) orParts.push(`category.eq.${id}`);
+        }
+        query = query.or(orParts.join(","));
+      }
+
+      if (ageFilter !== "all") {
+        const ranges: Record<string, [number, number]> = {
+          "0-3": [0, 3], "3-7": [3, 7], "7-12": [7, 12], "12+": [12, 99],
+        };
+        const [lo, hi] = ranges[ageFilter];
+        // club overlaps requested range: age_min <= hi AND age_max >= lo
+        query = query.lte("age_min", hi).gte("age_max", lo);
       }
 
       const { data } = await query
@@ -298,7 +348,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
-  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery]);
+  }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery, ageFilter, matchedCategoryIds]);
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
@@ -722,6 +772,30 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         <h3 className="font-black text-sm">{t("home.free_banner_title")}</h3>
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{t("home.free_banner_text")}</p>
       </div>
+
+      {/* Age filter */}
+      <div className="mx-4 mt-4 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
+        <span className="text-sm font-black shrink-0 flex items-center gap-1">👶 {t("age.label")}</span>
+        {([
+          { id: "all", label: t("age.any") },
+          { id: "0-3", label: t("age.0_3") },
+          { id: "3-7", label: t("age.3_7") },
+          { id: "7-12", label: t("age.7_12") },
+          { id: "12+", label: t("age.12_plus") },
+        ] as const).map((opt) => {
+          const active = ageFilter === opt.id;
+          return (
+            <button
+              key={opt.id}
+              onClick={() => setAgeFilter(opt.id as typeof ageFilter)}
+              className={`shrink-0 px-4 py-2 rounded-full text-sm font-black border-[3px] transition-colors ${active ? "bg-primary/15 text-primary border-primary" : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"}`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+
 
       {/* Categories */}
       <div className="px-4 mt-4">

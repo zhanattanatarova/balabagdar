@@ -42,6 +42,12 @@ export const translations = {
   "home.not_found": { ru: "Ничего не найдено", kz: "Ештеңе табылмады", en: "Nothing found" },
   "home.free_banner_title": { ru: "🎉 Бесплатная доска объявлений", kz: "🎉 Тегін хабарландырулар тақтасы", en: "🎉 Free bulletin board" },
   "home.free_banner_text": { ru: "Размещайте кружки и события бесплатно — мы собираем лучшую базу детских занятий Казахстана!", kz: "Үйірмелер мен оқиғаларды тегін орналастырыңыз — біз Қазақстанның балалар сабақтарының ең жақсы базасын жинаймыз!", en: "List clubs and events for free — we're building the best database of children's activities in Kazakhstan!" },
+  "age.label": { ru: "Возраст:", kz: "Жас:", en: "Age:" },
+  "age.any": { ru: "Любой", kz: "Кез келген", en: "Any" },
+  "age.0_3": { ru: "0–3 лет", kz: "0–3 жас", en: "0–3 yrs" },
+  "age.3_7": { ru: "3–7 лет", kz: "3–7 жас", en: "3–7 yrs" },
+  "age.7_12": { ru: "7–12 лет", kz: "7–12 жас", en: "7–12 yrs" },
+  "age.12_plus": { ru: "12+ лет", kz: "12+ жас", en: "12+ yrs" },
 
   // Categories
   "cat.creativity": { ru: "Творчество", kz: "Шығармашылық", en: "Art" },
