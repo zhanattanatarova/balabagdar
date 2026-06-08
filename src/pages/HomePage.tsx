@@ -18,6 +18,7 @@ import iconTutors from "@/assets/icon-tutors.png";
 import iconLanguages from "@/assets/icon-languages.png";
 import iconShops from "@/assets/icon-shops.png";
 import iconSpecial from "@/assets/icon-special.png";
+import iconKindergarten from "@/assets/icon-kindergarten.png";
 import AuthModal from "@/components/AuthModal";
 
 const cities = [
@@ -35,9 +36,10 @@ const categoryIcons: Record<string, string> = {
   speech: iconSpeech, dance: iconDance, robotics: iconRobotics,
   swim: iconSwim, music: iconMusic, health: iconHealth, tutors: iconTutors,
   languages: iconLanguages, shops: iconShops, special: iconSpecial,
+  kindergarten: iconKindergarten,
 };
 
-const categoryIds = ["creativity", "sport", "development", "special", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
+const categoryIds = ["creativity", "sport", "development", "special", "kindergarten", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
 
 const languageOptions = [
   { id: "english", emoji: "🇬🇧" },
