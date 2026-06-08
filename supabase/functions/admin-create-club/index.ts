@@ -16,94 +16,80 @@ Deno.serve(async (req) => {
 
     const authHeader = req.headers.get("Authorization") ?? "";
     const token = authHeader.replace("Bearer ", "");
-    if (!token) return json({ error: "Unauthorized" }, 401);
+    if (!token) return json({ error: "Unauthorized" });
 
-    // Verify caller
     const userClient = createClient(SUPABASE_URL, ANON_KEY, {
       global: { headers: { Authorization: `Bearer ${token}` } },
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
-    if (userErr || !userData.user) return json({ error: "Unauthorized" }, 401);
+    if (userErr || !userData.user) return json({ error: "Unauthorized" });
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
-    // Check admin role
     const { data: roleRow } = await admin
       .from("user_roles")
       .select("role")
       .eq("user_id", userData.user.id)
       .eq("role", "admin")
       .maybeSingle();
-    if (!roleRow) return json({ error: "Forbidden: admin only" }, 403);
+    if (!roleRow) return json({ error: "Доступ только для администратора" });
 
     const body = await req.json();
     const {
-      email: emailIn,
-      password: passIn,
-      name,
-      city,
-      category,
-      categories,
-      phone,
-      address,
-      description,
-      instagram_url,
-      twogis_url,
-      price_from,
-      avatar_url,
-      gallery,
+      email: emailIn, password: passIn,
+      name, city, category, categories, phone, address, description,
+      instagram_url, twogis_url, price_from, avatar_url, gallery,
     } = body ?? {};
 
     const catList: string[] = Array.isArray(categories) && categories.length
       ? categories.filter((c: any) => typeof c === "string" && c.trim())
       : (category ? [category] : []);
-    // top-level group of the first id (e.g. "sport.football" -> "sport")
     const primaryCategory = (catList[0] ?? "development").split(".")[0];
 
-    if (!name || !city) {
-      return json({ error: "name and city are required" }, 400);
-    }
-    if (!emailIn && !phone) {
-      return json({ error: "Provide email or phone" }, 400);
-    }
+    if (!name || !city) return json({ error: "Укажите название и город" });
+    if (!emailIn && !phone) return json({ error: "Укажите email или телефон" });
 
-    // Auto-generate email from phone if not provided (matches Telegram auth pattern)
     const cleanPhone = (phone ?? "").replace(/\D/g, "");
-    const email = emailIn || `${cleanPhone}@phone.balahub.kz`;
+    const email = (emailIn || `${cleanPhone}@phone.balahub.kz`).toLowerCase();
     const password = passIn || (Math.random().toString(36).slice(-10) + "A1!");
-    if (String(password).length < 6) return json({ error: "password too short" }, 400);
 
-    // Create auth user (email confirmed)
+    // Try create; if exists, look up existing user and reuse
+    let newUserId: string | null = null;
     const { data: created, error: createErr } = await admin.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
+      email, password, email_confirm: true,
       user_metadata: { display_name: name },
     });
-    if (createErr || !created.user) return json({ error: createErr?.message || "create failed" }, 400);
+    if (created?.user) {
+      newUserId = created.user.id;
+    } else {
+      const msg = (createErr?.message || "").toLowerCase();
+      const exists = msg.includes("already") || msg.includes("registered") || msg.includes("exists");
+      if (!exists) return json({ error: createErr?.message || "Не удалось создать пользователя" });
+      // Find existing user by email via listUsers (paginated search)
+      const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
+      const found = list?.users?.find((u: any) => (u.email || "").toLowerCase() === email);
+      if (!found) return json({ error: `Пользователь с email ${email} уже существует, но не найден` });
+      newUserId = found.id;
+    }
 
-    const newUserId = created.user.id;
-
-    // Profile
+    // Profile (upsert)
     await admin.from("profiles").upsert({
-      user_id: newUserId,
-      display_name: name,
-      phone: phone ?? null,
+      user_id: newUserId, display_name: name, phone: phone ?? null,
     }, { onConflict: "user_id" });
 
-    // Role
-    await admin.from("user_roles").insert({ user_id: newUserId, role: "club_owner" });
+    // Role (ignore duplicate)
+    await admin.from("user_roles").upsert(
+      { user_id: newUserId, role: "club_owner" },
+      { onConflict: "user_id,role" },
+    );
 
     // Club
     const { data: club, error: clubErr } = await admin
       .from("clubs")
       .insert({
         user_id: newUserId,
-        name_ru: name,
-        name_kz: name,
-        name_en: name,
-        city,
-        category: primaryCategory,
+        name_ru: name, name_kz: name, name_en: name,
+        city, category: primaryCategory,
         categories: catList.length ? catList : [primaryCategory],
         phone: phone ?? null,
         address: address ?? null,
@@ -119,11 +105,11 @@ Deno.serve(async (req) => {
       .select()
       .single();
 
-    if (clubErr) return json({ error: clubErr.message }, 400);
+    if (clubErr) return json({ error: `Не удалось создать кружок: ${clubErr.message}` });
 
     return json({ ok: true, club, credentials: { email, password } });
   } catch (e: any) {
-    return json({ error: e?.message ?? "Server error" }, 500);
+    return json({ error: e?.message ?? "Server error" });
   }
 });
 
