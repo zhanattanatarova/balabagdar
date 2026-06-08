@@ -150,6 +150,7 @@ const AdminPage = () => {
         name: "", city: form.city, categories: [],
         email: "", password: "", phone: "", address: "", description: "",
         instagram_url: "", twogis_url: "", price_from: "",
+        avatar_url: "", gallery: [],
       });
     } catch (e: any) {
       toast({ title: "Ошибка", description: e.message, variant: "destructive" });
