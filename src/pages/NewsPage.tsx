@@ -1,4 +1,5 @@
 import { Star, ChevronRight, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import newsArt from "@/assets/news-art.jpg";
 import newsFestival from "@/assets/news-festival.jpg";
