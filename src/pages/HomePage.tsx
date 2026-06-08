@@ -18,6 +18,7 @@ import iconTutors from "@/assets/icon-tutors.png";
 import iconLanguages from "@/assets/icon-languages.png";
 import iconShops from "@/assets/icon-shops.png";
 import iconSpecial from "@/assets/icon-special.png";
+import iconKindergarten from "@/assets/icon-kindergarten.png";
 import AuthModal from "@/components/AuthModal";
 
 const cities = [
