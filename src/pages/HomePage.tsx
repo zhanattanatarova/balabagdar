@@ -773,6 +773,30 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{t("home.free_banner_text")}</p>
       </div>
 
+      {/* Age filter */}
+      <div className="mx-4 mt-4 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
+        <span className="text-sm font-black shrink-0 flex items-center gap-1">👶 {t("age.label")}</span>
+        {([
+          { id: "all", label: t("age.any") },
+          { id: "0-3", label: t("age.0_3") },
+          { id: "3-7", label: t("age.3_7") },
+          { id: "7-12", label: t("age.7_12") },
+          { id: "12+", label: t("age.12_plus") },
+        ] as const).map((opt) => {
+          const active = ageFilter === opt.id;
+          return (
+            <button
+              key={opt.id}
+              onClick={() => setAgeFilter(opt.id as typeof ageFilter)}
+              className={`shrink-0 px-4 py-2 rounded-full text-sm font-black border-[3px] transition-colors ${active ? "bg-primary/15 text-primary border-primary" : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"}`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+
+
       {/* Categories */}
       <div className="px-4 mt-4">
         <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-4">
