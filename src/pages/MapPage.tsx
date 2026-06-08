@@ -305,10 +305,18 @@ const MapPage = ({ city }: { city: string }) => {
                 </div>
                 {selected === club.id && (
                   <div className="mt-3 pt-3 border-t border-border flex flex-wrap gap-2">
+                    <Link
+                      to={`/club/${club.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1 text-xs font-black bg-primary text-primary-foreground px-3 py-2 rounded-xl"
+                    >
+                      Открыть профиль <ArrowRight size={12} />
+                    </Link>
                     {club.phone && (
                       <a
                         href={`tel:${club.phone}`}
-                        className="flex items-center gap-1 text-xs font-black bg-primary text-primary-foreground px-3 py-2 rounded-xl"
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl"
                       >
                         <Phone size={12} /> Позвонить
                       </a>
@@ -318,9 +326,10 @@ const MapPage = ({ city }: { city: string }) => {
                         href={club.twogis_url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl"
                       >
-                        <ExternalLink size={12} /> Открыть в 2GIS
+                        <ExternalLink size={12} /> 2GIS
                       </a>
                     )}
                   </div>
