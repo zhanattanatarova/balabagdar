@@ -53,6 +53,8 @@ export const TAXONOMY: Group[] = [
     id: "swim", emoji: "🏊", subs: [] },
   {
     id: "shops", emoji: "🛍️", subs: [] },
+  {
+    id: "kindergarten", emoji: "🏫", subs: [] },
   // Extra ad-hoc ones the user mentioned that map to existing groups
 ];
 
