@@ -31,7 +31,58 @@ const AdminPage = () => {
     instagram_url: "",
     twogis_url: "",
     price_from: "",
+    avatar_url: "",
+    gallery: [] as string[],
   });
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+
+  const uploadFile = async (file: File): Promise<string> => {
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `admin/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage.from("club-media").upload(path, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type,
+    });
+    if (error) throw error;
+    const { data } = supabase.storage.from("club-media").getPublicUrl(path);
+    return data.publicUrl;
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAvatar(true);
+    try {
+      const url = await uploadFile(file);
+      setForm((f) => ({ ...f, avatar_url: url }));
+    } catch (err: any) {
+      toast({ title: "Ошибка загрузки", description: err.message, variant: "destructive" });
+    } finally {
+      setUploadingAvatar(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploadingGallery(true);
+    try {
+      const urls = await Promise.all(files.map(uploadFile));
+      setForm((f) => ({ ...f, gallery: [...f.gallery, ...urls] }));
+    } catch (err: any) {
+      toast({ title: "Ошибка загрузки", description: err.message, variant: "destructive" });
+    } finally {
+      setUploadingGallery(false);
+      e.target.value = "";
+    }
+  };
+
+  const removeGalleryPhoto = (url: string) => {
+    setForm((f) => ({ ...f, gallery: f.gallery.filter((g) => g !== url) }));
+  };
 
   const toggleCategory = (c: string) => {
     setForm((f) => ({
