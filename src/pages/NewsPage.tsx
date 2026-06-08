@@ -1,4 +1,5 @@
 import { Star, ChevronRight, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import newsArt from "@/assets/news-art.jpg";
 import newsFestival from "@/assets/news-festival.jpg";
@@ -15,6 +16,7 @@ const events: { titleKey: TranslationKey; dateKey: TranslationKey; rating: numbe
 
 const NewsPage = ({ city }: { city: string }) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const titleLines = t("news.title").split("\n");
 
   return (
@@ -33,7 +35,11 @@ const NewsPage = ({ city }: { city: string }) => {
               ))}
             </h1>
           </div>
-          <button className="w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+          <button
+            onClick={() => navigate("/profile")}
+            aria-label="Settings"
+            className="w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30 active:scale-95 transition-all cursor-pointer"
+          >
             <Settings size={18} className="text-primary-foreground" />
           </button>
         </div>
