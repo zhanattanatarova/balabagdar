@@ -24,6 +24,21 @@ const CITIES = [
   "Сарань", "Каратау", "Жанатас", "Аральск", "Казалинск"
 ].sort((a, b) => a.localeCompare(b, "ru"));
 
+const CITY_2GIS_SLUG: Record<string, string> = {
+  "Астана": "astana", "Алматы": "almaty", "Шымкент": "shymkent",
+  "Актау": "aktau", "Жанаозен": "zhanaozen", "Караганда": "karaganda",
+  "Актобе": "aktobe", "Атырау": "atyrau", "Тараз": "taraz",
+  "Павлодар": "pavlodar", "Семей": "semey", "Костанай": "kostanay",
+  "Кызылорда": "kyzylorda", "Уральск": "oral", "Петропавловск": "petropavl",
+  "Темиртау": "temirtau", "Туркестан": "turkistan", "Кокшетау": "kokshetau",
+  "Талдыкорган": "taldykorgan", "Экибастуз": "ekibastuz", "Усть-Каменогорск": "ust-kamenogorsk",
+};
+
+const build2GisUrl = (city: string, address: string) => {
+  const slug = CITY_2GIS_SLUG[city] || "astana";
+  return `https://2gis.kz/${slug}/search/${encodeURIComponent(address)}`;
+};
+
 const AdminPage = () => {
   const { user, loading: authLoading } = useAuth();
   const { role, loading: roleLoading } = useUserRole();
@@ -195,7 +210,7 @@ const AdminPage = () => {
 
           <Field label="Название*" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
           <div>
-            <Select label="Город*" value={form.city} options={CITIES} onChange={(v) => setForm({ ...form, city: v })} />
+            <Select label="Город*" value={form.city} options={CITIES} onChange={(v) => setForm({ ...form, city: v, twogis_url: form.address ? build2GisUrl(v, form.address) : form.twogis_url })} />
           </div>
           <div>
             <label className="text-xs font-bold uppercase text-muted-foreground">Категории и направления (можно несколько)</label>
@@ -281,10 +296,10 @@ const AdminPage = () => {
             </div>
           </div>
 
-          <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
+          <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v, twogis_url: v ? build2GisUrl(form.city, v) : "" })} />
           <Field label="Телефон владельца* (для входа через Telegram)" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
           <Field label="Instagram URL" value={form.instagram_url} onChange={(v) => setForm({ ...form, instagram_url: v })} />
-          <Field label="2GIS URL" value={form.twogis_url} onChange={(v) => setForm({ ...form, twogis_url: v })} />
+          <Field label="2GIS URL (заполняется автоматически из адреса)" value={form.twogis_url} onChange={(v) => setForm({ ...form, twogis_url: v })} />
           <Field label="Цена от (₸)" value={form.price_from} onChange={(v) => setForm({ ...form, price_from: v })} />
           <Field label="Описание" value={form.description} onChange={(v) => setForm({ ...form, description: v })} multiline />
 
