@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon } from "lucide-react";
+import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 // Fix default marker icons (Vite asset URLs)
