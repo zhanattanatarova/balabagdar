@@ -1,5 +1,5 @@
-import { Star, ChevronRight, Settings } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Star, ChevronRight, Plus, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import newsArt from "@/assets/news-art.jpg";
 import newsFestival from "@/assets/news-festival.jpg";
@@ -7,6 +7,14 @@ import newsShow from "@/assets/news-show.jpg";
 import BrandLogo from "@/components/BrandLogo";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { TranslationKey } from "@/i18n/translations";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import AuthModal from "@/components/AuthModal";
 
 const events: { titleKey: TranslationKey; dateKey: TranslationKey; rating: number; img: string }[] = [
   { titleKey: "news.event1_title", dateKey: "news.date1", rating: 4.8, img: newsArt },
@@ -16,8 +24,60 @@ const events: { titleKey: TranslationKey; dateKey: TranslationKey; rating: numbe
 
 const NewsPage = ({ city }: { city: string }) => {
   const { t } = useLanguage();
-  const navigate = useNavigate();
+  const { user } = useAuth();
   const titleLines = t("news.title").split("\n");
+
+  const [open, setOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    title: "",
+    body: "",
+    name: "",
+    phone: "",
+    period: "week" as "week" | "month",
+  });
+
+  const openPostForm = () => {
+    if (!user) {
+      setAuthOpen(true);
+      return;
+    }
+    setOpen(true);
+  };
+
+  const submit = async () => {
+    if (!user) return;
+    if (!form.title.trim() || !form.body.trim()) {
+      toast({ title: "Заполните название и описание", variant: "destructive" });
+      return;
+    }
+    if (form.title.length > 120 || form.body.length > 1500) {
+      toast({ title: "Слишком длинный текст", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    const days = form.period === "week" ? 7 : 30;
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+    const { error } = await supabase.from("announcements").insert({
+      user_id: user.id,
+      category: "event",
+      title: form.title.trim(),
+      body: form.body.trim(),
+      name: form.name.trim(),
+      phone: form.phone.trim(),
+      city,
+      expires_at: expires,
+    });
+    setSubmitting(false);
+    if (error) {
+      toast({ title: "Не удалось опубликовать", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Опубликовано!", description: "Событие появится в ленте города." });
+    setForm({ title: "", body: "", name: "", phone: "", period: "week" });
+    setOpen(false);
+  };
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
@@ -36,11 +96,12 @@ const NewsPage = ({ city }: { city: string }) => {
             </h1>
           </div>
           <button
-            onClick={() => navigate("/profile")}
-            aria-label="Settings"
-            className="w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30 active:scale-95 transition-all cursor-pointer"
+            onClick={openPostForm}
+            aria-label="Добавить событие"
+            title="Добавить событие в городе"
+            className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30 active:scale-95 transition-all cursor-pointer"
           >
-            <Settings size={18} className="text-primary-foreground" />
+            <Plus size={20} className="text-primary-foreground" />
           </button>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-16 opacity-30" style={{
@@ -82,6 +143,83 @@ const NewsPage = ({ city }: { city: string }) => {
           );
         })}
       </div>
+
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Опубликовать событие в {city}</DialogTitle>
+            <DialogDescription>
+              Расскажите, что будет в городе на этой неделе или месяце.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <Label>Название события *</Label>
+              <Input
+                value={form.title}
+                maxLength={120}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                placeholder="Например: Детский фестиваль науки"
+              />
+            </div>
+            <div>
+              <Label>Описание *</Label>
+              <Textarea
+                value={form.body}
+                maxLength={1500}
+                rows={4}
+                onChange={(e) => setForm({ ...form, body: e.target.value })}
+                placeholder="Когда, где, для кого, цена, программа..."
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Имя организатора</Label>
+                <Input
+                  value={form.name}
+                  maxLength={100}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder="Центр / контакт"
+                />
+              </div>
+              <div>
+                <Label>Телефон</Label>
+                <Input
+                  value={form.phone}
+                  maxLength={30}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  placeholder="+7..."
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Период публикации</Label>
+              <div className="flex gap-2 mt-1">
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, period: "week" })}
+                  className={`flex-1 py-2 rounded-md border-2 font-bold text-sm ${form.period === "week" ? "bg-primary text-primary-foreground border-primary" : "border-input"}`}
+                >
+                  Неделя
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, period: "month" })}
+                  className={`flex-1 py-2 rounded-md border-2 font-bold text-sm ${form.period === "month" ? "bg-primary text-primary-foreground border-primary" : "border-input"}`}
+                >
+                  Месяц
+                </button>
+              </div>
+            </div>
+            <Button onClick={submit} disabled={submitting} className="w-full">
+              {submitting && <Loader2 className="animate-spin" size={16} />}
+              Опубликовать
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
