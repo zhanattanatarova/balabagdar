@@ -234,6 +234,30 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
+  const [ageFilter, setAgeFilter] = useState<"all" | "0-3" | "3-7" | "7-12" | "12+">("all");
+
+  // Map a search query to matching club category ids by scanning translations.
+  const matchedCategoryIds = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [] as string[];
+    const ids = new Set<string>();
+    for (const [key, val] of Object.entries(translations)) {
+      const v = val as Record<string, string>;
+      const hit = (v.ru || "").toLowerCase().includes(q)
+        || (v.kz || "").toLowerCase().includes(q)
+        || (v.en || "").toLowerCase().includes(q);
+      if (!hit) continue;
+      if (key.startsWith("cat.")) {
+        ids.add(key.slice(4));
+      } else if (key.includes(".") && !key.endsWith(".title") && !key.endsWith(".all")) {
+        // e.g. "sport.gymnastics" — stored as namespaced id on clubs
+        const [group] = key.split(".");
+        const known = ["sport","dance","languages","tutors","creativity","music","development","special","health"];
+        if (known.includes(group)) ids.add(key);
+      }
+    }
+    return Array.from(ids);
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchClubs = async () => {
