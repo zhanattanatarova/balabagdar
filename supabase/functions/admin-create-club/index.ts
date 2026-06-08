@@ -50,6 +50,8 @@ Deno.serve(async (req) => {
       instagram_url,
       twogis_url,
       price_from,
+      avatar_url,
+      gallery,
     } = body ?? {};
 
     const catList: string[] = Array.isArray(categories) && categories.length
