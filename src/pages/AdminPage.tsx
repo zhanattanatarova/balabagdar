@@ -210,7 +210,7 @@ const AdminPage = () => {
 
           <Field label="Название*" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
           <div>
-            <Select label="Город*" value={form.city} options={CITIES} onChange={(v) => setForm({ ...form, city: v })} />
+            <Select label="Город*" value={form.city} options={CITIES} onChange={(v) => setForm({ ...form, city: v, twogis_url: form.address ? build2GisUrl(v, form.address) : form.twogis_url })} />
           </div>
           <div>
             <label className="text-xs font-bold uppercase text-muted-foreground">Категории и направления (можно несколько)</label>
