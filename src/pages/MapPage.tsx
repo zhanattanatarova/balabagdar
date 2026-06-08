@@ -215,11 +215,24 @@ const MapPage = ({ city }: { city: string }) => {
               <Popup>
                 <div className="font-bold text-sm">{club.name_ru}</div>
                 {club.address && <div className="text-xs opacity-70">{club.address}</div>}
-                {club.phone && (
-                  <a href={`tel:${club.phone}`} className="text-xs text-primary font-bold block mt-1">
-                    {club.phone}
-                  </a>
-                )}
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  <Link
+                    to={`/club/${club.id}`}
+                    className="text-[11px] font-black bg-primary text-primary-foreground px-2.5 py-1 rounded-lg inline-flex items-center gap-1"
+                  >
+                    Профиль <ArrowRight size={10} />
+                  </Link>
+                  {club.phone && (
+                    <a href={`tel:${club.phone}`} className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                      <Phone size={10} /> Звонок
+                    </a>
+                  )}
+                  {club.twogis_url && (
+                    <a href={club.twogis_url} target="_blank" rel="noopener noreferrer" className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                      <ExternalLink size={10} /> 2GIS
+                    </a>
+                  )}
+                </div>
               </Popup>
             </Marker>
           ))}
