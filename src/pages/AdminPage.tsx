@@ -288,13 +288,10 @@ const AdminPage = () => {
           <Field label="Цена от (₸)" value={form.price_from} onChange={(v) => setForm({ ...form, price_from: v })} />
           <Field label="Описание" value={form.description} onChange={(v) => setForm({ ...form, description: v })} multiline />
 
-          <div className="pt-2 border-t-2 border-dashed border-border" />
-          <p className="text-xs font-bold uppercase text-muted-foreground">Доступ владельца (необязательно)</p>
-          <p className="text-xs text-muted-foreground">Оставьте пустым — владелец войдёт через Telegram по указанному телефону. Или задайте email+пароль для запасного входа.</p>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Email (опц.)" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
-            <Field label="Пароль (опц.)" value={form.password} onChange={(v) => setForm({ ...form, password: v })} />
-          </div>
+          <p className="text-xs text-muted-foreground pt-2 border-t-2 border-dashed border-border">
+            Владелец войдёт через Telegram-бота по указанному номеру телефона. Email и пароль не нужны.
+          </p>
+
 
           <button onClick={submit} disabled={submitting}
             className="w-full mt-3 bg-primary text-primary-foreground font-bold py-3.5 rounded-xl border-[3px] border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] disabled:opacity-50 flex items-center justify-center gap-2">
