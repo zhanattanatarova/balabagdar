@@ -24,6 +24,21 @@ const CITIES = [
   "Сарань", "Каратау", "Жанатас", "Аральск", "Казалинск"
 ].sort((a, b) => a.localeCompare(b, "ru"));
 
+const CITY_2GIS_SLUG: Record<string, string> = {
+  "Астана": "astana", "Алматы": "almaty", "Шымкент": "shymkent",
+  "Актау": "aktau", "Жанаозен": "zhanaozen", "Караганда": "karaganda",
+  "Актобе": "aktobe", "Атырау": "atyrau", "Тараз": "taraz",
+  "Павлодар": "pavlodar", "Семей": "semey", "Костанай": "kostanay",
+  "Кызылорда": "kyzylorda", "Уральск": "oral", "Петропавловск": "petropavl",
+  "Темиртау": "temirtau", "Туркестан": "turkistan", "Кокшетау": "kokshetau",
+  "Талдыкорган": "taldykorgan", "Экибастуз": "ekibastuz", "Усть-Каменогорск": "ust-kamenogorsk",
+};
+
+const build2GisUrl = (city: string, address: string) => {
+  const slug = CITY_2GIS_SLUG[city] || "astana";
+  return `https://2gis.kz/${slug}/search/${encodeURIComponent(address)}`;
+};
+
 const AdminPage = () => {
   const { user, loading: authLoading } = useAuth();
   const { role, loading: roleLoading } = useUserRole();
