@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Copy, Plus, ArrowLeft, ChevronDown } from "lucide-react";
+import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
 import { TAXONOMY } from "@/lib/categoriesTaxonomy";
 
 type Credential = { name: string; email: string; password: string; city: string };
@@ -31,7 +31,58 @@ const AdminPage = () => {
     instagram_url: "",
     twogis_url: "",
     price_from: "",
+    avatar_url: "",
+    gallery: [] as string[],
   });
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+
+  const uploadFile = async (file: File): Promise<string> => {
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `admin/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage.from("club-media").upload(path, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type,
+    });
+    if (error) throw error;
+    const { data } = supabase.storage.from("club-media").getPublicUrl(path);
+    return data.publicUrl;
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAvatar(true);
+    try {
+      const url = await uploadFile(file);
+      setForm((f) => ({ ...f, avatar_url: url }));
+    } catch (err: any) {
+      toast({ title: "Ошибка загрузки", description: err.message, variant: "destructive" });
+    } finally {
+      setUploadingAvatar(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploadingGallery(true);
+    try {
+      const urls = await Promise.all(files.map(uploadFile));
+      setForm((f) => ({ ...f, gallery: [...f.gallery, ...urls] }));
+    } catch (err: any) {
+      toast({ title: "Ошибка загрузки", description: err.message, variant: "destructive" });
+    } finally {
+      setUploadingGallery(false);
+      e.target.value = "";
+    }
+  };
+
+  const removeGalleryPhoto = (url: string) => {
+    setForm((f) => ({ ...f, gallery: f.gallery.filter((g) => g !== url) }));
+  };
 
   const toggleCategory = (c: string) => {
     setForm((f) => ({
@@ -99,6 +150,7 @@ const AdminPage = () => {
         name: "", city: form.city, categories: [],
         email: "", password: "", phone: "", address: "", description: "",
         instagram_url: "", twogis_url: "", price_from: "",
+        avatar_url: "", gallery: [],
       });
     } catch (e: any) {
       toast({ title: "Ошибка", description: e.message, variant: "destructive" });
@@ -175,6 +227,47 @@ const AdminPage = () => {
               <p className="text-xs text-destructive mt-2">Выберите хотя бы одно направление</p>
             )}
           </div>
+
+          <div>
+            <label className="text-xs font-bold uppercase text-muted-foreground">Главное фото (обложка)</label>
+            <div className="mt-2 flex items-center gap-3">
+              {form.avatar_url ? (
+                <div className="relative">
+                  <img src={form.avatar_url} alt="cover" className="w-24 h-24 rounded-2xl object-cover border-2 border-foreground" />
+                  <button type="button" onClick={() => setForm({ ...form, avatar_url: "" })}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 border-2 border-foreground">
+                    <X size={12} />
+                  </button>
+                </div>
+              ) : (
+                <label className="w-24 h-24 rounded-2xl border-2 border-dashed border-border bg-muted flex items-center justify-center cursor-pointer hover:border-primary">
+                  {uploadingAvatar ? <Loader2 className="animate-spin" size={20} /> : <Upload size={20} className="text-muted-foreground" />}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+                </label>
+              )}
+              <p className="text-xs text-muted-foreground flex-1">Будет показано в карточке и шапке профиля</p>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold uppercase text-muted-foreground">Галерея (можно несколько)</label>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {form.gallery.map((url) => (
+                <div key={url} className="relative">
+                  <img src={url} alt="photo" className="w-20 h-20 rounded-xl object-cover border-2 border-border" />
+                  <button type="button" onClick={() => removeGalleryPhoto(url)}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 border-2 border-foreground">
+                    <X size={10} />
+                  </button>
+                </div>
+              ))}
+              <label className="w-20 h-20 rounded-xl border-2 border-dashed border-border bg-muted flex items-center justify-center cursor-pointer hover:border-primary">
+                {uploadingGallery ? <Loader2 className="animate-spin" size={18} /> : <ImagePlus size={18} className="text-muted-foreground" />}
+                <input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} disabled={uploadingGallery} />
+              </label>
+            </div>
+          </div>
+
           <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
           <Field label="Телефон владельца* (для входа через Telegram)" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
           <Field label="Instagram URL" value={form.instagram_url} onChange={(v) => setForm({ ...form, instagram_url: v })} />
