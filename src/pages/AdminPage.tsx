@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Copy, Plus, ArrowLeft, ChevronDown } from "lucide-react";
+import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
 import { TAXONOMY } from "@/lib/categoriesTaxonomy";
 
 type Credential = { name: string; email: string; password: string; city: string };
