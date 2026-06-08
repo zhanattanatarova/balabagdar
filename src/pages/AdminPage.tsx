@@ -227,6 +227,47 @@ const AdminPage = () => {
               <p className="text-xs text-destructive mt-2">Выберите хотя бы одно направление</p>
             )}
           </div>
+
+          <div>
+            <label className="text-xs font-bold uppercase text-muted-foreground">Главное фото (обложка)</label>
+            <div className="mt-2 flex items-center gap-3">
+              {form.avatar_url ? (
+                <div className="relative">
+                  <img src={form.avatar_url} alt="cover" className="w-24 h-24 rounded-2xl object-cover border-2 border-foreground" />
+                  <button type="button" onClick={() => setForm({ ...form, avatar_url: "" })}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 border-2 border-foreground">
+                    <X size={12} />
+                  </button>
+                </div>
+              ) : (
+                <label className="w-24 h-24 rounded-2xl border-2 border-dashed border-border bg-muted flex items-center justify-center cursor-pointer hover:border-primary">
+                  {uploadingAvatar ? <Loader2 className="animate-spin" size={20} /> : <Upload size={20} className="text-muted-foreground" />}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
+                </label>
+              )}
+              <p className="text-xs text-muted-foreground flex-1">Будет показано в карточке и шапке профиля</p>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold uppercase text-muted-foreground">Галерея (можно несколько)</label>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {form.gallery.map((url) => (
+                <div key={url} className="relative">
+                  <img src={url} alt="photo" className="w-20 h-20 rounded-xl object-cover border-2 border-border" />
+                  <button type="button" onClick={() => removeGalleryPhoto(url)}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 border-2 border-foreground">
+                    <X size={10} />
+                  </button>
+                </div>
+              ))}
+              <label className="w-20 h-20 rounded-xl border-2 border-dashed border-border bg-muted flex items-center justify-center cursor-pointer hover:border-primary">
+                {uploadingGallery ? <Loader2 className="animate-spin" size={18} /> : <ImagePlus size={18} className="text-muted-foreground" />}
+                <input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} disabled={uploadingGallery} />
+              </label>
+            </div>
+          </div>
+
           <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
           <Field label="Телефон владельца* (для входа через Telegram)" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
           <Field label="Instagram URL" value={form.instagram_url} onChange={(v) => setForm({ ...form, instagram_url: v })} />
