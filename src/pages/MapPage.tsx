@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon } from "lucide-react";
+import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 // Fix default marker icons (Vite asset URLs)
@@ -214,11 +215,24 @@ const MapPage = ({ city }: { city: string }) => {
               <Popup>
                 <div className="font-bold text-sm">{club.name_ru}</div>
                 {club.address && <div className="text-xs opacity-70">{club.address}</div>}
-                {club.phone && (
-                  <a href={`tel:${club.phone}`} className="text-xs text-primary font-bold block mt-1">
-                    {club.phone}
-                  </a>
-                )}
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  <Link
+                    to={`/club/${club.id}`}
+                    className="text-[11px] font-black bg-primary text-primary-foreground px-2.5 py-1 rounded-lg inline-flex items-center gap-1"
+                  >
+                    Профиль <ArrowRight size={10} />
+                  </Link>
+                  {club.phone && (
+                    <a href={`tel:${club.phone}`} className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                      <Phone size={10} /> Звонок
+                    </a>
+                  )}
+                  {club.twogis_url && (
+                    <a href={club.twogis_url} target="_blank" rel="noopener noreferrer" className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                      <ExternalLink size={10} /> 2GIS
+                    </a>
+                  )}
+                </div>
               </Popup>
             </Marker>
           ))}
@@ -291,10 +305,18 @@ const MapPage = ({ city }: { city: string }) => {
                 </div>
                 {selected === club.id && (
                   <div className="mt-3 pt-3 border-t border-border flex flex-wrap gap-2">
+                    <Link
+                      to={`/club/${club.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1 text-xs font-black bg-primary text-primary-foreground px-3 py-2 rounded-xl"
+                    >
+                      Открыть профиль <ArrowRight size={12} />
+                    </Link>
                     {club.phone && (
                       <a
                         href={`tel:${club.phone}`}
-                        className="flex items-center gap-1 text-xs font-black bg-primary text-primary-foreground px-3 py-2 rounded-xl"
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl"
                       >
                         <Phone size={12} /> Позвонить
                       </a>
@@ -304,9 +326,10 @@ const MapPage = ({ city }: { city: string }) => {
                         href={club.twogis_url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl"
                       >
-                        <ExternalLink size={12} /> Открыть в 2GIS
+                        <ExternalLink size={12} /> 2GIS
                       </a>
                     )}
                   </div>
