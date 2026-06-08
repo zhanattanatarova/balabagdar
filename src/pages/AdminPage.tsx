@@ -296,10 +296,10 @@ const AdminPage = () => {
             </div>
           </div>
 
-          <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
+          <Field label="Адрес" value={form.address} onChange={(v) => setForm({ ...form, address: v, twogis_url: v ? build2GisUrl(form.city, v) : "" })} />
           <Field label="Телефон владельца* (для входа через Telegram)" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
           <Field label="Instagram URL" value={form.instagram_url} onChange={(v) => setForm({ ...form, instagram_url: v })} />
-          <Field label="2GIS URL" value={form.twogis_url} onChange={(v) => setForm({ ...form, twogis_url: v })} />
+          <Field label="2GIS URL (заполняется автоматически из адреса)" value={form.twogis_url} onChange={(v) => setForm({ ...form, twogis_url: v })} />
           <Field label="Цена от (₸)" value={form.price_from} onChange={(v) => setForm({ ...form, price_from: v })} />
           <Field label="Описание" value={form.description} onChange={(v) => setForm({ ...form, description: v })} multiline />
 
