@@ -113,6 +113,8 @@ Deno.serve(async (req) => {
         instagram: instagram_url ?? null,
         twogis_url: twogis_url ?? null,
         price_from: price_from ?? null,
+        avatar_url: avatar_url ?? null,
+        gallery: Array.isArray(gallery) ? gallery : [],
       })
       .select()
       .single();
