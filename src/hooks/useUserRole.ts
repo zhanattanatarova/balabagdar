@@ -24,19 +24,31 @@ export const useUserRole = () => {
         .eq("user_id", user.id);
 
       const roles = (data || []).map((r: any) => r.role as AppRole);
-      const picked: AppRole | null = roles.includes("admin")
+      let picked: AppRole | null = roles.includes("admin")
         ? "admin"
         : roles.includes("club_owner")
         ? "club_owner"
         : roles.includes("parent")
         ? "parent"
         : null;
+
+      // Auto-assign "parent" role on first login so users skip the role selector.
+      if (!picked) {
+        const { error: insErr } = await supabase
+          .from("user_roles")
+          .insert({ user_id: user.id, role: "parent" });
+        if (!insErr || (insErr as any).code === "23505") {
+          picked = "parent";
+        }
+      }
+
       setRole(picked);
       setLoading(false);
     };
 
     fetchRole();
   }, [user]);
+
 
   const assignRole = async (newRole: AppRole) => {
     if (!user) return null;
