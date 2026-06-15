@@ -59,8 +59,13 @@ export const TAXONOMY: Group[] = [
     id: "garden", emoji: "🏫", subs: [] },
   {
     id: "school", emoji: "🎓", subs: [] },
+  {
+    id: "correction", emoji: "🧩", subs: [] },
+  {
+    id: "neuropsychology", emoji: "🧠", subs: [] },
   // Extra ad-hoc ones the user mentioned that map to existing groups
 ];
+
 
 // All stored ids for a given top-level group (group itself + every namespaced sub).
 export function idsForGroup(groupId: string): string[] {

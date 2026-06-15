@@ -66,6 +66,8 @@ export const translations = {
   "cat.mini_garden": { ru: "Мини сад", kz: "Мини бақша", en: "Mini garden" },
   "cat.garden": { ru: "Сад", kz: "Балабақша", en: "Kindergarten" },
   "cat.school": { ru: "Школа", kz: "Мектеп", en: "School" },
+  "cat.correction": { ru: "Коррекционный центр", kz: "Түзеу орталығы", en: "Correctional center" },
+  "cat.neuropsychology": { ru: "Нейропсихология", kz: "Нейропсихология", en: "Neuropsychology" },
 
   // Special needs subcategories
   "special.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
