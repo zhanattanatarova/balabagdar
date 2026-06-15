@@ -54,6 +54,7 @@ const ClubEditPage = () => {
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const [categories, setCategories] = useState<string[]>([]);
+  const [catSearch, setCatSearch] = useState("");
   const [form, setForm] = useState({
     name_ru: "", name_kz: "", name_en: "",
     description_ru: "", description_kz: "", description_en: "",
