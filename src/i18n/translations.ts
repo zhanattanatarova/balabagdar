@@ -282,6 +282,7 @@ export const translations = {
   "profile.login": { ru: "Войти / Регистрация", kz: "Кіру / Тіркелу", en: "Login / Register" },
   "profile.login_desc": { ru: "По номеру телефона", kz: "Телефон нөмірі бойынша", en: "By phone number" },
   "profile.favorites": { ru: "Избранное", kz: "Таңдаулылар", en: "Favorites" },
+  "profile.my_clubs": { ru: "Мои кружки", kz: "Менің үйірмелерім", en: "My clubs" },
   "profile.history": { ru: "История просмотров", kz: "Қарау тарихы", en: "View history" },
   "profile.notifications": { ru: "Уведомления", kz: "Хабарландырулар", en: "Notifications" },
   "profile.contact_us": { ru: "Связаться с нами", kz: "Бізбен байланысу", en: "Contact us" },
@@ -293,7 +294,7 @@ export const translations = {
   "profile.language": { ru: "Язык", kz: "Тіл", en: "Language" },
 
   // Club dashboard
-  "dashboard.my_club": { ru: "Мой кружок", kz: "Менің үйірмем", en: "My club" },
+  "dashboard.my_club": { ru: "Мой кабинет", kz: "Менің кабинетім", en: "My cabinet" },
   "dashboard.edit_profile": { ru: "Редактировать профиль", kz: "Профильді өзгерту", en: "Edit profile" },
   "dashboard.bookings": { ru: "Заявки", kz: "Өтініштер", en: "Bookings" },
   "dashboard.calendar": { ru: "Календарь", kz: "Күнтізбе", en: "Calendar" },

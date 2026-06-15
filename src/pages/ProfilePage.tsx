@@ -17,8 +17,9 @@ const ProfilePage = () => {
 
   const phone = user?.user_metadata?.phone || user?.email?.replace("@phone.balahub.kz", "") || "";
 
+  const isOwner = role === "club_owner";
   const menuItems = [
-    { icon: Heart, label: t("profile.favorites"), color: "bg-destructive/10", iconColor: "text-destructive" },
+    ...(!isOwner ? [{ icon: Heart, label: t("profile.my_clubs"), color: "bg-destructive/10", iconColor: "text-destructive" }] : []),
     { icon: Clock, label: t("profile.history"), color: "bg-secondary/10", iconColor: "text-secondary" },
     { icon: Bell, label: t("profile.notifications"), color: "bg-primary/10", iconColor: "text-primary" },
   ];

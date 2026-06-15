@@ -53,10 +53,10 @@ const ClubEditPage = () => {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
+  const [categories, setCategories] = useState<string[]>([]);
   const [form, setForm] = useState({
     name_ru: "", name_kz: "", name_en: "",
     description_ru: "", description_kz: "", description_en: "",
-    category: "other",
     city: "Астана",
     address: "",
     phone: "",
@@ -78,10 +78,13 @@ const ClubEditPage = () => {
         setClubId(c.id);
         setAvatarUrl(c.avatar_url || "");
         setGallery(c.gallery || []);
+        const cats: string[] = Array.isArray(c.categories) && c.categories.length > 0
+          ? c.categories
+          : (c.category ? [c.category] : []);
+        setCategories(cats);
         setForm({
           name_ru: c.name_ru || "", name_kz: c.name_kz || "", name_en: c.name_en || "",
           description_ru: c.description_ru || "", description_kz: c.description_kz || "", description_en: c.description_en || "",
-          category: c.category || "other",
           city: c.city || "Астана",
           address: c.address || "",
           phone: c.phone || "",
@@ -154,9 +157,13 @@ const ClubEditPage = () => {
       toast({ title: t("common.error"), description: "Введите название кружка", variant: "destructive" });
       return;
     }
+    if (categories.length === 0) {
+      toast({ title: t("common.error"), description: "Выберите хотя бы одну категорию", variant: "destructive" });
+      return;
+    }
     setSaving(true);
 
-    const payload = { ...form, user_id: user.id, avatar_url: avatarUrl, gallery };
+    const payload = { ...form, user_id: user.id, avatar_url: avatarUrl, gallery, categories, category: categories[0] };
     let savedClubId = clubId;
     let error;
 
@@ -309,12 +316,22 @@ const ClubEditPage = () => {
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">🏷️ {t("edit.category")} & {t("edit.city")}</p>
           <div>
-            <label className={labelCls}>{t("edit.category")}</label>
-            <select value={form.category} onChange={(e) => update("category", e.target.value)} className={inputCls}>
-              {categoryOptions.map((c) => (
-                <option key={c} value={c}>{t(`cat.${c}` as any) || c}</option>
-              ))}
-            </select>
+            <label className={labelCls}>{t("edit.category")} (можно выбрать несколько)</label>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {categoryOptions.map((c) => {
+                const active = categories.includes(c);
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setCategories((prev) => active ? prev.filter((x) => x !== c) : [...prev, c])}
+                    className={`px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all ${active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent"}`}
+                  >
+                    {t(`cat.${c}` as any) || c}
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div>
             <label className={labelCls}>{t("edit.city")}</label>
