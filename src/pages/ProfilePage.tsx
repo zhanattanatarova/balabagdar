@@ -7,16 +7,13 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthModal from "@/components/AuthModal";
-import RoleSelector from "@/components/RoleSelector";
 
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
-  const { role, loading: roleLoading } = useUserRole();
+  const { role } = useUserRole();
   const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
-  const [roleDismissed, setRoleDismissed] = useState(false);
-  const showRoleSelector = !!user && !roleLoading && !role && !roleDismissed;
 
   const phone = user?.user_metadata?.phone || user?.email?.replace("@phone.balahub.kz", "") || "";
 
@@ -34,12 +31,8 @@ const ProfilePage = () => {
   return (
     <div className="pb-24 max-w-6xl mx-auto">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-      {showRoleSelector && (
-        <RoleSelector onComplete={(selectedRole) => {
-          setRoleDismissed(true);
-          if (selectedRole === "club_owner") navigate("/club/edit");
-        }} />
-      )}
+
+
 
 
       <div className="pt-8 pb-10 flex flex-col items-center rounded-b-[2rem]" style={{ background: "var(--gradient-header)" }}>
