@@ -134,12 +134,18 @@ const ClubDetailPage = () => {
               <MessageCircle size={16} /> {t("club.telegram_link")}
             </a>
           )}
-          {club.instagram && (
-            <a href={`https://instagram.com/${club.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-pink-soft font-bold text-sm">
-              📸 Instagram
-            </a>
-          )}
+          {club.instagram && (() => {
+            const raw = club.instagram.trim();
+            const href = /^https?:\/\//i.test(raw)
+              ? raw
+              : `https://instagram.com/${raw.replace(/^@/, "").replace(/^instagram\.com\//i, "")}`;
+            return (
+              <a href={href} target="_blank" rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-pink-soft font-bold text-sm">
+                📸 Instagram
+              </a>
+            );
+          })()}
         </div>
       </div>
 
