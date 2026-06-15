@@ -8,7 +8,8 @@ import { toast } from "@/hooks/use-toast";
 
 const categoryOptions = [
   "creativity", "sport", "development", "speech", "dance",
-  "robotics", "swim", "music", "health", "tutors", "mini_garden", "garden", "school", "other",
+  "robotics", "swim", "music", "health", "tutors", "mini_garden", "garden", "school",
+  "correction", "neuropsychology", "other",
 ];
 
 
