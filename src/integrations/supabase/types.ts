@@ -424,7 +424,45 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      announcements_public: {
+        Row: {
+          body: string | null
+          category: string | null
+          city: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          name: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          body?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          name?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          body?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          name?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

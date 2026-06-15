@@ -52,8 +52,10 @@ const BoardPage = ({ city }: { city: string }) => {
 
   const load = async () => {
     setLoading(true);
+    // Anonymous visitors read the public view (no phone numbers); authenticated users read the base table.
+    const source = user ? "announcements" : "announcements_public";
     const { data } = await supabase
-      .from("announcements")
+      .from(source as any)
       .select("*")
       .gt("expires_at", new Date().toISOString())
       .order("created_at", { ascending: false });
@@ -61,7 +63,8 @@ const BoardPage = ({ city }: { city: string }) => {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [user]);
+
 
   const filtered = useMemo(
     () => items.filter((i) =>
