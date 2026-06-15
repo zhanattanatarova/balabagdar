@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
 
 // Fix default marker icons (Vite asset URLs)
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -227,8 +228,8 @@ const MapPage = ({ city }: { city: string }) => {
                       <Phone size={10} /> Звонок
                     </a>
                   )}
-                  {club.twogis_url && (
-                    <a href={club.twogis_url} target="_blank" rel="noopener noreferrer" className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                  {safeImageUrl(club.twogis_url) && (
+                    <a href={safeUrl(club.twogis_url)} target="_blank" rel="noopener noreferrer" className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
                       <ExternalLink size={10} /> 2GIS
                     </a>
                   )}
@@ -277,9 +278,9 @@ const MapPage = ({ city }: { city: string }) => {
                 style={{ boxShadow: "var(--shadow-cartoon)" }}
               >
                 <div className="flex items-center gap-3">
-                  {club.avatar_url ? (
+                  {safeImageUrl(club.avatar_url) ? (
                     <img
-                      src={club.avatar_url}
+                      src={safeImageUrl(club.avatar_url)}
                       alt=""
                       className="rounded-xl object-cover border-2 border-foreground/5"
                       style={{ width: 52, height: 52 }}
@@ -321,9 +322,9 @@ const MapPage = ({ city }: { city: string }) => {
                         <Phone size={12} /> Позвонить
                       </a>
                     )}
-                    {club.twogis_url && (
+                    {safeImageUrl(club.twogis_url) && (
                       <a
-                        href={club.twogis_url}
+                        href={safeUrl(club.twogis_url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}

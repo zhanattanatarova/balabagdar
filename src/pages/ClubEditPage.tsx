@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
+import { validateImageFile } from "@/lib/uploadValidation";
 
 const categoryOptions = [
   "creativity", "sport", "development", "speech", "dance",
@@ -101,7 +102,12 @@ const ClubEditPage = () => {
   }, [user]);
 
   const uploadFile = async (file: File, path: string): Promise<string | null> => {
-    const { error } = await supabase.storage.from("club-media").upload(path, file, { upsert: true });
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      toast({ title: t("common.error"), description: validationError, variant: "destructive" });
+      return null;
+    }
+    const { error } = await supabase.storage.from("club-media").upload(path, file, { upsert: true, contentType: file.type });
     if (error) {
       toast({ title: t("common.error"), description: error.message, variant: "destructive" });
       return null;

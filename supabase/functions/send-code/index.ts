@@ -162,7 +162,9 @@ Deno.serve(async (req) => {
     }
 
     const cleanPhone = normalizePhone(phone);
-    const code = String(Math.floor(1000 + Math.random() * 9000));
+    const rand = new Uint32Array(1);
+    crypto.getRandomValues(rand);
+    const code = String(1000 + (rand[0] % 9000));
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,

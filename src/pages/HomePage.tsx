@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { safeImageUrl } from "@/lib/safeUrl";
 import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
 import iconCreativity from "@/assets/icon-creativity.png";
@@ -954,8 +955,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   className="min-w-[160px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
                   style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
                   <div className="relative h-24">
-                    {club.avatar_url ? (
-                      <img src={club.avatar_url} alt={name} className="w-full h-full object-cover" />
+                    {safeImageUrl(club.avatar_url) ? (
+                      <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-primary/10 flex items-center justify-center"><span className="text-3xl">🏫</span></div>
                     )}
@@ -995,8 +996,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 className="flex gap-3 cartoon-card p-3 cursor-pointer animate-slide-up"
                 style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
                 <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2" style={{ borderColor: "hsl(var(--foreground) / 0.06)" }}>
-                  {club.avatar_url ? (
-                    <img src={club.avatar_url} alt={name} className="w-full h-full object-cover" />
+                  {safeImageUrl(club.avatar_url) ? (
+                    <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-primary/10 flex items-center justify-center"><span className="text-xl">🏫</span></div>
                   )}
