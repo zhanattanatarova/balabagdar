@@ -5,7 +5,6 @@ import BrandLogo from "@/components/BrandLogo";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/hooks/useLanguage";
-import RoleSelector from "./RoleSelector";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -38,29 +37,22 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [loading, setLoading] = useState(false);
   const [botUrl, setBotUrl] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
-  const [showRoleSelector, setShowRoleSelector] = useState(false);
   const retryTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     return () => { if (retryTimerRef.current) clearInterval(retryTimerRef.current); };
   }, []);
 
+  // Auto-close on successful auth and route club owners to their dashboard.
   useEffect(() => {
-    if (user && !roleLoading && !role && open) {
-      setShowRoleSelector(true);
+    if (open && user && !roleLoading) {
+      onClose();
+      if (role === "club_owner") navigate("/dashboard");
     }
   }, [user, role, roleLoading, open]);
 
   if (!open) return null;
 
-  if (showRoleSelector) {
-    return <RoleSelector onComplete={(selectedRole) => {
-      setShowRoleSelector(false);
-      onClose();
-      if (selectedRole === "club_owner") navigate("/club/edit");
-      else navigate("/profile");
-    }} />;
-  }
 
   const digits = () => phone.replace(/\D/g, "");
 
