@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Loader2, Save, Plus, Trash2, Clock, Camera, ImagePlus, X } from "lucide-react";
+import { ArrowLeft, Loader2, Save, Plus, Trash2, Clock, Camera, ImagePlus, X, Search, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -54,6 +54,7 @@ const ClubEditPage = () => {
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const [categories, setCategories] = useState<string[]>([]);
+  const [catSearch, setCatSearch] = useState("");
   const [form, setForm] = useState({
     name_ru: "", name_kz: "", name_en: "",
     description_ru: "", description_kz: "", description_en: "",
@@ -317,20 +318,86 @@ const ClubEditPage = () => {
           <p className="text-sm font-black">🏷️ {t("edit.category")} & {t("edit.city")}</p>
           <div>
             <label className={labelCls}>{t("edit.category")} (можно выбрать несколько)</label>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {categoryOptions.map((c) => {
-                const active = categories.includes(c);
-                return (
-                  <button
+
+            {/* Selected chips */}
+            {categories.length > 0 ? (
+              <div className="mt-2 flex flex-wrap gap-1.5 p-2 rounded-xl bg-primary/5 border-2 border-primary/20">
+                {categories.map((c) => (
+                  <span
                     key={c}
-                    type="button"
-                    onClick={() => setCategories((prev) => active ? prev.filter((x) => x !== c) : [...prev, c])}
-                    className={`px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all ${active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent"}`}
+                    className="inline-flex items-center gap-1 pl-2.5 pr-1 py-1 rounded-lg bg-primary text-primary-foreground text-xs font-bold"
                   >
                     {t(`cat.${c}` as any) || c}
-                  </button>
-                );
-              })}
+                    <button
+                      type="button"
+                      onClick={() => setCategories((prev) => prev.filter((x) => x !== c))}
+                      className="w-4 h-4 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/40 flex items-center justify-center"
+                      aria-label="Remove"
+                    >
+                      <X size={10} />
+                    </button>
+                  </span>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setCategories([])}
+                  className="ml-auto text-[10px] font-bold text-primary hover:underline px-1.5"
+                >
+                  Очистить
+                </button>
+              </div>
+            ) : (
+              <p className="mt-2 text-xs text-muted-foreground font-bold">Категории не выбраны</p>
+            )}
+
+            {/* Search */}
+            <div className="mt-3 relative">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                value={catSearch}
+                onChange={(e) => setCatSearch(e.target.value)}
+                placeholder="Поиск категорий..."
+                className={inputCls + " pl-9"}
+              />
+              {catSearch && (
+                <button
+                  type="button"
+                  onClick={() => setCatSearch("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-muted-foreground/20 flex items-center justify-center"
+                >
+                  <X size={10} />
+                </button>
+              )}
+            </div>
+
+            {/* Options */}
+            <div className="mt-2 flex flex-wrap gap-2 max-h-52 overflow-y-auto p-1">
+              {(() => {
+                const q = catSearch.trim().toLowerCase();
+                const filtered = categoryOptions.filter((c) => {
+                  if (!q) return true;
+                  const label = (t(`cat.${c}` as any) || c).toLowerCase();
+                  return label.includes(q) || c.toLowerCase().includes(q);
+                });
+                if (filtered.length === 0) {
+                  return <p className="text-xs text-muted-foreground font-bold py-2 px-1">Ничего не найдено</p>;
+                }
+                return filtered.map((c) => {
+                  const active = categories.includes(c);
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCategories((prev) => active ? prev.filter((x) => x !== c) : [...prev, c])}
+                      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all ${active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent hover:border-primary/40"}`}
+                    >
+                      {active && <Check size={12} />}
+                      {t(`cat.${c}` as any) || c}
+                    </button>
+                  );
+                });
+              })()}
             </div>
           </div>
           <div>
