@@ -63,7 +63,9 @@ export const translations = {
   "cat.languages": { ru: "Языки", kz: "Тілдер", en: "Languages" },
   "cat.shops": { ru: "Детские магазины", kz: "Балалар дүкендері", en: "Kids shops" },
   "cat.special": { ru: "Особенные дети", kz: "Ерекше балалар", en: "Special needs" },
-  "cat.kindergarten": { ru: "Садик", kz: "Балабақша", en: "Kindergarten" },
+  "cat.mini_garden": { ru: "Мини сад", kz: "Мини бақша", en: "Mini garden" },
+  "cat.garden": { ru: "Сад", kz: "Балабақша", en: "Kindergarten" },
+  "cat.school": { ru: "Школа", kz: "Мектеп", en: "School" },
 
   // Special needs subcategories
   "special.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
