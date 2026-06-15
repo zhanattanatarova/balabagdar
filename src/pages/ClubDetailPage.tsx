@@ -6,6 +6,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import BookingModal from "@/components/BookingModal";
 import ClubReviews from "@/components/ClubReviews";
+import { safeImageUrl } from "@/lib/safeUrl";
 
 const ClubDetailPage = () => {
   const { id } = useParams();
@@ -61,8 +62,8 @@ const ClubDetailPage = () => {
 
       {/* Header image */}
       <div className="relative h-56 bg-muted">
-        {club.avatar_url ? (
-          <img src={club.avatar_url} alt={name} className="w-full h-full object-cover" />
+        {safeImageUrl(club.avatar_url) ? (
+          <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-primary/10">
             <span className="text-5xl">🏫</span>
