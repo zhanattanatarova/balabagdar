@@ -8,8 +8,9 @@ import { toast } from "@/hooks/use-toast";
 
 const categoryOptions = [
   "creativity", "sport", "development", "speech", "dance",
-  "robotics", "swim", "music", "health", "tutors", "kindergarten", "other",
+  "robotics", "swim", "music", "health", "tutors", "mini_garden", "garden", "school", "other",
 ];
+
 
 const cities = [
   "Алматы", "Астана", "Шымкент", "Караганда", "Актобе",
