@@ -38,9 +38,10 @@ const categoryIcons: Record<string, string> = {
   swim: iconSwim, music: iconMusic, health: iconHealth, tutors: iconTutors,
   languages: iconLanguages, shops: iconShops, special: iconSpecial,
   mini_garden: iconKindergarten, garden: iconKindergarten, school: iconKindergarten,
+  correction: iconSpecial, neuropsychology: iconDevelopment,
 };
 
-const categoryIds = ["creativity", "sport", "development", "special", "mini_garden", "garden", "school", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
+const categoryIds = ["creativity", "sport", "development", "special", "mini_garden", "garden", "school", "correction", "neuropsychology", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "shops"];
 
 
 const languageOptions = [
