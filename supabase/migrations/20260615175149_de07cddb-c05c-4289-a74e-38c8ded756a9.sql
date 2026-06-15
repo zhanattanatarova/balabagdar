@@ -1,0 +1,1 @@
+DELETE FROM public.clubs WHERE id = '5e581c30-e880-4ebd-916d-184f240d70ec';
