@@ -164,6 +164,23 @@ const ClubEditPage = () => {
     }
     setSaving(true);
 
+    // Ensure the user has the club_owner role (RLS requires it for insert/update)
+    const { data: existingRoles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id);
+    const hasOwnerRole = (existingRoles || []).some((r: any) => r.role === "club_owner");
+    if (!hasOwnerRole) {
+      const { error: roleErr } = await supabase
+        .from("user_roles")
+        .insert({ user_id: user.id, role: "club_owner" });
+      if (roleErr && (roleErr as any).code !== "23505") {
+        setSaving(false);
+        toast({ title: t("common.error"), description: "Не удалось присвоить роль владельца: " + roleErr.message, variant: "destructive" });
+        return;
+      }
+    }
+
     const payload = { ...form, user_id: user.id, avatar_url: avatarUrl, gallery, categories, category: categories[0] };
     let savedClubId = clubId;
     let error;
