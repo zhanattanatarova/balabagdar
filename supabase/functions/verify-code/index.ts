@@ -103,9 +103,7 @@ Deno.serve(async (req) => {
         console.error("Password update error:", updErr);
         return json(500, { error: "Failed to update password" });
       }
-      await supabase
-        .from("phone_auth_secrets")
-        .upsert({ user_id: userId, password }, { onConflict: "user_id" });
+      // Password is stored hashed by Supabase Auth — do NOT keep a plaintext copy.
     }
 
     // Sign in
