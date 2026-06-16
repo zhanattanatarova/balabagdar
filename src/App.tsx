@@ -9,6 +9,8 @@ import ClubDetailPage from "./pages/ClubDetailPage";
 import AdminPage from "./pages/AdminPage";
 import LegalPage from "./pages/LegalPage";
 import NotFound from "./pages/NotFound";
+import FavoritesPage from "./pages/FavoritesPage";
+import HistoryPage from "./pages/HistoryPage";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,8 @@ const App = () => (
             <Route path="/club/:id" element={<ClubDetailPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/legal" element={<LegalPage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/history" element={<HistoryPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
