@@ -18,14 +18,17 @@ const ProfilePage = () => {
   const phone = user?.user_metadata?.phone || user?.email?.replace("@phone.balahub.kz", "") || "";
 
   const isOwner = role === "club_owner";
+  const openWhatsApp = () => {
+    window.open("https://wa.me/77474807286", "_blank", "noopener,noreferrer");
+  };
   const menuItems = [
-    ...(!isOwner ? [{ icon: Heart, label: t("profile.my_clubs"), color: "bg-destructive/10", iconColor: "text-destructive" }] : []),
-    { icon: Clock, label: t("profile.history"), color: "bg-secondary/10", iconColor: "text-secondary" },
-    { icon: Bell, label: t("profile.notifications"), color: "bg-primary/10", iconColor: "text-primary" },
+    ...(!isOwner ? [{ icon: Heart, label: t("profile.my_clubs"), color: "bg-destructive/10", iconColor: "text-destructive", onClick: () => navigate("/?tab=favorites") }] : []),
+    { icon: Clock, label: t("profile.history"), color: "bg-secondary/10", iconColor: "text-secondary", onClick: () => navigate("/?tab=history") },
+    { icon: Bell, label: t("profile.notifications"), color: "bg-primary/10", iconColor: "text-primary", onClick: () => navigate("/notifications") },
   ];
 
   const settingsItems = [
-    { icon: MessageCircle, label: t("profile.contact_us"), color: "bg-primary/10", iconColor: "text-primary", onClick: () => toast({ title: t("profile.contact_us") }) },
+    { icon: MessageCircle, label: t("profile.contact_us"), color: "bg-primary/10", iconColor: "text-primary", onClick: openWhatsApp },
     { icon: FileText, label: "Правовая информация", color: "bg-muted", iconColor: "text-foreground", onClick: () => navigate("/legal") },
   ];
 
