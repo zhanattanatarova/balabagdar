@@ -89,7 +89,7 @@ const ProfilePage = () => {
 
         <div className="cartoon-card p-1 mb-4">
           {menuItems.map((item) => (
-            <button key={item.label} onClick={() => toast({ title: item.label })}
+            <button key={item.label} onClick={item.onClick}
               className="flex items-center gap-3 p-3 text-left w-full hover:bg-muted/50 rounded-xl transition-colors">
               <div className={`w-9 h-9 rounded-xl ${item.color} flex items-center justify-center shrink-0`}>
                 <item.icon size={18} className={item.iconColor} />
