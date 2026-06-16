@@ -1,4 +1,4 @@
-import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle, Building2, FileText } from "lucide-react";
+import { Heart, Clock, Bell, ChevronRight, LogOut, LogIn, MessageCircle, Building2, FileText, Phone, Send, Copy, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,36 +8,44 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthModal from "@/components/AuthModal";
 
+const CONTACT_PHONE = "+7 747 480 7286";
+const CONTACT_PHONE_RAW = "77474807286";
+
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
   const { role } = useUserRole();
   const navigate = useNavigate();
   const [showAuth, setShowAuth] = useState(false);
+  const [showContact, setShowContact] = useState(false);
 
   const phone = user?.user_metadata?.phone || user?.email?.replace("@phone.balahub.kz", "") || "";
 
   const isOwner = role === "club_owner";
-  const openWhatsApp = () => {
-    window.open("https://wa.me/77474807286", "_blank", "noopener,noreferrer");
+
+  const copyPhone = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT_PHONE);
+      toast({ title: "Номер скопирован", description: CONTACT_PHONE });
+    } catch {
+      toast({ title: CONTACT_PHONE });
+    }
   };
+
   const menuItems = [
-    ...(!isOwner ? [{ icon: Heart, label: t("profile.my_clubs"), color: "bg-destructive/10", iconColor: "text-destructive", onClick: () => navigate("/?tab=favorites") }] : []),
-    { icon: Clock, label: t("profile.history"), color: "bg-secondary/10", iconColor: "text-secondary", onClick: () => navigate("/?tab=history") },
+    ...(!isOwner ? [{ icon: Heart, label: t("profile.my_clubs"), color: "bg-destructive/10", iconColor: "text-destructive", onClick: () => navigate("/favorites") }] : []),
+    { icon: Clock, label: t("profile.history"), color: "bg-secondary/10", iconColor: "text-secondary", onClick: () => navigate("/history") },
     { icon: Bell, label: t("profile.notifications"), color: "bg-primary/10", iconColor: "text-primary", onClick: () => navigate("/notifications") },
   ];
 
   const settingsItems = [
-    { icon: MessageCircle, label: t("profile.contact_us"), color: "bg-primary/10", iconColor: "text-primary", onClick: openWhatsApp },
+    { icon: MessageCircle, label: t("profile.contact_us"), color: "bg-primary/10", iconColor: "text-primary", onClick: () => setShowContact(true) },
     { icon: FileText, label: "Правовая информация", color: "bg-muted", iconColor: "text-foreground", onClick: () => navigate("/legal") },
   ];
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-
-
-
 
       <div className="pt-8 pb-10 flex flex-col items-center rounded-b-[2rem]" style={{ background: "var(--gradient-header)" }}>
         <div className="border-4 border-primary-foreground/30 rounded-full" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
@@ -105,7 +113,6 @@ const ProfilePage = () => {
           {settingsItems.map((item) => (
             <button key={item.label} onClick={item.onClick}
               className="flex items-center gap-3 p-3 text-left w-full hover:bg-muted/50 rounded-xl transition-colors">
-
               <div className={`w-9 h-9 rounded-xl ${item.color} flex items-center justify-center shrink-0`}>
                 <item.icon size={18} className={item.iconColor} />
               </div>
@@ -122,6 +129,62 @@ const ProfilePage = () => {
             className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-destructive/30 text-destructive font-bold text-sm active:scale-[0.97] transition-transform bg-destructive/5">
             <LogOut size={14} />{t("profile.logout")}
           </button>
+        </div>
+      )}
+
+      {showContact && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-4" onClick={() => setShowContact(false)}>
+          <div className="bg-card rounded-3xl w-full max-w-sm cartoon-card p-5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-black text-lg">{t("profile.contact_us")}</h3>
+              <button onClick={() => setShowContact(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X size={16} />
+              </button>
+            </div>
+            <p className="text-sm text-muted-foreground font-medium mb-4">Выберите удобный способ связи:</p>
+            <div className="space-y-2">
+              <a href={`tel:+${CONTACT_PHONE_RAW}`}
+                className="flex items-center gap-3 p-3 rounded-2xl bg-primary/10 hover:bg-primary/20 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shrink-0">
+                  <Phone size={18} className="text-primary-foreground" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-black text-sm">Позвонить</p>
+                  <p className="text-xs text-muted-foreground font-bold">{CONTACT_PHONE}</p>
+                </div>
+              </a>
+              <a href={`https://wa.me/${CONTACT_PHONE_RAW}`} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3 p-3 rounded-2xl bg-[#25D366]/10 hover:bg-[#25D366]/20 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-[#25D366] flex items-center justify-center shrink-0">
+                  <MessageCircle size={18} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-black text-sm">WhatsApp</p>
+                  <p className="text-xs text-muted-foreground font-bold">Написать в чат</p>
+                </div>
+              </a>
+              <a href={`https://t.me/+${CONTACT_PHONE_RAW}`} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3 p-3 rounded-2xl bg-[#229ED9]/10 hover:bg-[#229ED9]/20 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-[#229ED9] flex items-center justify-center shrink-0">
+                  <Send size={18} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-black text-sm">Telegram</p>
+                  <p className="text-xs text-muted-foreground font-bold">Открыть в Telegram</p>
+                </div>
+              </a>
+              <button onClick={copyPhone}
+                className="w-full flex items-center gap-3 p-3 rounded-2xl bg-muted hover:bg-muted/70 transition-colors text-left">
+                <div className="w-10 h-10 rounded-xl bg-foreground/10 flex items-center justify-center shrink-0">
+                  <Copy size={18} className="text-foreground" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-black text-sm">Скопировать номер</p>
+                  <p className="text-xs text-muted-foreground font-bold">{CONTACT_PHONE}</p>
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
