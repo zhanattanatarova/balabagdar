@@ -859,29 +859,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("special");
                 return;
               }
-              if (selectedCategory === id) {
-                setSelectedCategory(null);
-                setSelectedLanguage(null);
-                setSelectedDance(null);
-                setSelectedSport(null);
-                setSelectedHealth(null);
-                setSelectedTutors(null);
-                setSelectedCreativity(null);
-                setSelectedMusic(null);
-                setSelectedDevelopment(null);
-                setSelectedSpecial(null);
-              } else {
-                setSelectedCategory(id);
-                setSelectedLanguage(null);
-                setSelectedDance(null);
-                setSelectedSport(null);
-                setSelectedHealth(null);
-                setSelectedTutors(null);
-                setSelectedCreativity(null);
-                setSelectedMusic(null);
-                setSelectedDevelopment(null);
-                setSelectedSpecial(null);
-              }
+              goSearch(id);
             };
             const isActive = selectedCategory === id;
             return (
