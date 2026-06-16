@@ -212,6 +212,15 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const { user } = useAuth();
   const { t, tField } = useLanguage();
   const navigate = useNavigate();
+  const goSearch = (cat: string, sub?: string | null) => {
+    const sp = new URLSearchParams();
+    sp.set("cat", cat);
+    if (sub) sp.set("sub", sub);
+    if (city) sp.set("city", city);
+    if (ageFilter !== "all") sp.set("age", ageFilter);
+    if (searchQuery.trim()) sp.set("q", searchQuery.trim());
+    navigate(`/search?${sp.toString()}`);
+  };
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -373,7 +382,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedLanguage(null); setSelectedCategory(null); setShowLanguagePicker(false); }}
+                onClick={() => { setShowLanguagePicker(false); goSearch("languages"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedLanguage ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">🌐</span>
@@ -385,7 +394,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={lang.id}
-                    onClick={() => { setSelectedLanguage(lang.id); setSelectedCategory("languages"); setShowLanguagePicker(false); }}
+                    onClick={() => { setShowLanguagePicker(false); goSearch("languages", lang.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{lang.emoji}</span>
@@ -413,7 +422,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedDance(null); setSelectedCategory(null); setShowDancePicker(false); }}
+                onClick={() => { setShowDancePicker(false); goSearch("dance"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDance ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">💫</span>
@@ -425,7 +434,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={d.id}
-                    onClick={() => { setSelectedDance(d.id); setSelectedCategory("dance"); setShowDancePicker(false); }}
+                    onClick={() => { setShowDancePicker(false); goSearch("dance", d.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{d.emoji}</span>
@@ -453,7 +462,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedSport(null); setSelectedCategory(null); setShowSportPicker(false); }}
+                onClick={() => { setShowSportPicker(false); goSearch("sport"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedSport ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">🏅</span>
@@ -465,7 +474,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={s.id}
-                    onClick={() => { setSelectedSport(s.id); setSelectedCategory("sport"); setShowSportPicker(false); }}
+                    onClick={() => { setShowSportPicker(false); goSearch("sport", s.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{s.emoji}</span>
@@ -493,7 +502,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedHealth(null); setSelectedCategory(null); setShowHealthPicker(false); }}
+                onClick={() => { setShowHealthPicker(false); goSearch("health"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedHealth ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">❤️</span>
@@ -505,7 +514,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={h.id}
-                    onClick={() => { setSelectedHealth(h.id); setSelectedCategory("health"); setShowHealthPicker(false); }}
+                    onClick={() => { setShowHealthPicker(false); goSearch("health", h.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{h.emoji}</span>
@@ -533,7 +542,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedTutors(null); setSelectedCategory(null); setShowTutorsPicker(false); }}
+                onClick={() => { setShowTutorsPicker(false); goSearch("tutors"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedTutors ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">📖</span>
@@ -545,7 +554,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={o.id}
-                    onClick={() => { setSelectedTutors(o.id); setSelectedCategory("tutors"); setShowTutorsPicker(false); }}
+                    onClick={() => { setShowTutorsPicker(false); goSearch("tutors", o.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
@@ -573,7 +582,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedCreativity(null); setSelectedCategory(null); setShowCreativityPicker(false); }}
+                onClick={() => { setShowCreativityPicker(false); goSearch("creativity"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedCreativity ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">🎭</span>
@@ -585,7 +594,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={o.id}
-                    onClick={() => { setSelectedCreativity(o.id); setSelectedCategory("creativity"); setShowCreativityPicker(false); }}
+                    onClick={() => { setShowCreativityPicker(false); goSearch("creativity", o.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
@@ -613,7 +622,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedMusic(null); setSelectedCategory(null); setShowMusicPicker(false); }}
+                onClick={() => { setShowMusicPicker(false); goSearch("music"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedMusic ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">🎼</span>
@@ -625,7 +634,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={o.id}
-                    onClick={() => { setSelectedMusic(o.id); setSelectedCategory("music"); setShowMusicPicker(false); }}
+                    onClick={() => { setShowMusicPicker(false); goSearch("music", o.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
@@ -653,7 +662,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedDevelopment(null); setSelectedCategory(null); setShowDevelopmentPicker(false); }}
+                onClick={() => { setShowDevelopmentPicker(false); goSearch("development"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDevelopment ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">✨</span>
@@ -665,7 +674,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={o.id}
-                    onClick={() => { setSelectedDevelopment(o.id); setSelectedCategory("development"); setShowDevelopmentPicker(false); }}
+                    onClick={() => { setShowDevelopmentPicker(false); goSearch("development", o.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
@@ -693,7 +702,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
-                onClick={() => { setSelectedSpecial(null); setSelectedCategory(null); setShowSpecialPicker(false); }}
+                onClick={() => { setShowSpecialPicker(false); goSearch("special"); }}
                 className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedSpecial ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
               >
                 <span className="text-xl">✨</span>
@@ -705,7 +714,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 return (
                   <button
                     key={o.id}
-                    onClick={() => { setSelectedSpecial(o.id); setSelectedCategory("special"); setShowSpecialPicker(false); }}
+                    onClick={() => { setShowSpecialPicker(false); goSearch("special", o.id); }}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
