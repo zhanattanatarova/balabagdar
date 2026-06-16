@@ -11,6 +11,7 @@ import LegalPage from "./pages/LegalPage";
 import NotFound from "./pages/NotFound";
 import FavoritesPage from "./pages/FavoritesPage";
 import HistoryPage from "./pages/HistoryPage";
+import SearchPage from "./pages/SearchPage";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/legal" element={<LegalPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/history" element={<HistoryPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
