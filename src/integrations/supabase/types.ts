@@ -20,6 +20,7 @@ export type Database = {
           category: string
           city: string
           created_at: string
+          event_date: string | null
           expires_at: string
           id: string
           name: string
@@ -33,6 +34,7 @@ export type Database = {
           category?: string
           city?: string
           created_at?: string
+          event_date?: string | null
           expires_at?: string
           id?: string
           name?: string
@@ -46,6 +48,7 @@ export type Database = {
           category?: string
           city?: string
           created_at?: string
+          event_date?: string | null
           expires_at?: string
           id?: string
           name?: string
@@ -412,6 +415,7 @@ export type Database = {
           category: string | null
           city: string | null
           created_at: string | null
+          event_date: string | null
           expires_at: string | null
           id: string | null
           name: string | null
@@ -424,6 +428,7 @@ export type Database = {
           category?: string | null
           city?: string | null
           created_at?: string | null
+          event_date?: string | null
           expires_at?: string | null
           id?: string | null
           name?: string | null
@@ -436,6 +441,7 @@ export type Database = {
           category?: string | null
           city?: string | null
           created_at?: string | null
+          event_date?: string | null
           expires_at?: string | null
           id?: string | null
           name?: string | null
