@@ -1,12 +1,8 @@
-import { useState } from "react";
-import { Star, ChevronRight, Plus, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Loader2, Calendar as CalendarIcon, MapPin, Phone } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import newsArt from "@/assets/news-art.jpg";
-import newsFestival from "@/assets/news-festival.jpg";
-import newsShow from "@/assets/news-show.jpg";
 import BrandLogo from "@/components/BrandLogo";
 import { useLanguage } from "@/hooks/useLanguage";
-import type { TranslationKey } from "@/i18n/translations";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,17 +12,24 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/components/AuthModal";
 
-const events: { titleKey: TranslationKey; dateKey: TranslationKey; rating: number; img: string }[] = [
-  { titleKey: "news.event1_title", dateKey: "news.date1", rating: 4.8, img: newsArt },
-  { titleKey: "news.event2_title", dateKey: "news.date2", rating: 4.7, img: newsFestival },
-  { titleKey: "news.event3_title", dateKey: "news.date3", rating: 4.5, img: newsShow },
-];
+interface EventItem {
+  id: string;
+  title: string;
+  body: string;
+  name: string;
+  phone?: string;
+  city: string;
+  event_date: string | null;
+  created_at: string;
+}
 
 const NewsPage = ({ city }: { city: string }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const titleLines = t("news.title").split("\n");
 
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -35,14 +38,28 @@ const NewsPage = ({ city }: { city: string }) => {
     body: "",
     name: "",
     phone: "",
+    event_date: "",
     period: "week" as "week" | "month",
   });
 
+  const load = async () => {
+    setLoading(true);
+    const source = user ? "announcements" : "announcements_public";
+    const { data } = await supabase
+      .from(source as any)
+      .select("id,title,body,name,phone,city,event_date,created_at")
+      .eq("category", "event")
+      .gt("expires_at", new Date().toISOString())
+      .order("event_date", { ascending: true, nullsFirst: false });
+    const list = ((data as any[]) || []).filter((e) => !city || e.city === city);
+    setEvents(list);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, [user, city]);
+
   const openPostForm = () => {
-    if (!user) {
-      setAuthOpen(true);
-      return;
-    }
+    if (!user) { setAuthOpen(true); return; }
     setOpen(true);
   };
 
@@ -50,6 +67,10 @@ const NewsPage = ({ city }: { city: string }) => {
     if (!user) return;
     if (!form.title.trim() || !form.body.trim()) {
       toast({ title: "Заполните название и описание", variant: "destructive" });
+      return;
+    }
+    if (!form.event_date) {
+      toast({ title: "Укажите дату события", variant: "destructive" });
       return;
     }
     if (form.title.length > 120 || form.body.length > 1500) {
@@ -67,16 +88,27 @@ const NewsPage = ({ city }: { city: string }) => {
       name: form.name.trim(),
       phone: form.phone.trim(),
       city,
+      event_date: new Date(form.event_date).toISOString(),
       expires_at: expires,
-    });
+    } as any);
     setSubmitting(false);
     if (error) {
       toast({ title: "Не удалось опубликовать", description: error.message, variant: "destructive" });
       return;
     }
     toast({ title: "Опубликовано!", description: "Событие появится в ленте города." });
-    setForm({ title: "", body: "", name: "", phone: "", period: "week" });
+    setForm({ title: "", body: "", name: "", phone: "", event_date: "", period: "week" });
     setOpen(false);
+    load();
+  };
+
+  const formatDate = (iso: string | null) => {
+    if (!iso) return "";
+    try {
+      return new Date(iso).toLocaleString("ru-RU", {
+        day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
+      });
+    } catch { return ""; }
   };
 
   return (
@@ -104,54 +136,67 @@ const NewsPage = ({ city }: { city: string }) => {
             <Plus size={20} className="text-primary-foreground" />
           </button>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16 opacity-30" style={{
-          background: "url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 60\"><path d=\"M0 40 Q50 10 100 35 Q150 60 200 30 Q250 5 300 35 Q350 55 400 25 L400 60 L0 60Z\" fill=\"white\"/></svg>') no-repeat bottom",
-          backgroundSize: "cover"
-        }} />
       </div>
 
       {/* Events list */}
-      <div className="px-4 mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {events.map((event, i) => {
-          const title = t(event.titleKey);
-          const date = t(event.dateKey);
-          return (
-            <div
-              key={event.titleKey}
-              onClick={() => toast({ title, description: `${date} · ⭐ ${event.rating}` })}
-              className="cartoon-card overflow-hidden cursor-pointer animate-slide-up"
-              style={{ animationDelay: `${i * 0.08}s`, animationFillMode: "both" }}
+      <div className="px-4 mt-5">
+        {loading && (
+          <div className="flex justify-center py-10"><Loader2 className="animate-spin text-primary" /></div>
+        )}
+        {!loading && events.length === 0 && (
+          <div className="cartoon-card flex flex-col items-center justify-center text-center py-14 px-6">
+            <div className="text-5xl mb-4">🎉</div>
+            <h3 className="font-black text-lg">Пока нет событий в {city}</h3>
+            <p className="text-sm text-muted-foreground font-bold mt-1">
+              Будьте первым — расскажите о своём событии!
+            </p>
+            <button
+              onClick={openPostForm}
+              className="mt-5 flex items-center gap-2 bg-primary text-primary-foreground font-black text-sm px-6 py-3 rounded-full shadow-md"
             >
-              <div className="relative h-40">
-                <img src={event.img} alt={title} className="w-full h-full object-cover" />
-              </div>
-              <div className="p-3.5">
-                <h3 className="font-black text-sm leading-snug">{title}</h3>
-                <div className="flex items-center gap-1 mt-1.5">
-                  {[1,2,3,4,5].map(s => (
-                    <Star key={s} size={13} className={s <= Math.floor(event.rating) ? "text-secondary fill-secondary" : "text-muted-foreground/30"} />
-                  ))}
+              <Plus size={16} /> Добавить событие
+            </button>
+          </div>
+        )}
+        {!loading && events.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {events.map((e, i) => (
+              <div
+                key={e.id}
+                className="cartoon-card p-4 animate-slide-up"
+                style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}
+              >
+                {e.event_date && (
+                  <div className="flex items-center gap-1.5 text-xs font-black text-primary mb-2">
+                    <CalendarIcon size={14} /> {formatDate(e.event_date)}
+                  </div>
+                )}
+                <h3 className="font-black text-base leading-snug">{e.title}</h3>
+                <p className="text-sm mt-2 whitespace-pre-line font-medium line-clamp-4">{e.body}</p>
+                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
+                    <MapPin size={11} /> {e.city}
+                  </span>
+                  {e.phone && (
+                    <a href={`tel:${e.phone}`} className="flex items-center gap-1 text-xs font-black text-primary">
+                      <Phone size={12} /> {e.phone}
+                    </a>
+                  )}
                 </div>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-xs text-muted-foreground font-bold">{date}</span>
-                  <button className="bg-primary text-primary-foreground text-xs font-black px-3.5 py-1.5 rounded-full flex items-center gap-1">
-                    {t("news.more")} <ChevronRight size={12} />
-                  </button>
-                </div>
               </div>
-            </div>
-          );
-        })}
+            ))}
+          </div>
+        )}
       </div>
 
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Опубликовать событие в {city}</DialogTitle>
             <DialogDescription>
-              Расскажите, что будет в городе на этой неделе или месяце.
+              Расскажите, что и когда будет в городе.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
@@ -165,13 +210,21 @@ const NewsPage = ({ city }: { city: string }) => {
               />
             </div>
             <div>
+              <Label>Дата и время события *</Label>
+              <Input
+                type="datetime-local"
+                value={form.event_date}
+                onChange={(e) => setForm({ ...form, event_date: e.target.value })}
+              />
+            </div>
+            <div>
               <Label>Описание *</Label>
               <Textarea
                 value={form.body}
                 maxLength={1500}
                 rows={4}
                 onChange={(e) => setForm({ ...form, body: e.target.value })}
-                placeholder="Когда, где, для кого, цена, программа..."
+                placeholder="Где, для кого, цена, программа..."
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
