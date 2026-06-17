@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Phone, MapPin, X, Loader2 } from "lucide-react";
+import { Plus, Phone, MapPin, X, Loader2, Pencil, Trash2, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
@@ -12,6 +12,7 @@ interface Announcement {
   name: string;
   phone: string;
   city: string;
+  image_url?: string | null;
   created_at: string;
   expires_at: string;
   user_id: string | null;
@@ -34,25 +35,39 @@ const cities = [
   "Талдыкорган","Экибастуз",
 ];
 
+type FormState = {
+  title: string;
+  body: string;
+  category: string;
+  name: string;
+  phone: string;
+  city: string;
+  image_url: string;
+};
+
+const emptyForm = (city: string): FormState => ({
+  title: "",
+  body: "",
+  category: "other",
+  name: "",
+  phone: "",
+  city: city || "Актау",
+  image_url: "",
+});
+
 const BoardPage = ({ city }: { city: string }) => {
   const { user } = useAuth();
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [activeCat, setActiveCat] = useState("all");
-  const [form, setForm] = useState({
-    title: "",
-    body: "",
-    category: "other",
-    name: "",
-    phone: "",
-    city: city || "Актау",
-  });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState<FormState>(emptyForm(city));
 
   const load = async () => {
     setLoading(true);
-    // Anonymous visitors read the public view (no phone numbers); authenticated users read the base table.
     const source = user ? "announcements" : "announcements_public";
     const { data } = await supabase
       .from(source as any)
@@ -64,7 +79,6 @@ const BoardPage = ({ city }: { city: string }) => {
   };
 
   useEffect(() => { load(); }, [user]);
-
 
   const filtered = useMemo(
     () => items.filter((i) =>
@@ -79,29 +93,90 @@ const BoardPage = ({ city }: { city: string }) => {
       toast({ title: "Войдите в аккаунт", description: "Чтобы разместить объявление, нужна авторизация", variant: "destructive" });
       return;
     }
+    setEditingId(null);
+    setForm(emptyForm(city));
     setOpen(true);
   };
 
-  const handleCreate = async () => {
+  const openEdit = (a: Announcement) => {
+    setEditingId(a.id);
+    setForm({
+      title: a.title,
+      body: a.body,
+      category: a.category,
+      name: a.name || "",
+      phone: a.phone || "",
+      city: a.city,
+      image_url: a.image_url || "",
+    });
+    setOpen(true);
+  };
+
+  const handleFile = async (file: File) => {
+    if (!user) return;
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: "Файл больше 10 MB", variant: "destructive" });
+      return;
+    }
+    setUploading(true);
+    const ext = file.name.split(".").pop() || "bin";
+    const path = `announcements/${user.id}/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("club-media").upload(path, file, {
+      contentType: file.type || "application/octet-stream",
+      upsert: false,
+    });
+    if (error) {
+      setUploading(false);
+      toast({ title: "Не удалось загрузить", description: error.message, variant: "destructive" });
+      return;
+    }
+    const { data: pub } = supabase.storage.from("club-media").getPublicUrl(path);
+    setForm((f) => ({ ...f, image_url: pub.publicUrl }));
+    setUploading(false);
+  };
+
+  const handleSave = async () => {
     if (!user) return;
     if (!form.title.trim() || !form.body.trim()) {
       toast({ title: "Заполните поля", description: "Заголовок и текст обязательны", variant: "destructive" });
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("announcements").insert({
-      ...form,
-      user_id: user.id,
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    });
-    setSaving(false);
-    if (error) {
-      toast({ title: "Ошибка", description: error.message, variant: "destructive" });
-      return;
+    if (editingId) {
+      const { error } = await supabase.from("announcements").update({
+        title: form.title,
+        body: form.body,
+        category: form.category,
+        name: form.name,
+        phone: form.phone,
+        city: form.city,
+        image_url: form.image_url || null,
+      } as any).eq("id", editingId);
+      setSaving(false);
+      if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
+      toast({ title: "Обновлено" });
+    } else {
+      const { error } = await supabase.from("announcements").insert({
+        ...form,
+        image_url: form.image_url || null,
+        user_id: user.id,
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      } as any);
+      setSaving(false);
+      if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
+      toast({ title: "Опубликовано!" });
     }
-    toast({ title: "Опубликовано!" });
     setOpen(false);
-    setForm({ ...form, title: "", body: "" });
+    setEditingId(null);
+    setForm(emptyForm(city));
+    load();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Удалить объявление?")) return;
+    const { error } = await supabase.from("announcements").delete().eq("id", id);
+    if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
+    toast({ title: "Удалено" });
     load();
   };
 
@@ -168,6 +243,7 @@ const BoardPage = ({ city }: { city: string }) => {
         )}
         {!loading && filtered.map((a) => {
           const cat = categories.find((c) => c.value === a.category);
+          const isOwner = user && a.user_id === user.id;
           return (
             <div key={a.id} className="cartoon-card p-4">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -177,7 +253,20 @@ const BoardPage = ({ city }: { city: string }) => {
                 <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1">
                   <MapPin size={10} /> {a.city}
                 </span>
+                {isOwner && (
+                  <div className="ml-auto flex items-center gap-1">
+                    <button onClick={() => openEdit(a)} className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title="Редактировать">
+                      <Pencil size={12} />
+                    </button>
+                    <button onClick={() => handleDelete(a.id)} className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title="Удалить">
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                )}
               </div>
+              {a.image_url && (
+                <img src={a.image_url} alt={a.title} className="w-full max-h-72 object-cover rounded-xl mb-2" />
+              )}
               <h3 className="font-black text-base">{a.title}</h3>
               <p className="text-sm mt-2 whitespace-pre-line font-medium">{a.body}</p>
               <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
@@ -197,7 +286,7 @@ const BoardPage = ({ city }: { city: string }) => {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-center p-4" onClick={() => setOpen(false)}>
           <div className="bg-card rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-border">
-              <h2 className="font-black">Новое объявление</h2>
+              <h2 className="font-black">{editingId ? "Редактировать объявление" : "Новое объявление"}</h2>
               <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><X size={16} /></button>
             </div>
             <div className="p-4 space-y-3">
@@ -222,6 +311,26 @@ const BoardPage = ({ city }: { city: string }) => {
                 <textarea value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} rows={6} maxLength={2000} className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold resize-none" />
               </div>
               <div>
+                <label className="text-xs font-bold text-muted-foreground">Фото (необязательно)</label>
+                {form.image_url ? (
+                  <div className="mt-1 relative">
+                    <img src={form.image_url} alt="" className="w-full max-h-52 object-cover rounded-xl" />
+                    <button onClick={() => setForm({ ...form, image_url: "" })} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
+                  </div>
+                ) : (
+                  <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">
+                    {uploading ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
+                    {uploading ? "Загрузка..." : "Добавить фото (любой формат)"}
+                    <input
+                      type="file"
+                      accept="*/*"
+                      className="hidden"
+                      onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ""; }}
+                    />
+                  </label>
+                )}
+              </div>
+              <div>
                 <label className="text-xs font-bold text-muted-foreground">Имя / название</label>
                 <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={80} className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold" />
               </div>
@@ -229,8 +338,8 @@ const BoardPage = ({ city }: { city: string }) => {
                 <label className="text-xs font-bold text-muted-foreground">Телефон</label>
                 <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} maxLength={30} placeholder="+7 ..." className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold" />
               </div>
-              <button onClick={handleCreate} disabled={saving} className="w-full bg-primary text-primary-foreground font-black py-3.5 rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
-                {saving ? <Loader2 size={16} className="animate-spin" /> : "Опубликовать"}
+              <button onClick={handleSave} disabled={saving || uploading} className="w-full bg-primary text-primary-foreground font-black py-3.5 rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
+                {saving ? <Loader2 size={16} className="animate-spin" /> : (editingId ? "Сохранить" : "Опубликовать")}
               </button>
             </div>
           </div>
