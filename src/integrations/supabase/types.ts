@@ -23,6 +23,7 @@ export type Database = {
           event_date: string | null
           expires_at: string
           id: string
+          image_url: string | null
           name: string
           phone: string
           title: string
@@ -37,6 +38,7 @@ export type Database = {
           event_date?: string | null
           expires_at?: string
           id?: string
+          image_url?: string | null
           name?: string
           phone?: string
           title: string
@@ -51,6 +53,7 @@ export type Database = {
           event_date?: string | null
           expires_at?: string
           id?: string
+          image_url?: string | null
           name?: string
           phone?: string
           title?: string
@@ -418,6 +421,7 @@ export type Database = {
           event_date: string | null
           expires_at: string | null
           id: string | null
+          image_url: string | null
           name: string | null
           title: string | null
           updated_at: string | null
@@ -431,6 +435,7 @@ export type Database = {
           event_date?: string | null
           expires_at?: string | null
           id?: string | null
+          image_url?: string | null
           name?: string | null
           title?: string | null
           updated_at?: string | null
@@ -444,6 +449,7 @@ export type Database = {
           event_date?: string | null
           expires_at?: string | null
           id?: string | null
+          image_url?: string | null
           name?: string | null
           title?: string | null
           updated_at?: string | null
