@@ -315,17 +315,17 @@ const BoardPage = ({ city }: { city: string }) => {
       <div className="px-4 pt-5 pb-3 flex items-center justify-between">
         <div>
           <h1 className="text-lg font-black flex items-center gap-2">
-            <span className="text-xl">📣</span> Доска объявлений
+            <span className="text-xl">📣</span> {tt.title}
           </h1>
           <p className="text-xs text-muted-foreground font-bold mt-0.5">
-            {city || "Актау"} · объявления активны 30 дней
+            {city || "Актау"} · {tt.subtitle}
           </p>
         </div>
         <button
           onClick={openCreate}
           className="flex items-center gap-1.5 bg-primary text-primary-foreground font-black text-xs px-4 py-2.5 rounded-full shadow-md"
         >
-          <Plus size={14} /> Добавить
+          <Plus size={14} /> {tt.add}
         </button>
       </div>
 
