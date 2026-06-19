@@ -8,7 +8,7 @@ interface LanguageContextType {
   tField: (fieldRu: string, fieldKz?: string | null, fieldEn?: string | null) => string;
 }
 
-const defaultLang: Lang = (typeof localStorage !== "undefined" && (localStorage.getItem("balahub_lang") as Lang)) || "ru";
+const defaultLang: Lang = (typeof localStorage !== "undefined" && (localStorage.getItem("balahub_lang") as Lang)) || "kz";
 
 const fallbackContext: LanguageContextType = {
   lang: defaultLang,
