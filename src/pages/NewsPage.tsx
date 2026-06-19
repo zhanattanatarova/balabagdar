@@ -63,9 +63,12 @@ const NewsPage = ({ city }: { city: string }) => {
   const load = async () => {
     setLoading(true);
     const source = user ? "announcements" : "announcements_public";
+    const columns = user
+      ? "id,title,body,name,phone,city,event_date,image_url,created_at,user_id"
+      : "id,title,body,name,city,event_date,image_url,created_at,user_id";
     const { data } = await supabase
       .from(source as any)
-      .select("id,title,body,name,phone,city,event_date,image_url,created_at,user_id")
+      .select(columns)
       .eq("category", "event")
       .gt("expires_at", new Date().toISOString())
       .order("event_date", { ascending: true, nullsFirst: false });
