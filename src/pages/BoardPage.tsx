@@ -219,7 +219,7 @@ const BoardPage = ({ city }: { city: string }) => {
 
   const openCreate = () => {
     if (!user) {
-      toast({ title: "Войдите в аккаунт", description: "Чтобы разместить объявление, нужна авторизация", variant: "destructive" });
+      toast({ title: tt.login_req, description: tt.login_desc, variant: "destructive" });
       return;
     }
     setEditingId(null);
@@ -244,7 +244,7 @@ const BoardPage = ({ city }: { city: string }) => {
   const handleFile = async (file: File) => {
     if (!user) return;
     if (file.size > 10 * 1024 * 1024) {
-      toast({ title: "Файл больше 10 MB", variant: "destructive" });
+      toast({ title: tt.too_big, variant: "destructive" });
       return;
     }
     setUploading(true);
@@ -257,7 +257,7 @@ const BoardPage = ({ city }: { city: string }) => {
     });
     if (error) {
       setUploading(false);
-      toast({ title: "Не удалось загрузить", description: error.message, variant: "destructive" });
+      toast({ title: tt.upload_fail, description: error.message, variant: "destructive" });
       return;
     }
     const { data: pub } = supabase.storage.from("club-media").getPublicUrl(path);
@@ -268,7 +268,7 @@ const BoardPage = ({ city }: { city: string }) => {
   const handleSave = async () => {
     if (!user) return;
     if (!form.title.trim() || !form.body.trim()) {
-      toast({ title: "Заполните поля", description: "Заголовок и текст обязательны", variant: "destructive" });
+      toast({ title: tt.fill_fields, description: tt.fill_desc, variant: "destructive" });
       return;
     }
     setSaving(true);
@@ -283,8 +283,8 @@ const BoardPage = ({ city }: { city: string }) => {
         image_url: form.image_url || null,
       } as any).eq("id", editingId);
       setSaving(false);
-      if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Обновлено" });
+      if (error) { toast({ title: tt.error, description: error.message, variant: "destructive" }); return; }
+      toast({ title: tt.updated });
     } else {
       const { error } = await supabase.from("announcements").insert({
         ...form,
@@ -293,8 +293,8 @@ const BoardPage = ({ city }: { city: string }) => {
         expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
       } as any);
       setSaving(false);
-      if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Опубликовано!" });
+      if (error) { toast({ title: tt.error, description: error.message, variant: "destructive" }); return; }
+      toast({ title: tt.published });
     }
     setOpen(false);
     setEditingId(null);
@@ -303,10 +303,10 @@ const BoardPage = ({ city }: { city: string }) => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Удалить объявление?")) return;
+    if (!confirm(tt.confirm_del)) return;
     const { error } = await supabase.from("announcements").delete().eq("id", id);
-    if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
-    toast({ title: "Удалено" });
+    if (error) { toast({ title: tt.error, description: error.message, variant: "destructive" }); return; }
+    toast({ title: tt.deleted });
     load();
   };
 
