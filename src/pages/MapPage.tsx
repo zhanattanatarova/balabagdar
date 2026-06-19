@@ -230,11 +230,11 @@ const MapPage = ({ city }: { city: string }) => {
                     to={`/club/${club.id}`}
                     className="text-[11px] font-black bg-primary text-primary-foreground px-2.5 py-1 rounded-lg inline-flex items-center gap-1"
                   >
-                    Профиль <ArrowRight size={10} />
+                    {mt.profile} <ArrowRight size={10} />
                   </Link>
                   {club.phone && (
                     <a href={`tel:${club.phone}`} className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
-                      <Phone size={10} /> Звонок
+                      <Phone size={10} /> {mt.call}
                     </a>
                   )}
                   {safeImageUrl(club.twogis_url) && (
