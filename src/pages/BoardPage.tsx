@@ -121,8 +121,9 @@ const BoardPage = ({ city }: { city: string }) => {
     setUploading(true);
     const ext = file.name.split(".").pop() || "bin";
     const path = `announcements/${user.id}/${Date.now()}.${ext}`;
+    const isImage = file.type.startsWith("image/");
     const { error } = await supabase.storage.from("club-media").upload(path, file, {
-      contentType: file.type || "application/octet-stream",
+      contentType: isImage ? file.type : "application/octet-stream",
       upsert: false,
     });
     if (error) {

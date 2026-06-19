@@ -7,7 +7,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
 import { TAXONOMY } from "@/lib/categoriesTaxonomy";
-import { validateImageFile } from "@/lib/uploadValidation";
+import { validateImageFileDeep } from "@/lib/uploadValidation";
 
 type Credential = { name: string; email: string; password: string; city: string };
 
@@ -67,14 +67,14 @@ const AdminPage = () => {
 
   const uploadFile = async (file: File): Promise<string> => {
     if (!user) throw new Error("Не авторизован");
-    const validationError = validateImageFile(file);
-    if (validationError) throw new Error(validationError);
+    const result = await validateImageFileDeep(file);
+    if ("error" in result) throw new Error(result.error);
     const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
     const path = `${user.id}/admin/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const { error } = await supabase.storage.from("club-media").upload(path, file, {
       cacheControl: "3600",
       upsert: false,
-      contentType: file.type,
+      contentType: result.mime,
     });
     if (error) throw error;
     const { data } = supabase.storage.from("club-media").getPublicUrl(path);

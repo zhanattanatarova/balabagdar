@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import FavoritesPage from "./pages/FavoritesPage";
 import HistoryPage from "./pages/HistoryPage";
 import SearchPage from "./pages/SearchPage";
+import SecurityPage from "./pages/SecurityPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/security" element={<SecurityPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
