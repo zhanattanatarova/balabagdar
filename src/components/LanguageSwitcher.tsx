@@ -6,7 +6,7 @@ const labels: Record<Lang, string> = { ru: "РУ", kz: "ҚЗ", en: "EN" };
 
 const LanguageSwitcher = () => {
   const { lang, setLang } = useLanguage();
-  const langs: Lang[] = ["ru", "kz", "en"];
+  const langs: Lang[] = ["kz", "ru", "en"];
 
   return (
     <div className="flex items-center gap-1 bg-muted rounded-xl p-1">
