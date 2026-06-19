@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone can view club media" ON storage.objects;
