@@ -167,7 +167,7 @@ const MapPage = ({ city }: { city: string }) => {
     <div className="pb-24 max-w-6xl mx-auto">
       <div className="px-4 pt-5 pb-3 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-lg font-black">🗺️ Карта кружков</h1>
+          <h1 className="text-lg font-black">{mt.title}</h1>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-xs font-bold inline-flex items-center gap-1 text-muted-foreground">
               <MapPin size={12} /> {city}
