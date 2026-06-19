@@ -174,7 +174,7 @@ const MapPage = ({ city }: { city: string }) => {
             </span>
             {geocoding && (
               <span className="text-[10px] font-bold text-primary inline-flex items-center gap-1">
-                <Loader2 size={10} className="animate-spin" /> геокодинг…
+                <Loader2 size={10} className="animate-spin" /> {mt.geocoding}
               </span>
             )}
           </div>
