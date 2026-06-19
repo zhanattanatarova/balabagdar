@@ -109,6 +109,8 @@ function FitBounds({ points }: { points: [number, number][] }) {
 }
 
 const MapPage = ({ city }: { city: string }) => {
+  const { lang } = useLanguage();
+  const mt = mapStrings[lang] || mapStrings.kz;
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
   const [geocoding, setGeocoding] = useState(false);
