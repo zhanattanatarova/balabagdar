@@ -416,32 +416,32 @@ const BoardPage = ({ city }: { city: string }) => {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-center p-4" onClick={() => setOpen(false)}>
           <div className="bg-card rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-border">
-              <h2 className="font-black">{editingId ? "Редактировать объявление" : "Новое объявление"}</h2>
+              <h2 className="font-black">{editingId ? tt.edit_title : tt.new_title}</h2>
               <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><X size={16} /></button>
             </div>
             <div className="p-4 space-y-3">
               <div>
-                <label className="text-xs font-bold text-muted-foreground">Категория</label>
+                <label className="text-xs font-bold text-muted-foreground">{tt.category}</label>
                 <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold">
                   {categories.filter((c) => c.value !== "all").map((c) => <option key={c.value} value={c.value}>{c.emoji} {c.label}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-muted-foreground">Город</label>
+                <label className="text-xs font-bold text-muted-foreground">{tt.city}</label>
                 <select value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold">
                   {cities.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-muted-foreground">Заголовок</label>
+                <label className="text-xs font-bold text-muted-foreground">{tt.head}</label>
                 <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} maxLength={120} className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold" />
               </div>
               <div>
-                <label className="text-xs font-bold text-muted-foreground">Текст</label>
+                <label className="text-xs font-bold text-muted-foreground">{tt.body}</label>
                 <textarea value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} rows={6} maxLength={2000} className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold resize-none" />
               </div>
               <div>
-                <label className="text-xs font-bold text-muted-foreground">Фото (необязательно)</label>
+                <label className="text-xs font-bold text-muted-foreground">{tt.photo}</label>
                 {form.image_url ? (
                   <div className="mt-1 relative">
                     <img src={form.image_url} alt="" className="w-full max-h-52 object-cover rounded-xl" />
@@ -450,7 +450,7 @@ const BoardPage = ({ city }: { city: string }) => {
                 ) : (
                   <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">
                     {uploading ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
-                    {uploading ? "Загрузка..." : "Добавить фото (любой формат)"}
+                    {uploading ? tt.uploading : tt.photo_add}
                     <input
                       type="file"
                       accept="*/*"
@@ -461,15 +461,15 @@ const BoardPage = ({ city }: { city: string }) => {
                 )}
               </div>
               <div>
-                <label className="text-xs font-bold text-muted-foreground">Имя / название</label>
+                <label className="text-xs font-bold text-muted-foreground">{tt.name}</label>
                 <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={80} className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold" />
               </div>
               <div>
-                <label className="text-xs font-bold text-muted-foreground">Телефон</label>
+                <label className="text-xs font-bold text-muted-foreground">{tt.phone}</label>
                 <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} maxLength={30} placeholder="+7 ..." className="w-full mt-1 px-4 py-3 rounded-xl bg-muted text-sm font-bold" />
               </div>
               <button onClick={handleSave} disabled={saving || uploading} className="w-full bg-primary text-primary-foreground font-black py-3.5 rounded-2xl disabled:opacity-50 flex items-center justify-center gap-2">
-                {saving ? <Loader2 size={16} className="animate-spin" /> : (editingId ? "Сохранить" : "Опубликовать")}
+                {saving ? <Loader2 size={16} className="animate-spin" /> : (editingId ? tt.save : tt.publish)}
               </button>
             </div>
           </div>
