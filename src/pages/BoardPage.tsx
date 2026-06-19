@@ -359,15 +359,15 @@ const BoardPage = ({ city }: { city: string }) => {
         {!loading && filtered.length === 0 && (
           <div className="cartoon-card flex flex-col items-center justify-center text-center py-14 px-6">
             <div className="text-5xl mb-4">📬</div>
-            <h3 className="font-black text-lg">Пока нет объявлений</h3>
+            <h3 className="font-black text-lg">{tt.empty_title}</h3>
             <p className="text-sm text-muted-foreground font-bold mt-1">
-              Будьте первым — добавьте объявление!
+              {tt.empty_sub}
             </p>
             <button
               onClick={openCreate}
               className="mt-5 flex items-center gap-2 bg-primary text-primary-foreground font-black text-sm px-6 py-3 rounded-full shadow-md"
             >
-              <Plus size={16} /> Добавить объявление
+              <Plus size={16} /> {tt.add_full}
             </button>
           </div>
         )}
