@@ -320,7 +320,7 @@ const MapPage = ({ city }: { city: string }) => {
                       onClick={(e) => e.stopPropagation()}
                       className="flex items-center gap-1 text-xs font-black bg-primary text-primary-foreground px-3 py-2 rounded-xl"
                     >
-                      Открыть профиль <ArrowRight size={12} />
+                      {mt.open_profile} <ArrowRight size={12} />
                     </Link>
                     {club.phone && (
                       <a
@@ -328,7 +328,7 @@ const MapPage = ({ city }: { city: string }) => {
                         onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl"
                       >
-                        <Phone size={12} /> Позвонить
+                        <Phone size={12} /> {mt.phone}
                       </a>
                     )}
                     {safeImageUrl(club.twogis_url) && (
