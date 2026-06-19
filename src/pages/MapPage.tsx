@@ -6,6 +6,13 @@ import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon,
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const mapStrings = {
+  kz: { title: "🗺️ Үйірмелер картасы", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық үйірмелер", no_clubs: "Бұл қалада әзірге үйірмелер жоқ" },
+  ru: { title: "🗺️ Карта кружков", geocoding: "геокодинг…", nearby: "Рядом со мной", profile: "Профиль", call: "Звонок", open_profile: "Открыть профиль", phone: "Позвонить", all_clubs: "Все кружки", no_clubs: "Пока нет кружков в этом городе" },
+  en: { title: "🗺️ Clubs map", geocoding: "geocoding…", nearby: "Near me", profile: "Profile", call: "Call", open_profile: "Open profile", phone: "Call", all_clubs: "All clubs", no_clubs: "No clubs in this city yet" },
+};
 
 // Fix default marker icons (Vite asset URLs)
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -102,6 +109,8 @@ function FitBounds({ points }: { points: [number, number][] }) {
 }
 
 const MapPage = ({ city }: { city: string }) => {
+  const { lang } = useLanguage();
+  const mt = mapStrings[lang] || mapStrings.kz;
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
   const [geocoding, setGeocoding] = useState(false);
@@ -158,14 +167,14 @@ const MapPage = ({ city }: { city: string }) => {
     <div className="pb-24 max-w-6xl mx-auto">
       <div className="px-4 pt-5 pb-3 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-lg font-black">🗺️ Карта кружков</h1>
+          <h1 className="text-lg font-black">{mt.title}</h1>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-xs font-bold inline-flex items-center gap-1 text-muted-foreground">
               <MapPin size={12} /> {city}
             </span>
             {geocoding && (
               <span className="text-[10px] font-bold text-primary inline-flex items-center gap-1">
-                <Loader2 size={10} className="animate-spin" /> геокодинг…
+                <Loader2 size={10} className="animate-spin" /> {mt.geocoding}
               </span>
             )}
           </div>
@@ -187,7 +196,7 @@ const MapPage = ({ city }: { city: string }) => {
           className="inline-flex items-center gap-2 bg-card border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full"
           style={{ boxShadow: "var(--shadow-cartoon)" }}
         >
-          <Navigation size={14} /> Рядом со мной
+          <Navigation size={14} /> {mt.nearby}
         </button>
       </div>
 
@@ -221,11 +230,11 @@ const MapPage = ({ city }: { city: string }) => {
                     to={`/club/${club.id}`}
                     className="text-[11px] font-black bg-primary text-primary-foreground px-2.5 py-1 rounded-lg inline-flex items-center gap-1"
                   >
-                    Профиль <ArrowRight size={10} />
+                    {mt.profile} <ArrowRight size={10} />
                   </Link>
                   {club.phone && (
                     <a href={`tel:${club.phone}`} className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
-                      <Phone size={10} /> Звонок
+                      <Phone size={10} /> {mt.call}
                     </a>
                   )}
                   {safeImageUrl(club.twogis_url) && (
@@ -253,7 +262,7 @@ const MapPage = ({ city }: { city: string }) => {
 
       <div className="px-4 mt-5">
         <h2 className="section-title mb-3 flex items-center gap-2">
-          <MapIcon size={16} /> Все кружки — {city} ({clubs.length})
+          <MapIcon size={16} /> {mt.all_clubs} — {city} ({clubs.length})
         </h2>
         {loading ? (
           <div className="flex justify-center py-10">
@@ -261,7 +270,7 @@ const MapPage = ({ city }: { city: string }) => {
           </div>
         ) : clubs.length === 0 ? (
           <div className="text-center py-10 text-sm text-muted-foreground font-bold">
-            Пока нет кружков в этом городе
+            {mt.no_clubs}
           </div>
         ) : (
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
@@ -311,7 +320,7 @@ const MapPage = ({ city }: { city: string }) => {
                       onClick={(e) => e.stopPropagation()}
                       className="flex items-center gap-1 text-xs font-black bg-primary text-primary-foreground px-3 py-2 rounded-xl"
                     >
-                      Открыть профиль <ArrowRight size={12} />
+                      {mt.open_profile} <ArrowRight size={12} />
                     </Link>
                     {club.phone && (
                       <a
@@ -319,7 +328,7 @@ const MapPage = ({ city }: { city: string }) => {
                         onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl"
                       >
-                        <Phone size={12} /> Позвонить
+                        <Phone size={12} /> {mt.phone}
                       </a>
                     )}
                     {safeImageUrl(club.twogis_url) && (
