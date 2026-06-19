@@ -183,6 +183,9 @@ const emptyForm = (city: string): FormState => ({
 
 const BoardPage = ({ city }: { city: string }) => {
   const { user } = useAuth();
+  const { lang } = useLanguage();
+  const tt = uiStrings[lang] || uiStrings.kz;
+  const categories = categoriesByLang[lang] || categoriesByLang.kz;
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
