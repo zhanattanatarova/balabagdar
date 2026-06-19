@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
-import { validateImageFile } from "@/lib/uploadValidation";
+import { validateImageFileDeep } from "@/lib/uploadValidation";
 
 const categoryOptions = [
   "creativity", "sport", "development", "speech", "dance",
