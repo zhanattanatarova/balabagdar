@@ -196,7 +196,7 @@ const MapPage = ({ city }: { city: string }) => {
           className="inline-flex items-center gap-2 bg-card border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full"
           style={{ boxShadow: "var(--shadow-cartoon)" }}
         >
-          <Navigation size={14} /> Рядом со мной
+          <Navigation size={14} /> {mt.nearby}
         </button>
       </div>
 
