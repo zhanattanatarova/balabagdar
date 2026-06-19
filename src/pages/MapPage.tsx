@@ -6,6 +6,13 @@ import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon,
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const mapStrings = {
+  kz: { title: "🗺️ Үйірмелер картасы", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық үйірмелер", no_clubs: "Бұл қалада әзірге үйірмелер жоқ" },
+  ru: { title: "🗺️ Карта кружков", geocoding: "геокодинг…", nearby: "Рядом со мной", profile: "Профиль", call: "Звонок", open_profile: "Открыть профиль", phone: "Позвонить", all_clubs: "Все кружки", no_clubs: "Пока нет кружков в этом городе" },
+  en: { title: "🗺️ Clubs map", geocoding: "geocoding…", nearby: "Near me", profile: "Profile", call: "Call", open_profile: "Open profile", phone: "Call", all_clubs: "All clubs", no_clubs: "No clubs in this city yet" },
+};
 
 // Fix default marker icons (Vite asset URLs)
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
