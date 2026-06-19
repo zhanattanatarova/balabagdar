@@ -385,10 +385,10 @@ const BoardPage = ({ city }: { city: string }) => {
                 </span>
                 {isOwner && (
                   <div className="ml-auto flex items-center gap-1">
-                    <button onClick={() => openEdit(a)} className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title="Редактировать">
+                    <button onClick={() => openEdit(a)} className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title={tt.edit_btn}>
                       <Pencil size={12} />
                     </button>
-                    <button onClick={() => handleDelete(a.id)} className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title="Удалить">
+                    <button onClick={() => handleDelete(a.id)} className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title={tt.delete_btn}>
                       <Trash2 size={12} />
                     </button>
                   </div>
