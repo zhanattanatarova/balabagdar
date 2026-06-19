@@ -26,7 +26,7 @@ const LanguageContext = createContext<LanguageContextType>(fallbackContext);
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLangState] = useState<Lang>(() => {
     const saved = localStorage.getItem("balahub_lang");
-    return (saved as Lang) || "ru";
+    return (saved as Lang) || "kz";
   });
 
   const setLang = useCallback((l: Lang) => {
