@@ -106,12 +106,12 @@ const ClubEditPage = () => {
   }, [user]);
 
   const uploadFile = async (file: File, path: string): Promise<string | null> => {
-    const validationError = validateImageFile(file);
-    if (validationError) {
-      toast({ title: t("common.error"), description: validationError, variant: "destructive" });
+    const result = await validateImageFileDeep(file);
+    if ("error" in result) {
+      toast({ title: t("common.error"), description: result.error, variant: "destructive" });
       return null;
     }
-    const { error } = await supabase.storage.from("club-media").upload(path, file, { upsert: true, contentType: file.type });
+    const { error } = await supabase.storage.from("club-media").upload(path, file, { upsert: true, contentType: result.mime });
     if (error) {
       toast({ title: t("common.error"), description: error.message, variant: "destructive" });
       return null;
