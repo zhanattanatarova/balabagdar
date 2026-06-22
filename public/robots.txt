@@ -12,3 +12,10 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /club/edit
+Disallow: /notifications
+Disallow: /security
+
+Sitemap: https://balabagdar.kz/sitemap.xml
