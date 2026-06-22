@@ -6,6 +6,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import BookingModal from "@/components/BookingModal";
 import ClubReviews from "@/components/ClubReviews";
+import SEO from "@/components/SEO";
 import { safeImageUrl } from "@/lib/safeUrl";
 
 const ClubDetailPage = () => {
