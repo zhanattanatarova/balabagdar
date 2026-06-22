@@ -59,6 +59,21 @@ const ClubDetailPage = () => {
 
   return (
     <div className="pb-24 max-w-2xl mx-auto">
+      <SEO
+        title={`${name} — ${club.city} | BalaBagdar`}
+        description={(description || `${name} — балалар үйірмесі ${club.city} қаласында.`).slice(0, 160)}
+        path={`/club/${club.id}`}
+        image={safeImageUrl(club.avatar_url) || undefined}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name,
+          address: { "@type": "PostalAddress", addressLocality: club.city, streetAddress: club.address, addressCountry: "KZ" },
+          telephone: club.phone,
+          image: safeImageUrl(club.avatar_url) || undefined,
+          aggregateRating: club.rating ? { "@type": "AggregateRating", ratingValue: club.rating, reviewCount: club.reviews_count || 0 } : undefined,
+        }}
+      />
       <BookingModal open={showBooking} onClose={() => setShowBooking(false)} club={club} schedules={schedules} />
 
       {/* Header image */}
