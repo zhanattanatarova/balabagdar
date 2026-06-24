@@ -38,6 +38,8 @@ interface ScheduleItem {
 
 const STORAGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/club-media`;
 
+type FormLang = "kz" | "ru" | "en";
+
 const ClubEditPage = () => {
   const { user } = useAuth();
   const { t, lang } = useLanguage();
@@ -53,6 +55,7 @@ const ClubEditPage = () => {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
+  const [formLang, setFormLang] = useState<FormLang>("kz");
   const [categories, setCategories] = useState<string[]>([]);
   const [catSearch, setCatSearch] = useState("");
   const [form, setForm] = useState({
@@ -69,6 +72,7 @@ const ClubEditPage = () => {
     age_max: 18,
     price_from: 0,
   });
+
 
   useEffect(() => {
     if (!user) return;
