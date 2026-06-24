@@ -227,6 +227,14 @@ export const translations = {
   "creativity.design": { ru: "Дизайн", kz: "Дизайн", en: "Design" },
   "creativity.calligraphy": { ru: "Каллиграфия", kz: "Каллиграфия", en: "Calligraphy" },
   "creativity.cooking": { ru: "Кулинария", kz: "Аспаздық", en: "Cooking" },
+  "creativity.beading": { ru: "Бисероплетение", kz: "Моншақ өру", en: "Beading" },
+  "creativity.video": { ru: "Видеомонтаж / Блогинг", kz: "Бейне монтаж / Блог", en: "Video / Blogging" },
+  "creativity.animation": { ru: "Мультипликация", kz: "Мультипликация", en: "Animation" },
+  "creativity.graffiti": { ru: "Граффити / Стрит-арт", kz: "Граффити", en: "Graffiti / Street art" },
+  "creativity.woodworking": { ru: "Столярное дело", kz: "Ағаш ұқсату", en: "Woodworking" },
+  "creativity.magic": { ru: "Фокусы / Магия", kz: "Сиқыр", en: "Magic tricks" },
+  "creativity.model_making": { ru: "Моделирование (модели)", kz: "Үлгілеу", en: "Model making" },
+  "creativity.3d_modeling": { ru: "3D-моделирование", kz: "3D-модельдеу", en: "3D modeling" },
 
   // Music subcategories
   "music.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
