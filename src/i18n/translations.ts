@@ -68,6 +68,9 @@ export const translations = {
   "cat.school": { ru: "Школа", kz: "Мектеп", en: "School" },
   "cat.correction": { ru: "Коррекционный центр", kz: "Түзеу орталығы", en: "Correctional center" },
   "cat.neuropsychology": { ru: "Нейропсихология", kz: "Нейропсихология", en: "Neuropsychology" },
+  "cat.it": { ru: "IT и программирование", kz: "IT және бағдарламалау", en: "IT & Coding" },
+  "cat.camp": { ru: "Лагеря", kz: "Лагерьлер", en: "Camps" },
+  "cat.scouts": { ru: "Скауты", kz: "Скауттар", en: "Scouts" },
 
   // Special needs subcategories
   "special.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
