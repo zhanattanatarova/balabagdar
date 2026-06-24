@@ -124,6 +124,9 @@ export const translations = {
   "dance.breakdance": { ru: "Брейк-данс", kz: "Брейк-данс", en: "Breakdance" },
   "dance.contemporary": { ru: "Контемпорари", kz: "Контемпорари", en: "Contemporary" },
   "dance.oriental": { ru: "Восточные танцы", kz: "Шығыс билері", en: "Oriental" },
+  "dance.jazz_funk": { ru: "Jazz Funk", kz: "Jazz Funk", en: "Jazz Funk" },
+  "dance.kpop": { ru: "K-Pop", kz: "K-Pop", en: "K-Pop" },
+  "dance.zumba": { ru: "Зумба", kz: "Зумба", en: "Zumba" },
 
   // Sport subcategories
   "sport.title": { ru: "Выберите вид спорта", kz: "Спорт түрін таңдаңыз", en: "Choose a sport" },
