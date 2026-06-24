@@ -59,6 +59,7 @@ const NewsPage = ({ city }: { city: string }) => {
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm());
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const load = async () => {
     setLoading(true);
@@ -272,7 +273,15 @@ const NewsPage = ({ city }: { city: string }) => {
                       )}
                     </div>
                     <h3 className="font-black text-base leading-snug">{e.title}</h3>
-                    <p className="text-sm mt-2 whitespace-pre-line font-medium line-clamp-4">{e.body}</p>
+                    <p className={`text-sm mt-2 whitespace-pre-line font-medium ${expanded[e.id] ? "" : "line-clamp-4"}`}>{e.body}</p>
+                    {e.body && e.body.length > 180 && (
+                      <button
+                        onClick={() => setExpanded((s) => ({ ...s, [e.id]: !s[e.id] }))}
+                        className="mt-1 text-xs font-black text-primary hover:underline"
+                      >
+                        {expanded[e.id] ? "Свернуть" : "Читать полностью"}
+                      </button>
+                    )}
                     <div className="mt-3 pt-3 border-t border-border flex items-center justify-between flex-wrap gap-2">
                       <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
                         <MapPin size={11} /> {e.city}
