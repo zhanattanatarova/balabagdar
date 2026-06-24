@@ -254,6 +254,12 @@ export const translations = {
   "music.theory": { ru: "Теория музыки", kz: "Музыка теориясы", en: "Music theory" },
   "music.dj": { ru: "DJ / Электронная", kz: "DJ / Электронды", en: "DJ / Electronic" },
   "music.choir": { ru: "Хор", kz: "Хор", en: "Choir" },
+  "music.bayan": { ru: "Баян", kz: "Баян", en: "Bayan" },
+  "music.ukulele": { ru: "Укулеле", kz: "Укулеле", en: "Ukulele" },
+  "music.harp": { ru: "Арфа", kz: "Арфа", en: "Harp" },
+  "music.composition": { ru: "Композиция", kz: "Композиция", en: "Composition" },
+  "music.jazz": { ru: "Джаз", kz: "Джаз", en: "Jazz" },
+  "music.rock_band": { ru: "Рок-группа", kz: "Рок-топ", en: "Rock band" },
 
   // Development subcategories
   "development.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
