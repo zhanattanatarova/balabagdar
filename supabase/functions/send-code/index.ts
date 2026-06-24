@@ -115,7 +115,7 @@ async function processTelegramUpdates(supabase: ReturnType<typeof createClient>)
       if (typeof msg.text === "string" && msg.text.startsWith("/start")) {
         await telegramApi("sendMessage", {
           chat_id: chatId,
-          text: "👋 Привет! Для входа в BalaBagdar отправьте свой номер телефона кнопкой ниже.",
+          text: "👋 Привет! Для входа в BalaBagdar нажмите кнопку ниже, чтобы поделиться своим номером телефона. Номера, отправленные текстом, не принимаются в целях безопасности.",
           reply_markup: {
             keyboard: [[{ text: "📱 Отправить номер", request_contact: true }]],
             resize_keyboard: true,
@@ -124,17 +124,25 @@ async function processTelegramUpdates(supabase: ReturnType<typeof createClient>)
         });
       }
 
-      // Preferred: shared Telegram contact
-      if (msg.contact?.phone_number) {
+      // ONLY accept Telegram-verified contact shares — never trust free-text phone numbers,
+      // since anyone could type someone else's number and hijack their OTP.
+      if (msg.contact?.phone_number && String(msg.contact.user_id) === String(msg.from?.id)) {
         await upsertPhoneChat(supabase, msg.contact.phone_number, chatId);
-      }
-
-      // Fallback: user typed phone in text
-      if (typeof msg.text === "string") {
-        const match = msg.text.match(/\+?\d[\d\s()\-]{8,}/);
-        if (match) {
-          await upsertPhoneChat(supabase, match[0], chatId);
-        }
+      } else if (msg.contact?.phone_number) {
+        await telegramApi("sendMessage", {
+          chat_id: chatId,
+          text: "⚠️ Можно отправить только свой собственный номер через кнопку ниже.",
+        });
+      } else if (typeof msg.text === "string" && !msg.text.startsWith("/")) {
+        await telegramApi("sendMessage", {
+          chat_id: chatId,
+          text: "📱 Пожалуйста, отправьте номер кнопкой «Отправить номер» — текстовые сообщения с номером не принимаются.",
+          reply_markup: {
+            keyboard: [[{ text: "📱 Отправить номер", request_contact: true }]],
+            resize_keyboard: true,
+            one_time_keyboard: true,
+          },
+        });
       }
     }
 
