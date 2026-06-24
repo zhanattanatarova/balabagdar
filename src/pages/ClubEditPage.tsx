@@ -158,14 +158,6 @@ const ClubEditPage = () => {
 
   const handleSave = async () => {
     if (!user) return;
-    if (!form.name_ru.trim()) {
-      toast({ title: t("common.error"), description: "Введите название кружка", variant: "destructive" });
-      return;
-    }
-    if (categories.length === 0) {
-      toast({ title: t("common.error"), description: "Выберите хотя бы одну категорию", variant: "destructive" });
-      return;
-    }
     setSaving(true);
 
     // Ensure the user has the club_owner role (RLS requires it for insert/update)
@@ -185,7 +177,21 @@ const ClubEditPage = () => {
       }
     }
 
-    const payload = { ...form, user_id: user.id, avatar_url: avatarUrl, gallery, categories, category: categories[0] };
+    // Auto-fill empty name/description fields from whichever language was filled
+    const anyName = (form.name_kz || form.name_ru || form.name_en || "Жаңа үйірме / Новый кружок").trim();
+    const anyDesc = (form.description_kz || form.description_ru || form.description_en || "").trim();
+    const safeForm = {
+      ...form,
+      name_ru: (form.name_ru || anyName).trim(),
+      name_kz: (form.name_kz || anyName).trim(),
+      name_en: (form.name_en || anyName).trim(),
+      description_ru: form.description_ru || anyDesc,
+      description_kz: form.description_kz || anyDesc,
+      description_en: form.description_en || anyDesc,
+    };
+    const safeCategories = categories.length > 0 ? categories : ["other"];
+
+    const payload = { ...safeForm, user_id: user.id, avatar_url: avatarUrl, gallery, categories: safeCategories, category: safeCategories[0] };
     let savedClubId = clubId;
     let error;
 
@@ -196,6 +202,7 @@ const ClubEditPage = () => {
       error = insertError;
       if (data) { setClubId(data.id); savedClubId = data.id; }
     }
+
 
     if (!error && savedClubId) {
       await supabase.from("club_schedules").delete().eq("club_id", savedClubId);
