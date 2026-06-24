@@ -325,25 +325,44 @@ const ClubEditPage = () => {
           </div>
         </div>
 
-        {/* Name in 3 languages */}
+        {/* Language selector */}
+        <div className="cartoon-card p-4 space-y-2">
+          <p className="text-sm font-black">🌐 Тіл / Язык анкеты</p>
+          <p className="text-xs text-muted-foreground font-bold">Анкетаны бір тілде толтырыңыз — қалғаны автоматты түрде толтырылады.</p>
+          <div className="flex gap-2 pt-1">
+            {(["kz", "ru", "en"] as FormLang[]).map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setFormLang(l)}
+                className={`flex-1 py-2.5 rounded-xl text-xs font-black border-2 transition-all ${formLang === l ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent"}`}
+              >
+                {l === "kz" ? "🇰🇿 Қазақша" : l === "ru" ? "🇷🇺 Русский" : "🇬🇧 English"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Name */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">📝 {t("edit.name")}</p>
-          <div><label className={labelCls}>🇷🇺 Русский</label><input value={form.name_ru} onChange={(e) => update("name_ru", e.target.value)} placeholder="Название кружка" className={inputCls} /></div>
-          <div><label className={labelCls}>🇰🇿 Қазақша</label><input value={form.name_kz} onChange={(e) => update("name_kz", e.target.value)} placeholder="Үйірме атауы" className={inputCls} /></div>
-          <div><label className={labelCls}>🇬🇧 English</label><input value={form.name_en} onChange={(e) => update("name_en", e.target.value)} placeholder="Club name" className={inputCls} /></div>
+          {formLang === "ru" && <div><label className={labelCls}>🇷🇺 Русский</label><input value={form.name_ru} onChange={(e) => update("name_ru", e.target.value)} placeholder="Название кружка" className={inputCls} /></div>}
+          {formLang === "kz" && <div><label className={labelCls}>🇰🇿 Қазақша</label><input value={form.name_kz} onChange={(e) => update("name_kz", e.target.value)} placeholder="Үйірме атауы" className={inputCls} /></div>}
+          {formLang === "en" && <div><label className={labelCls}>🇬🇧 English</label><input value={form.name_en} onChange={(e) => update("name_en", e.target.value)} placeholder="Club name" className={inputCls} /></div>}
         </div>
 
         {/* Description */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">📋 {t("edit.description")}</p>
-          <div><label className={labelCls}>🇷🇺 Русский</label><textarea value={form.description_ru} onChange={(e) => update("description_ru", e.target.value)} rows={3} placeholder="Расскажите о вашем кружке..." className={textareaCls} /></div>
-          <div><label className={labelCls}>🇰🇿 Қазақша</label><textarea value={form.description_kz} onChange={(e) => update("description_kz", e.target.value)} rows={3} placeholder="Үйірмеңіз туралы..." className={textareaCls} /></div>
-          <div><label className={labelCls}>🇬🇧 English</label><textarea value={form.description_en} onChange={(e) => update("description_en", e.target.value)} rows={3} placeholder="Tell about your club..." className={textareaCls} /></div>
+          {formLang === "ru" && <div><label className={labelCls}>🇷🇺 Русский</label><textarea value={form.description_ru} onChange={(e) => update("description_ru", e.target.value)} rows={3} placeholder="Расскажите о вашем кружке..." className={textareaCls} /></div>}
+          {formLang === "kz" && <div><label className={labelCls}>🇰🇿 Қазақша</label><textarea value={form.description_kz} onChange={(e) => update("description_kz", e.target.value)} rows={3} placeholder="Үйірмеңіз туралы..." className={textareaCls} /></div>}
+          {formLang === "en" && <div><label className={labelCls}>🇬🇧 English</label><textarea value={form.description_en} onChange={(e) => update("description_en", e.target.value)} rows={3} placeholder="Tell about your club..." className={textareaCls} /></div>}
         </div>
 
         {/* Category & City */}
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">🏷️ {t("edit.category")} & {t("edit.city")}</p>
+
           <div>
             <label className={labelCls}>{t("edit.category")} (можно выбрать несколько)</label>
 
