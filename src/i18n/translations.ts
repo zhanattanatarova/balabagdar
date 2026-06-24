@@ -56,7 +56,7 @@ export const translations = {
   "cat.speech": { ru: "Логопеды", kz: "Логопедтер", en: "Speech" },
   "cat.dance": { ru: "Танцы", kz: "Би", en: "Dance" },
   "cat.robotics": { ru: "Робототехника", kz: "Робототехника", en: "Robotics" },
-  "cat.swim": { ru: "Бассейн", kz: "Бассейн", en: "Swimming" },
+  "cat.swim": { ru: "Плавание", kz: "Жүзу", en: "Swimming" },
   "cat.music": { ru: "Музыка", kz: "Музыка", en: "Music" },
   "cat.health": { ru: "Здоровье", kz: "Денсаулық", en: "Health" },
   "cat.tutors": { ru: "Репетиторы", kz: "Репетиторлар", en: "Tutors" },
@@ -68,6 +68,9 @@ export const translations = {
   "cat.school": { ru: "Школа", kz: "Мектеп", en: "School" },
   "cat.correction": { ru: "Коррекционный центр", kz: "Түзеу орталығы", en: "Correctional center" },
   "cat.neuropsychology": { ru: "Нейропсихология", kz: "Нейропсихология", en: "Neuropsychology" },
+  "cat.it": { ru: "IT и программирование", kz: "IT және бағдарламалау", en: "IT & Coding" },
+  "cat.camp": { ru: "Лагеря", kz: "Лагерьлер", en: "Camps" },
+  "cat.scouts": { ru: "Скауты", kz: "Скауттар", en: "Scouts" },
 
   // Special needs subcategories
   "special.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
@@ -104,6 +107,9 @@ export const translations = {
   "lang.arabic": { ru: "Арабский", kz: "Араб", en: "Arabic" },
   "lang.japanese": { ru: "Японский", kz: "Жапон", en: "Japanese" },
   "lang.italian": { ru: "Итальянский", kz: "Итальян", en: "Italian" },
+  "lang.portuguese": { ru: "Португальский", kz: "Португал", en: "Portuguese" },
+  "lang.hindi": { ru: "Хинди", kz: "Хинди", en: "Hindi" },
+  "lang.polish": { ru: "Польский", kz: "Поляк", en: "Polish" },
 
   // Dance subcategories
   "dance.title": { ru: "Выберите вид танца", kz: "Би түрін таңдаңыз", en: "Choose a dance style" },
@@ -118,6 +124,9 @@ export const translations = {
   "dance.breakdance": { ru: "Брейк-данс", kz: "Брейк-данс", en: "Breakdance" },
   "dance.contemporary": { ru: "Контемпорари", kz: "Контемпорари", en: "Contemporary" },
   "dance.oriental": { ru: "Восточные танцы", kz: "Шығыс билері", en: "Oriental" },
+  "dance.jazz_funk": { ru: "Jazz Funk", kz: "Jazz Funk", en: "Jazz Funk" },
+  "dance.kpop": { ru: "K-Pop", kz: "K-Pop", en: "K-Pop" },
+  "dance.zumba": { ru: "Зумба", kz: "Зумба", en: "Zumba" },
 
   // Sport subcategories
   "sport.title": { ru: "Выберите вид спорта", kz: "Спорт түрін таңдаңыз", en: "Choose a sport" },
@@ -137,6 +146,31 @@ export const translations = {
   "sport.skating": { ru: "Фигурное катание", kz: "Мәнерлеп сырғанау", en: "Figure skating" },
   "sport.cycling": { ru: "Велоспорт", kz: "Велоспорт", en: "Cycling" },
   "sport.athletics": { ru: "Лёгкая атлетика", kz: "Жеңіл атлетика", en: "Athletics" },
+  "sport.swimming": { ru: "Плавание", kz: "Жүзу", en: "Swimming" },
+  "sport.yoga": { ru: "Йога", kz: "Йога", en: "Yoga" },
+  "sport.acrobatics": { ru: "Акробатика", kz: "Акробатика", en: "Acrobatics" },
+  "sport.rhythmic_gymnastics": { ru: "Художественная гимнастика", kz: "Көркем гимнастика", en: "Rhythmic gymnastics" },
+  "sport.climbing": { ru: "Скалолазание", kz: "Жартас өрмелеу", en: "Climbing" },
+  "sport.parkour": { ru: "Паркур", kz: "Паркур", en: "Parkour" },
+  "sport.fencing": { ru: "Фехтование", kz: "Семсерлесу", en: "Fencing" },
+  "sport.equestrian": { ru: "Конный спорт", kz: "Атпен спорт", en: "Equestrian" },
+  "sport.table_tennis": { ru: "Настольный теннис", kz: "Үстел теннисі", en: "Table tennis" },
+  "sport.badminton": { ru: "Бадминтон", kz: "Бадминтон", en: "Badminton" },
+  "sport.skiing": { ru: "Лыжи", kz: "Шаңғы", en: "Skiing" },
+  "sport.snowboard": { ru: "Сноуборд", kz: "Сноуборд", en: "Snowboard" },
+  "sport.rollerskating": { ru: "Роликовые коньки", kz: "Роликті коньки", en: "Rollerskating" },
+  "sport.rugby": { ru: "Регби", kz: "Регби", en: "Rugby" },
+  "sport.handball": { ru: "Гандбол", kz: "Гандбол", en: "Handball" },
+  "sport.kickboxing": { ru: "Кикбоксинг", kz: "Кикбоксинг", en: "Kickboxing" },
+  "sport.mma": { ru: "ММА / Смешанные единоборства", kz: "ММА", en: "MMA" },
+  "sport.sambo": { ru: "Самбо", kz: "Самбо", en: "Sambo" },
+  "sport.aikido": { ru: "Айкидо", kz: "Айкидо", en: "Aikido" },
+  "sport.capoeira": { ru: "Капоэйра", kz: "Капоэйра", en: "Capoeira" },
+  "sport.checkers": { ru: "Шашки", kz: "Дойбы", en: "Checkers" },
+  "sport.shooting": { ru: "Стрельба", kz: "Ату", en: "Shooting" },
+  "sport.archery": { ru: "Стрельба из лука", kz: "Садақ ату", en: "Archery" },
+  "sport.crossfit": { ru: "Кроссфит", kz: "Кроссфит", en: "Crossfit" },
+  "sport.golf": { ru: "Гольф", kz: "Гольф", en: "Golf" },
 
   // Health subcategories
   "health.title": { ru: "Выберите услугу", kz: "Қызметті таңдаңыз", en: "Choose a service" },
@@ -180,6 +214,11 @@ export const translations = {
   "tutors.fizmat": { ru: "Подготовка в Физмат", kz: "Физмат дайындық", en: "Physmath prep" },
   "tutors.olympiad": { ru: "Олимпиадная подготовка", kz: "Олимпиадаға дайындық", en: "Olympiad prep" },
   "tutors.primary": { ru: "Начальная школа", kz: "Бастауыш мектеп", en: "Primary school" },
+  "tutors.world_history": { ru: "Всемирная история", kz: "Дүниежүзі тарихы", en: "World history" },
+  "tutors.social_studies": { ru: "Обществознание", kz: "Қоғамтану", en: "Social studies" },
+  "tutors.economics": { ru: "Экономика", kz: "Экономика", en: "Economics" },
+  "tutors.ielts": { ru: "Подготовка к IELTS", kz: "IELTS дайындық", en: "IELTS prep" },
+  "tutors.sat": { ru: "Подготовка к SAT", kz: "SAT дайындық", en: "SAT prep" },
 
   // Creativity subcategories
   "creativity.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
@@ -199,6 +238,14 @@ export const translations = {
   "creativity.design": { ru: "Дизайн", kz: "Дизайн", en: "Design" },
   "creativity.calligraphy": { ru: "Каллиграфия", kz: "Каллиграфия", en: "Calligraphy" },
   "creativity.cooking": { ru: "Кулинария", kz: "Аспаздық", en: "Cooking" },
+  "creativity.beading": { ru: "Бисероплетение", kz: "Моншақ өру", en: "Beading" },
+  "creativity.video": { ru: "Видеомонтаж / Блогинг", kz: "Бейне монтаж / Блог", en: "Video / Blogging" },
+  "creativity.animation": { ru: "Мультипликация", kz: "Мультипликация", en: "Animation" },
+  "creativity.graffiti": { ru: "Граффити / Стрит-арт", kz: "Граффити", en: "Graffiti / Street art" },
+  "creativity.woodworking": { ru: "Столярное дело", kz: "Ағаш ұқсату", en: "Woodworking" },
+  "creativity.magic": { ru: "Фокусы / Магия", kz: "Сиқыр", en: "Magic tricks" },
+  "creativity.model_making": { ru: "Моделирование (модели)", kz: "Үлгілеу", en: "Model making" },
+  "creativity.3d_modeling": { ru: "3D-моделирование", kz: "3D-модельдеу", en: "3D modeling" },
 
   // Music subcategories
   "music.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
@@ -218,6 +265,12 @@ export const translations = {
   "music.theory": { ru: "Теория музыки", kz: "Музыка теориясы", en: "Music theory" },
   "music.dj": { ru: "DJ / Электронная", kz: "DJ / Электронды", en: "DJ / Electronic" },
   "music.choir": { ru: "Хор", kz: "Хор", en: "Choir" },
+  "music.bayan": { ru: "Баян", kz: "Баян", en: "Bayan" },
+  "music.ukulele": { ru: "Укулеле", kz: "Укулеле", en: "Ukulele" },
+  "music.harp": { ru: "Арфа", kz: "Арфа", en: "Harp" },
+  "music.composition": { ru: "Композиция", kz: "Композиция", en: "Composition" },
+  "music.jazz": { ru: "Джаз", kz: "Джаз", en: "Jazz" },
+  "music.rock_band": { ru: "Рок-группа", kz: "Рок-топ", en: "Rock band" },
 
   // Development subcategories
   "development.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
@@ -235,6 +288,24 @@ export const translations = {
   "development.emotional": { ru: "Эмоциональный интеллект", kz: "Эмоционалды интеллект", en: "Emotional intelligence" },
   "development.social": { ru: "Социальные навыки", kz: "Әлеуметтік дағдылар", en: "Social skills" },
   "development.fine_motor": { ru: "Мелкая моторика", kz: "Ұсақ моторика", en: "Fine motor skills" },
+  "development.attention": { ru: "Внимание и концентрация", kz: "Зейін және шоғырлану", en: "Attention & focus" },
+  "development.creativity_dev": { ru: "Творческое мышление", kz: "Шығармашылық ойлау", en: "Creative thinking" },
+
+  // IT subcategories
+  "it.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
+  "it.all": { ru: "Все направления", kz: "Барлық бағыттар", en: "All directions" },
+  "it.programming": { ru: "Программирование", kz: "Бағдарламалау", en: "Programming" },
+  "it.scratch": { ru: "Scratch для детей", kz: "Балаларға Scratch", en: "Scratch for kids" },
+  "it.python": { ru: "Python", kz: "Python", en: "Python" },
+  "it.web": { ru: "Веб-разработка", kz: "Веб-әзірлеу", en: "Web development" },
+  "it.gamedev": { ru: "Разработка игр", kz: "Ойын жасау", en: "Game development" },
+  "it.roblox": { ru: "Roblox Studio", kz: "Roblox Studio", en: "Roblox Studio" },
+  "it.minecraft": { ru: "Minecraft / Майнкрафт", kz: "Minecraft", en: "Minecraft" },
+  "it.ai": { ru: "Искусственный интеллект", kz: "Жасанды интеллект", en: "Artificial intelligence" },
+  "it.data": { ru: "Анализ данных", kz: "Деректер талдауы", en: "Data analysis" },
+  "it.cybersec": { ru: "Кибербезопасность", kz: "Киберқауіпсіздік", en: "Cybersecurity" },
+  "it.ux": { ru: "UI/UX дизайн", kz: "UI/UX дизайн", en: "UI/UX design" },
+
 
   // Club detail
   "club.book": { ru: "Забронировать", kz: "Брондау", en: "Book" },

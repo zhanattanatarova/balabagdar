@@ -11,31 +11,31 @@ export type Group = {
 export const TAXONOMY: Group[] = [
   {
     id: "development", emoji: "🧠",
-    subs: ["early", "special", "afk", "aba", "sensory", "montessori", "logic", "memory", "mental_arithmetic", "reading", "emotional", "social", "fine_motor"],
+    subs: ["early", "special", "afk", "aba", "sensory", "montessori", "logic", "memory", "mental_arithmetic", "reading", "emotional", "social", "fine_motor", "attention", "creativity_dev"],
   },
   {
     id: "sport", emoji: "🏆",
-    subs: ["gymnastics", "karate", "judo", "taekwondo", "boxing", "wrestling", "football", "basketball", "volleyball", "tennis", "hockey", "chess", "skating", "cycling", "athletics"],
+    subs: ["gymnastics", "rhythmic_gymnastics", "acrobatics", "karate", "judo", "taekwondo", "boxing", "kickboxing", "mma", "sambo", "wrestling", "aikido", "capoeira", "football", "basketball", "volleyball", "handball", "rugby", "tennis", "table_tennis", "badminton", "hockey", "chess", "checkers", "skating", "rollerskating", "skiing", "snowboard", "cycling", "athletics", "swimming", "climbing", "parkour", "yoga", "fencing", "equestrian", "shooting", "archery", "crossfit", "golf"],
   },
   {
     id: "creativity", emoji: "🎨",
-    subs: ["drawing", "painting", "handicraft", "sculpting", "pottery", "origami", "embroidery", "knitting", "sewing", "theater", "cinema", "photography", "design", "calligraphy", "cooking"],
+    subs: ["drawing", "painting", "handicraft", "sculpting", "pottery", "origami", "embroidery", "knitting", "sewing", "beading", "theater", "cinema", "photography", "video", "animation", "design", "calligraphy", "graffiti", "cooking", "woodworking", "magic", "model_making", "3d_modeling"],
   },
   {
     id: "music", emoji: "🎵",
-    subs: ["dombyra", "kobyz", "vocals", "piano", "guitar", "violin", "drums", "flute", "saxophone", "accordion", "cello", "solfeggio", "theory", "dj", "choir"],
+    subs: ["dombyra", "kobyz", "bayan", "vocals", "piano", "guitar", "ukulele", "violin", "cello", "harp", "drums", "flute", "saxophone", "accordion", "solfeggio", "theory", "composition", "dj", "choir", "jazz", "rock_band"],
   },
   {
     id: "dance", emoji: "💃",
-    subs: ["ballet", "ballroom", "sport", "modern", "hiphop", "folk", "latin", "breakdance", "contemporary", "oriental"],
+    subs: ["ballet", "ballroom", "sport", "modern", "hiphop", "folk", "latin", "breakdance", "contemporary", "oriental", "jazz_funk", "kpop", "zumba"],
   },
   {
     id: "languages", emoji: "🌍",
-    subs: ["english", "chinese", "french", "korean", "turkish", "kazakh", "russian", "german", "spanish", "arabic", "japanese", "italian"],
+    subs: ["english", "chinese", "french", "korean", "turkish", "kazakh", "russian", "german", "spanish", "arabic", "japanese", "italian", "portuguese", "hindi", "polish"],
   },
   {
     id: "tutors", emoji: "📚",
-    subs: ["school_prep", "primary", "kazakh", "russian", "english", "math", "algebra", "geometry", "physics", "chemistry", "biology", "geography", "history", "literature", "informatics", "ent", "nish", "ktl", "fizmat", "olympiad"],
+    subs: ["school_prep", "primary", "kazakh", "russian", "english", "math", "algebra", "geometry", "physics", "chemistry", "biology", "geography", "history", "world_history", "social_studies", "literature", "informatics", "economics", "ent", "nish", "ktl", "fizmat", "olympiad", "ielts", "sat"],
   },
   {
     id: "special", emoji: "💖",
@@ -44,6 +44,10 @@ export const TAXONOMY: Group[] = [
   {
     id: "health", emoji: "🏥",
     subs: ["massage", "pediatrician", "nutritionist", "psychologist", "neurologist", "dentist", "ophthalmologist", "orthopedist", "speech_therapist", "defectologist", "lfk", "osteopath", "allergist", "ent", "vaccination"],
+  },
+  {
+    id: "it", emoji: "💻",
+    subs: ["programming", "scratch", "python", "web", "gamedev", "roblox", "minecraft", "ai", "data", "cybersec", "ux"],
   },
   {
     id: "robotics", emoji: "🤖", subs: [] },
@@ -63,7 +67,10 @@ export const TAXONOMY: Group[] = [
     id: "correction", emoji: "🧩", subs: [] },
   {
     id: "neuropsychology", emoji: "🧠", subs: [] },
-  // Extra ad-hoc ones the user mentioned that map to existing groups
+  {
+    id: "camp", emoji: "🏕️", subs: [] },
+  {
+    id: "scouts", emoji: "🧭", subs: [] },
 ];
 
 
