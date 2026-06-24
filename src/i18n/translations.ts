@@ -107,6 +107,9 @@ export const translations = {
   "lang.arabic": { ru: "Арабский", kz: "Араб", en: "Arabic" },
   "lang.japanese": { ru: "Японский", kz: "Жапон", en: "Japanese" },
   "lang.italian": { ru: "Итальянский", kz: "Итальян", en: "Italian" },
+  "lang.portuguese": { ru: "Португальский", kz: "Португал", en: "Portuguese" },
+  "lang.hindi": { ru: "Хинди", kz: "Хинди", en: "Hindi" },
+  "lang.polish": { ru: "Польский", kz: "Поляк", en: "Polish" },
 
   // Dance subcategories
   "dance.title": { ru: "Выберите вид танца", kz: "Би түрін таңдаңыз", en: "Choose a dance style" },
