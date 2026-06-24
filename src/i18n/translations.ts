@@ -263,6 +263,24 @@ export const translations = {
   "development.emotional": { ru: "Эмоциональный интеллект", kz: "Эмоционалды интеллект", en: "Emotional intelligence" },
   "development.social": { ru: "Социальные навыки", kz: "Әлеуметтік дағдылар", en: "Social skills" },
   "development.fine_motor": { ru: "Мелкая моторика", kz: "Ұсақ моторика", en: "Fine motor skills" },
+  "development.attention": { ru: "Внимание и концентрация", kz: "Зейін және шоғырлану", en: "Attention & focus" },
+  "development.creativity_dev": { ru: "Творческое мышление", kz: "Шығармашылық ойлау", en: "Creative thinking" },
+
+  // IT subcategories
+  "it.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
+  "it.all": { ru: "Все направления", kz: "Барлық бағыттар", en: "All directions" },
+  "it.programming": { ru: "Программирование", kz: "Бағдарламалау", en: "Programming" },
+  "it.scratch": { ru: "Scratch для детей", kz: "Балаларға Scratch", en: "Scratch for kids" },
+  "it.python": { ru: "Python", kz: "Python", en: "Python" },
+  "it.web": { ru: "Веб-разработка", kz: "Веб-әзірлеу", en: "Web development" },
+  "it.gamedev": { ru: "Разработка игр", kz: "Ойын жасау", en: "Game development" },
+  "it.roblox": { ru: "Roblox Studio", kz: "Roblox Studio", en: "Roblox Studio" },
+  "it.minecraft": { ru: "Minecraft / Майнкрафт", kz: "Minecraft", en: "Minecraft" },
+  "it.ai": { ru: "Искусственный интеллект", kz: "Жасанды интеллект", en: "Artificial intelligence" },
+  "it.data": { ru: "Анализ данных", kz: "Деректер талдауы", en: "Data analysis" },
+  "it.cybersec": { ru: "Кибербезопасность", kz: "Киберқауіпсіздік", en: "Cybersecurity" },
+  "it.ux": { ru: "UI/UX дизайн", kz: "UI/UX дизайн", en: "UI/UX design" },
+
 
   // Club detail
   "club.book": { ru: "Забронировать", kz: "Брондау", en: "Book" },
