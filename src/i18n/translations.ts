@@ -56,7 +56,7 @@ export const translations = {
   "cat.speech": { ru: "Логопеды", kz: "Логопедтер", en: "Speech" },
   "cat.dance": { ru: "Танцы", kz: "Би", en: "Dance" },
   "cat.robotics": { ru: "Робототехника", kz: "Робототехника", en: "Robotics" },
-  "cat.swim": { ru: "Бассейн", kz: "Бассейн", en: "Swimming" },
+  "cat.swim": { ru: "Плавание", kz: "Жүзу", en: "Swimming" },
   "cat.music": { ru: "Музыка", kz: "Музыка", en: "Music" },
   "cat.health": { ru: "Здоровье", kz: "Денсаулық", en: "Health" },
   "cat.tutors": { ru: "Репетиторы", kz: "Репетиторлар", en: "Tutors" },
