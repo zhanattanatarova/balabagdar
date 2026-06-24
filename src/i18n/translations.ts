@@ -214,6 +214,11 @@ export const translations = {
   "tutors.fizmat": { ru: "Подготовка в Физмат", kz: "Физмат дайындық", en: "Physmath prep" },
   "tutors.olympiad": { ru: "Олимпиадная подготовка", kz: "Олимпиадаға дайындық", en: "Olympiad prep" },
   "tutors.primary": { ru: "Начальная школа", kz: "Бастауыш мектеп", en: "Primary school" },
+  "tutors.world_history": { ru: "Всемирная история", kz: "Дүниежүзі тарихы", en: "World history" },
+  "tutors.social_studies": { ru: "Обществознание", kz: "Қоғамтану", en: "Social studies" },
+  "tutors.economics": { ru: "Экономика", kz: "Экономика", en: "Economics" },
+  "tutors.ielts": { ru: "Подготовка к IELTS", kz: "IELTS дайындық", en: "IELTS prep" },
+  "tutors.sat": { ru: "Подготовка к SAT", kz: "SAT дайындық", en: "SAT prep" },
 
   // Creativity subcategories
   "creativity.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
