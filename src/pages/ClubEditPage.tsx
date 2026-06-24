@@ -157,74 +157,100 @@ const ClubEditPage = () => {
   };
 
   const handleSave = async () => {
-    if (!user) return;
+    console.log("[ClubEdit] Save clicked", { userId: user?.id, clubId });
+    if (!user) {
+      toast({ title: t("common.error"), description: "Не авторизован. Войдите снова.", variant: "destructive" });
+      return;
+    }
     setSaving(true);
 
-    // Ensure the user has the club_owner role (RLS requires it for insert/update)
-    const { data: existingRoles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id);
-    const hasOwnerRole = (existingRoles || []).some((r: any) => r.role === "club_owner");
-    if (!hasOwnerRole) {
-      const { error: roleErr } = await supabase
+    try {
+      // Ensure the user has the club_owner role (RLS requires it for insert/update)
+      const { data: existingRoles, error: roleSelectErr } = await supabase
         .from("user_roles")
-        .insert({ user_id: user.id, role: "club_owner" });
-      if (roleErr && (roleErr as any).code !== "23505") {
+        .select("role")
+        .eq("user_id", user.id);
+      if (roleSelectErr) console.warn("[ClubEdit] role select error", roleSelectErr);
+      const hasOwnerRole = (existingRoles || []).some((r: any) => r.role === "club_owner");
+      if (!hasOwnerRole) {
+        const { error: roleErr } = await supabase
+          .from("user_roles")
+          .insert({ user_id: user.id, role: "club_owner" });
+        if (roleErr && (roleErr as any).code !== "23505") {
+          console.error("[ClubEdit] role insert error", roleErr);
+          toast({ title: t("common.error"), description: "Не удалось присвоить роль владельца: " + roleErr.message, variant: "destructive" });
+          setSaving(false);
+          return;
+        }
+      }
+
+      // Auto-fill empty name/description fields from whichever language was filled
+      const anyName = (form.name_kz || form.name_ru || form.name_en || "Жаңа үйірме / Новый кружок").trim();
+      const anyDesc = (form.description_kz || form.description_ru || form.description_en || "").trim();
+      const safeForm = {
+        ...form,
+        name_ru: (form.name_ru || anyName).trim(),
+        name_kz: (form.name_kz || anyName).trim(),
+        name_en: (form.name_en || anyName).trim(),
+        description_ru: form.description_ru || anyDesc,
+        description_kz: form.description_kz || anyDesc,
+        description_en: form.description_en || anyDesc,
+        city: form.city || "Астана",
+        age_min: Number.isFinite(form.age_min) ? form.age_min : 3,
+        age_max: Number.isFinite(form.age_max) ? form.age_max : 18,
+        price_from: Number.isFinite(form.price_from) ? form.price_from : 0,
+      };
+      const safeCategories = categories.length > 0 ? categories : ["other"];
+
+      const payload = { ...safeForm, user_id: user.id, avatar_url: avatarUrl, gallery, categories: safeCategories, category: safeCategories[0] };
+      console.log("[ClubEdit] payload", payload);
+      let savedClubId = clubId;
+      let error: any = null;
+
+      if (clubId) {
+        const res = await supabase.from("clubs").update(payload).eq("id", clubId);
+        error = res.error;
+      } else {
+        const { data, error: insertError } = await supabase.from("clubs").insert(payload).select().single();
+        error = insertError;
+        if (data) { setClubId(data.id); savedClubId = data.id; }
+      }
+
+      if (error) {
+        console.error("[ClubEdit] clubs save error", error);
+        toast({ title: t("common.error"), description: error.message || "Не удалось сохранить", variant: "destructive" });
         setSaving(false);
-        toast({ title: t("common.error"), description: "Не удалось присвоить роль владельца: " + roleErr.message, variant: "destructive" });
         return;
       }
-    }
 
-    // Auto-fill empty name/description fields from whichever language was filled
-    const anyName = (form.name_kz || form.name_ru || form.name_en || "Жаңа үйірме / Новый кружок").trim();
-    const anyDesc = (form.description_kz || form.description_ru || form.description_en || "").trim();
-    const safeForm = {
-      ...form,
-      name_ru: (form.name_ru || anyName).trim(),
-      name_kz: (form.name_kz || anyName).trim(),
-      name_en: (form.name_en || anyName).trim(),
-      description_ru: form.description_ru || anyDesc,
-      description_kz: form.description_kz || anyDesc,
-      description_en: form.description_en || anyDesc,
-    };
-    const safeCategories = categories.length > 0 ? categories : ["other"];
-
-    const payload = { ...safeForm, user_id: user.id, avatar_url: avatarUrl, gallery, categories: safeCategories, category: safeCategories[0] };
-    let savedClubId = clubId;
-    let error;
-
-    if (clubId) {
-      ({ error } = await supabase.from("clubs").update(payload).eq("id", clubId));
-    } else {
-      const { data, error: insertError } = await supabase.from("clubs").insert(payload).select().single();
-      error = insertError;
-      if (data) { setClubId(data.id); savedClubId = data.id; }
-    }
-
-
-    if (!error && savedClubId) {
-      await supabase.from("club_schedules").delete().eq("club_id", savedClubId);
-      if (schedules.length > 0) {
-        const schedPayload = schedules.map((s) => ({
-          club_id: savedClubId!,
-          day_of_week: s.day_of_week,
-          start_time: s.start_time,
-          end_time: s.end_time,
-          max_slots: s.max_slots,
-        }));
-        const { error: schedError } = await supabase.from("club_schedules").insert(schedPayload);
-        if (schedError) error = schedError;
+      if (savedClubId) {
+        await supabase.from("club_schedules").delete().eq("club_id", savedClubId);
+        if (schedules.length > 0) {
+          const schedPayload = schedules.map((s) => ({
+            club_id: savedClubId!,
+            day_of_week: s.day_of_week,
+            start_time: s.start_time,
+            end_time: s.end_time,
+            max_slots: s.max_slots,
+          }));
+          const { error: schedError } = await supabase.from("club_schedules").insert(schedPayload);
+          if (schedError) {
+            console.warn("[ClubEdit] schedules error", schedError);
+            toast({ title: t("common.error"), description: "Профиль сохранён, но расписание не сохранилось: " + schedError.message, variant: "destructive" });
+            setSaving(false);
+            navigate("/dashboard");
+            return;
+          }
+        }
       }
-    }
 
-    setSaving(false);
-    if (error) {
-      toast({ title: t("common.error"), description: error.message, variant: "destructive" });
-    } else {
       toast({ title: t("edit.saved") });
+      setSaving(false);
       navigate("/dashboard");
+    } catch (e: any) {
+      console.error("[ClubEdit] unexpected error", e);
+      toast({ title: t("common.error"), description: e?.message || String(e), variant: "destructive" });
+      setSaving(false);
     }
   };
 
