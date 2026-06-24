@@ -244,16 +244,23 @@ const BoardPage = ({ city }: { city: string }) => {
 
   const handleFile = async (file: File) => {
     if (!user) return;
-    if (file.size > 10 * 1024 * 1024) {
-      toast({ title: tt.too_big, variant: "destructive" });
+    setUploading(true);
+    const validation = await validateImageFileDeep(file);
+    if ("error" in validation) {
+      setUploading(false);
+      toast({ title: validation.error, variant: "destructive" });
       return;
     }
-    setUploading(true);
-    const ext = file.name.split(".").pop() || "bin";
+    const extByMime: Record<string, string> = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+      "image/gif": "gif",
+    };
+    const ext = extByMime[validation.mime] || "bin";
     const path = `announcements/${user.id}/${Date.now()}.${ext}`;
-    const isImage = file.type.startsWith("image/");
     const { error } = await supabase.storage.from("club-media").upload(path, file, {
-      contentType: isImage ? file.type : "application/octet-stream",
+      contentType: validation.mime,
       upsert: false,
     });
     if (error) {
@@ -265,6 +272,7 @@ const BoardPage = ({ city }: { city: string }) => {
     setForm((f) => ({ ...f, image_url: pub.publicUrl }));
     setUploading(false);
   };
+
 
   const handleSave = async () => {
     if (!user) return;
