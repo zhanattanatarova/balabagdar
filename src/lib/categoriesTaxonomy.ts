@@ -35,7 +35,7 @@ export const TAXONOMY: Group[] = [
   },
   {
     id: "tutors", emoji: "📚",
-    subs: ["school_prep", "primary", "kazakh", "russian", "english", "math", "algebra", "geometry", "physics", "chemistry", "biology", "geography", "history", "world_history", "social_studies", "literature", "informatics", "economics", "ent", "nish", "ktl", "fizmat", "olympiad", "ielts", "sat"],
+    subs: ["school_prep", "afterschool_1_4", "primary", "kazakh", "russian", "english", "math", "algebra", "geometry", "physics", "chemistry", "biology", "geography", "history", "world_history", "social_studies", "literature", "informatics", "economics", "ent", "nish", "ktl", "fizmat", "olympiad", "ielts", "sat"],
   },
   {
     id: "special", emoji: "💖",

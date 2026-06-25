@@ -195,6 +195,7 @@ export const translations = {
   "tutors.title": { ru: "Выберите предмет", kz: "Пәнді таңдаңыз", en: "Choose a subject" },
   "tutors.all": { ru: "Все предметы", kz: "Барлық пәндер", en: "All subjects" },
   "tutors.school_prep": { ru: "Подготовка к школе", kz: "Мектепке дайындық", en: "School prep" },
+  "tutors.afterschool_1_4": { ru: "Продлёнка 1–4 класс", kz: "Ұзартылған топ 1–4 сынып", en: "After-school 1–4 grade" },
   "tutors.kazakh": { ru: "Казахский язык", kz: "Қазақ тілі", en: "Kazakh language" },
   "tutors.russian": { ru: "Русский язык", kz: "Орыс тілі", en: "Russian language" },
   "tutors.english": { ru: "Английский язык", kz: "Ағылшын тілі", en: "English language" },
