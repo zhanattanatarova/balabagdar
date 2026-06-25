@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.enforce_booking_pending_status() FROM PUBLIC, anon, authenticated;

@@ -51,7 +51,12 @@ Deno.serve(async (req) => {
 
     const cleanPhone = (phone ?? "").replace(/\D/g, "");
     const email = (emailIn || `${cleanPhone}@phone.balahub.kz`).toLowerCase();
-    const password = passIn || (Math.random().toString(36).slice(-10) + "A1!");
+    const genSecurePassword = () => {
+      const buf = new Uint8Array(12);
+      crypto.getRandomValues(buf);
+      return btoa(String.fromCharCode(...buf)).replace(/[+/=]/g, "") + "A1!";
+    };
+    const password = passIn || genSecurePassword();
 
     // Try create; if exists, look up existing user and reuse
     let newUserId: string | null = null;
