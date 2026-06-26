@@ -75,6 +75,12 @@ export const translations = {
   // Special needs subcategories
   "special.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
   "special.all": { ru: "Все направления", kz: "Барлық бағыттар", en: "All directions" },
+  "special.asd": { ru: "РАС (аутизм)", kz: "АСБ (аутизм)", en: "ASD (autism)" },
+  "special.zprr": { ru: "ЗПРР", kz: "ПСДА (психикалық-сөйлеу дамуының артта қалуы)", en: "Delayed psycho-speech development" },
+  "special.zrr": { ru: "ЗРР", kz: "СДА (сөйлеу дамуының артта қалуы)", en: "Delayed speech development" },
+  "special.onr": { ru: "ОНР (общее недоразвитие речи)", kz: "ЖСД (жалпы сөйлеудің дамымауы)", en: "General speech underdevelopment" },
+  "special.adhd": { ru: "СДВГ", kz: "НТЗС (назардың тапшылығы және зейіннің бұзылуы синдромы)", en: "ADHD" },
+  "special.correction_center": { ru: "Коррекционный центр", kz: "Түзету орталығы", en: "Correction center" },
   "special.afk": { ru: "АФК (адаптивная физкультура)", kz: "АДШ (адаптивті дене шынықтыру)", en: "Adaptive PE (AFK)" },
   "special.lfk": { ru: "ЛФК (лечебная физкультура)", kz: "ЕДШ (емдік дене шынықтыру)", en: "Therapeutic exercise (LFK)" },
   "special.aba": { ru: "ABA-терапия", kz: "ABA-терапия", en: "ABA therapy" },
