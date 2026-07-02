@@ -801,7 +801,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl text-xs font-black bg-primary text-primary-foreground"
             >
-              {t("home.search_btn") || "Найти"}
+              {"Найти"}
             </button>
           )}
         </div>
