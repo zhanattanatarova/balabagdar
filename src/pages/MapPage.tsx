@@ -146,8 +146,16 @@ const MapPage = ({ city }: { city: string }) => {
     load();
   }, [city]);
 
+  const filteredClubs = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return clubs;
+    return clubs.filter((c) =>
+      (c.name_ru || "").toLowerCase().includes(q) ||
+      (c.address || "").toLowerCase().includes(q)
+    );
+  }, [clubs, searchQuery]);
   const center = CITY_CENTERS[city] || [48.0196, 66.9237];
-  const markers = useMemo(() => clubs.filter((c) => c.lat && c.lng) as Required<Pick<Club, "lat" | "lng">> & Club[], [clubs]);
+  const markers = useMemo(() => filteredClubs.filter((c) => c.lat && c.lng) as Required<Pick<Club, "lat" | "lng">> & Club[], [filteredClubs]);
 
   const handleLocate = () => {
     if (!navigator.geolocation) return;
