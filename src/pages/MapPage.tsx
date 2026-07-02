@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon, ArrowRight } from "lucide-react";
+import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon, ArrowRight, Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
@@ -116,6 +116,7 @@ const MapPage = ({ city }: { city: string }) => {
   const [geocoding, setGeocoding] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
@@ -145,8 +146,16 @@ const MapPage = ({ city }: { city: string }) => {
     load();
   }, [city]);
 
+  const filteredClubs = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return clubs;
+    return clubs.filter((c) =>
+      (c.name_ru || "").toLowerCase().includes(q) ||
+      (c.address || "").toLowerCase().includes(q)
+    );
+  }, [clubs, searchQuery]);
   const center = CITY_CENTERS[city] || [48.0196, 66.9237];
-  const markers = useMemo(() => clubs.filter((c) => c.lat && c.lng) as Required<Pick<Club, "lat" | "lng">> & Club[], [clubs]);
+  const markers = useMemo(() => filteredClubs.filter((c) => c.lat && c.lng) as Required<Pick<Club, "lat" | "lng">> & Club[], [filteredClubs]);
 
   const handleLocate = () => {
     if (!navigator.geolocation) return;
@@ -190,10 +199,29 @@ const MapPage = ({ city }: { city: string }) => {
         </a>
       </div>
 
-      <div className="px-4 mb-3">
+      <div className="px-4 mb-3 flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Поиск по названию или адресу"
+            className="w-full pl-9 pr-9 py-2 rounded-full text-xs font-bold bg-card border-[3px] border-foreground/8 focus:outline-none focus:border-primary"
+            style={{ boxShadow: "var(--shadow-cartoon)" }}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-muted flex items-center justify-center"
+              aria-label="Очистить"
+            >
+              <X size={12} />
+            </button>
+          )}
+        </div>
         <button
           onClick={handleLocate}
-          className="inline-flex items-center gap-2 bg-card border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full"
+          className="inline-flex items-center gap-2 bg-card border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full shrink-0"
           style={{ boxShadow: "var(--shadow-cartoon)" }}
         >
           <Navigation size={14} /> {mt.nearby}
@@ -262,19 +290,19 @@ const MapPage = ({ city }: { city: string }) => {
 
       <div className="px-4 mt-5">
         <h2 className="section-title mb-3 flex items-center gap-2">
-          <MapIcon size={16} /> {mt.all_clubs} — {city} ({clubs.length})
+          <MapIcon size={16} /> {mt.all_clubs} — {city} ({filteredClubs.length})
         </h2>
         {loading ? (
           <div className="flex justify-center py-10">
             <Loader2 className="animate-spin text-primary" />
           </div>
-        ) : clubs.length === 0 ? (
+        ) : filteredClubs.length === 0 ? (
           <div className="text-center py-10 text-sm text-muted-foreground font-bold">
-            {mt.no_clubs}
+            {searchQuery ? "Ничего не найдено" : mt.no_clubs}
           </div>
         ) : (
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
-            {clubs.map((club) => (
+            {filteredClubs.map((club) => (
               <div
                 key={club.id}
                 onClick={() => {
