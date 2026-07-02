@@ -116,6 +116,7 @@ const MapPage = ({ city }: { city: string }) => {
   const [geocoding, setGeocoding] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
