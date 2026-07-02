@@ -774,9 +774,36 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         </div>
         <div className="relative">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "hsl(145, 70%, 35%)" }} />
-          <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t("home.search")}
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && searchQuery.trim()) {
+                const sp = new URLSearchParams();
+                sp.set("q", searchQuery.trim());
+                if (city) sp.set("city", city);
+                if (ageFilter !== "all") sp.set("age", ageFilter);
+                navigate(`/search?${sp.toString()}`);
+              }
+            }}
+            placeholder={t("home.search")}
             className="w-full pl-10 pr-4 py-3 rounded-2xl text-sm font-bold focus:outline-none focus:ring-[3px] focus:ring-secondary border-[3px]"
-            style={{ background: "white", color: "hsl(145, 70%, 30%)", boxShadow: "var(--shadow-cartoon)", borderColor: "hsl(145, 50%, 75%)" }} />
+            style={{ background: "white", color: "hsl(145, 70%, 30%)", boxShadow: "var(--shadow-cartoon)", borderColor: "hsl(145, 50%, 75%)" }}
+          />
+          {searchQuery.trim() && (
+            <button
+              onClick={() => {
+                const sp = new URLSearchParams();
+                sp.set("q", searchQuery.trim());
+                if (city) sp.set("city", city);
+                if (ageFilter !== "all") sp.set("age", ageFilter);
+                navigate(`/search?${sp.toString()}`);
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl text-xs font-black bg-primary text-primary-foreground"
+            >
+              {t("home.search_btn") || "Найти"}
+            </button>
+          )}
         </div>
       </div>
 
