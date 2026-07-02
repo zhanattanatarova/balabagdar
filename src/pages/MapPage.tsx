@@ -290,19 +290,19 @@ const MapPage = ({ city }: { city: string }) => {
 
       <div className="px-4 mt-5">
         <h2 className="section-title mb-3 flex items-center gap-2">
-          <MapIcon size={16} /> {mt.all_clubs} — {city} ({clubs.length})
+          <MapIcon size={16} /> {mt.all_clubs} — {city} ({filteredClubs.length})
         </h2>
         {loading ? (
           <div className="flex justify-center py-10">
             <Loader2 className="animate-spin text-primary" />
           </div>
-        ) : clubs.length === 0 ? (
+        ) : filteredClubs.length === 0 ? (
           <div className="text-center py-10 text-sm text-muted-foreground font-bold">
-            {mt.no_clubs}
+            {searchQuery ? "Ничего не найдено" : mt.no_clubs}
           </div>
         ) : (
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
-            {clubs.map((club) => (
+            {filteredClubs.map((club) => (
               <div
                 key={club.id}
                 onClick={() => {
