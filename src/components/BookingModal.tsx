@@ -40,7 +40,7 @@ const BookingModal = ({ open, onClose, club, schedules }: BookingModalProps) => 
       return;
     }
     setLoading(true);
-    const { error } = await supabase.from("bookings").insert({
+    const { data: inserted, error } = await supabase.from("bookings").insert({
       club_id: club.id,
       user_id: user.id,
       booking_date: format(date, "yyyy-MM-dd"),
@@ -49,11 +49,17 @@ const BookingModal = ({ open, onClose, club, schedules }: BookingModalProps) => 
       phone,
       message,
       status: "pending",
-    });
+    }).select("id").single();
     setLoading(false);
     if (error) {
       toast({ title: t("common.error"), description: error.message, variant: "destructive" });
     } else {
+      // Notify club owner via Telegram (fire-and-forget)
+      if (inserted?.id) {
+        supabase.functions.invoke("notify-owner-booking", {
+          body: { booking_id: inserted.id },
+        }).catch((e) => console.warn("notify-owner-booking failed", e));
+      }
       toast({ title: t("booking.success") });
       onClose();
       setChildName("");
