@@ -1,1 +1,4 @@
 project_id = "zeitvmduhywhamhcaheh"
+
+[functions.notify-owner-booking]
+verify_jwt = false
