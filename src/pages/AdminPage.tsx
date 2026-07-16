@@ -47,6 +47,9 @@ const AdminPage = () => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [creds, setCreds] = useState<Credential[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
   const [form, setForm] = useState({
     name: "",
     city: "Актау",
