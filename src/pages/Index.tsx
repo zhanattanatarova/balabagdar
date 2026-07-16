@@ -1,5 +1,60 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+
+const KZ_CITIES = [
+  "Алматы","Астана","Шымкент","Караганда","Актобе","Тараз","Павлодар","Усть-Каменогорск","Семей","Атырау",
+  "Костанай","Кызылорда","Уральск","Петропавловск","Актау","Темиртау","Туркестан","Кокшетау","Талдыкорган","Экибастуз",
+  "Рудный","Жезказган","Каскелен","Талгар","Конаев","Жанаозен","Байконур","Балхаш","Кентау","Сатпаев",
+  "Сарань","Щучинск","Риддер","Аксай","Степногорск",
+];
+
+const CITY_ALIASES: Record<string, string> = {
+  "almaty": "Алматы", "alma-ata": "Алматы",
+  "astana": "Астана", "nur-sultan": "Астана", "nursultan": "Астана",
+  "shymkent": "Шымкент", "chimkent": "Шымкент",
+  "karaganda": "Караганда", "qaraghandy": "Караганда",
+  "aktobe": "Актобе", "aqtobe": "Актобе",
+  "taraz": "Тараз",
+  "pavlodar": "Павлодар",
+  "ust-kamenogorsk": "Усть-Каменогорск", "oskemen": "Усть-Каменогорск",
+  "semey": "Семей", "semipalatinsk": "Семей",
+  "atyrau": "Атырау",
+  "kostanay": "Костанай", "qostanay": "Костанай",
+  "kyzylorda": "Кызылорда", "qyzylorda": "Кызылорда",
+  "uralsk": "Уральск", "oral": "Уральск",
+  "petropavl": "Петропавловск", "petropavlovsk": "Петропавловск",
+  "aktau": "Актау", "aqtau": "Актау",
+  "temirtau": "Темиртау",
+  "turkestan": "Туркестан", "turkistan": "Туркестан",
+  "kokshetau": "Кокшетау",
+  "taldykorgan": "Талдыкорган", "taldyqorgan": "Талдыкорган",
+  "ekibastuz": "Экибастуз",
+  "rudny": "Рудный", "rudniy": "Рудный",
+  "zhezkazgan": "Жезказган", "jezkazgan": "Жезказган",
+  "kaskelen": "Каскелен",
+  "talgar": "Талгар",
+  "konaev": "Конаев", "qonaev": "Конаев", "kapshagay": "Конаев", "kapchagay": "Конаев",
+  "zhanaozen": "Жанаозен", "janaozen": "Жанаозен",
+  "baikonur": "Байконур", "baykonyr": "Байконур",
+  "balkhash": "Балхаш", "balqash": "Балхаш",
+  "kentau": "Кентау",
+  "satpaev": "Сатпаев", "satbayev": "Сатпаев",
+  "saran": "Сарань",
+  "shchuchinsk": "Щучинск", "shchuchye": "Щучинск", "burabay": "Щучинск",
+  "ridder": "Риддер",
+  "aksay": "Аксай", "aqsai": "Аксай",
+  "stepnogorsk": "Степногорск",
+};
+
+const normalizeCity = (raw: string): string | null => {
+  if (!raw) return null;
+  const s = raw.trim();
+  if (KZ_CITIES.includes(s)) return s;
+  const lower = s.toLowerCase();
+  if (CITY_ALIASES[lower]) return CITY_ALIASES[lower];
+  for (const c of KZ_CITIES) if (c.toLowerCase() === lower) return c;
+  return null;
+};
 import SplashScreen from "./SplashScreen";
 import HomePage from "./HomePage";
 import MapPage from "./MapPage";
