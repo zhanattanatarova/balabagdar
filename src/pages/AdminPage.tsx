@@ -368,10 +368,70 @@ const AdminPage = () => {
             <p className="text-xs text-muted-foreground mt-3">⚠️ Сохраните пароли — они показываются только сейчас.</p>
           </div>
         )}
+
+        <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+          <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+            <h2 className="text-lg font-black">📨 Все заявки на бронь</h2>
+            <button onClick={loadBookings} className="text-xs font-bold text-primary">Обновить</button>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {(["all", "pending", "confirmed", "cancelled"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${statusFilter === s ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border"}`}
+              >
+                {s === "all" ? "Все" : s === "pending" ? "Новые" : s === "confirmed" ? "Подтверждены" : "Отменены"}
+                {" "}({s === "all" ? bookings.length : bookings.filter((b) => b.status === s).length})
+              </button>
+            ))}
+          </div>
+
+          {bookingsLoading ? (
+            <div className="flex justify-center py-6"><Loader2 className="animate-spin" /></div>
+          ) : bookings.filter((b) => statusFilter === "all" || b.status === statusFilter).length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-6">Заявок пока нет</p>
+          ) : (
+            <div className="space-y-2">
+              {bookings
+                .filter((b) => statusFilter === "all" || b.status === statusFilter)
+                .map((b) => (
+                  <div key={b.id} className="p-3 rounded-xl bg-muted border-2 border-border">
+                    <div className="flex items-start justify-between gap-2 flex-wrap">
+                      <div className="min-w-0 flex-1">
+                        <div className="font-black text-sm">{b.clubs?.name_ru || "—"} <span className="text-xs text-muted-foreground font-bold">· {b.clubs?.city}</span></div>
+                        <div className="text-xs mt-1">
+                          👶 <span className="font-bold">{b.child_name}</span>
+                          {b.child_age ? <span className="text-muted-foreground"> · {b.child_age} лет</span> : null}
+                        </div>
+                        <div className="text-xs mt-0.5">📞 <a href={`tel:${b.phone}`} className="font-bold text-primary">{b.phone || "—"}</a></div>
+                        <div className="text-xs mt-0.5">📅 <span className="font-bold">{b.booking_date}</span></div>
+                        {b.message && <div className="text-xs mt-1 text-muted-foreground">💬 {b.message}</div>}
+                        <div className="text-[10px] text-muted-foreground mt-1">{new Date(b.created_at).toLocaleString("ru")}</div>
+                      </div>
+                      <div className="flex flex-col gap-1 shrink-0">
+                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full text-center ${b.status === "confirmed" ? "bg-green-light text-primary" : b.status === "cancelled" ? "bg-destructive/20 text-destructive" : "bg-secondary/20 text-secondary"}`}>
+                          {b.status}
+                        </span>
+                        {b.status !== "confirmed" && (
+                          <button onClick={() => updateBookingStatus(b.id, "confirmed")} className="text-[10px] font-bold px-2 py-1 rounded-lg bg-primary text-primary-foreground">✓ Подтвердить</button>
+                        )}
+                        {b.status !== "cancelled" && (
+                          <button onClick={() => updateBookingStatus(b.id, "cancelled")} className="text-[10px] font-bold px-2 py-1 rounded-lg bg-destructive/10 text-destructive">✕ Отменить</button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
+
 
 const Field = ({ label, value, onChange, multiline }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean }) => (
   <div>
