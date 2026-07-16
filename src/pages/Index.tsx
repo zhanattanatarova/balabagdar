@@ -96,12 +96,74 @@ const seoByPath: Record<string, { title: string; description: string; path: stri
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
-  const [city, setCity] = useState("Актау");
+  const [city, setCity] = useState(() => {
+    try { return localStorage.getItem("bb_city") || "Актау"; } catch { return "Актау"; }
+  });
   const location = useLocation();
 
   const handleSplashComplete = useCallback(() => {
     setShowSplash(false);
   }, []);
+
+  // Persist manual city selection
+  useEffect(() => {
+    try { localStorage.setItem("bb_city", city); } catch {}
+  }, [city]);
+
+  // Auto-detect city by geolocation on first visit
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("bb_city_detected") === "1") return;
+      if (localStorage.getItem("bb_city")) return;
+    } catch {}
+
+    let cancelled = false;
+    const applyCity = (name: string | null) => {
+      const matched = name ? normalizeCity(name) : null;
+      if (matched && !cancelled) {
+        setCity(matched);
+        try {
+          localStorage.setItem("bb_city", matched);
+          localStorage.setItem("bb_city_detected", "1");
+        } catch {}
+      } else {
+        try { localStorage.setItem("bb_city_detected", "1"); } catch {}
+      }
+    };
+
+    const tryIpFallback = async () => {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        if (!res.ok) return applyCity(null);
+        const data = await res.json();
+        applyCity(data?.city || null);
+      } catch { applyCity(null); }
+    };
+
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const { latitude, longitude } = pos.coords;
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=ru`
+            );
+            const data = await res.json();
+            const addr = data?.address || {};
+            const name = addr.city || addr.town || addr.village || addr.municipality || addr.state || null;
+            applyCity(name);
+          } catch { tryIpFallback(); }
+        },
+        () => { tryIpFallback(); },
+        { timeout: 5000, maximumAge: 600000 }
+      );
+    } else {
+      tryIpFallback();
+    }
+
+    return () => { cancelled = true; };
+  }, []);
+
 
   const renderPage = () => {
     switch (location.pathname) {
