@@ -131,6 +131,32 @@ const AdminPage = () => {
     if (!authLoading && !user) navigate("/");
   }, [authLoading, user, navigate]);
 
+  const loadBookings = async () => {
+    setBookingsLoading(true);
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("*, clubs(name_ru, city, phone)")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    if (error) toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    setBookings(data || []);
+    setBookingsLoading(false);
+  };
+
+  useEffect(() => {
+    if (role === "admin") loadBookings();
+  }, [role]);
+
+  const updateBookingStatus = async (id: string, status: string) => {
+    const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
+    if (error) {
+      toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Статус обновлён" });
+      setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status } : b)));
+    }
+  };
+
   if (authLoading || roleLoading) {
     return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
   }
