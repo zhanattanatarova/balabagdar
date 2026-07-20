@@ -1,0 +1,1 @@
+DELETE FROM public.profiles WHERE user_id='6a74e894-eab1-4c19-9034-9861d6f93bdc';
