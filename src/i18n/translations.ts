@@ -88,6 +88,7 @@ export const translations = {
   "special.aba": { ru: "ABA-терапия", kz: "ABA-терапия", en: "ABA therapy" },
   "special.sensory": { ru: "Сенсорная интеграция", kz: "Сенсорлық интеграция", en: "Sensory integration" },
   "special.speech": { ru: "Логопед-дефектолог", kz: "Логопед-дефектолог", en: "Speech & defectology" },
+  "special.logomassage": { ru: "Логомассаж", kz: "Логомассаж", en: "Logopedic massage" },
   "special.psychologist": { ru: "Детский психолог", kz: "Балалар психологы", en: "Child psychologist" },
   "special.neurologist": { ru: "Невролог", kz: "Невролог", en: "Neurologist" },
   "special.massage": { ru: "Лечебный массаж", kz: "Емдік массаж", en: "Therapeutic massage" },
