@@ -95,6 +95,13 @@ Deno.serve(async (req) => {
         phone,
         display_name: `User ${phone.slice(-4)}`,
       });
+
+      // Assign chosen role at registration (parent by default, or club_owner
+      // when the user registers as a club/center). Ignore duplicates.
+      await supabase.from("user_roles").insert({
+        user_id: userId,
+        role: chosenRole,
+      });
     } else {
       // reset
       if (!userId) {
