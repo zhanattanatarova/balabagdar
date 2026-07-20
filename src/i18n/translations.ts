@@ -81,6 +81,8 @@ export const translations = {
   "special.onr": { ru: "ОНР (общее недоразвитие речи)", kz: "ЖСД (жалпы сөйлеудің дамымауы)", en: "General speech underdevelopment" },
   "special.adhd": { ru: "СДВГ", kz: "НТЗС (назардың тапшылығы және зейіннің бұзылуы синдромы)", en: "ADHD" },
   "special.correction_center": { ru: "Коррекционный центр", kz: "Түзету орталығы", en: "Correction center" },
+  "special.surdo": { ru: "Сурдопедагог", kz: "Сурдопедагог", en: "Deaf educator (surdo)" },
+  "special.tiflo": { ru: "Тифлопедагог", kz: "Тифлопедагог", en: "Vision educator (tiflo)" },
   "special.afk": { ru: "АФК (адаптивная физкультура)", kz: "АДШ (адаптивті дене шынықтыру)", en: "Adaptive PE (AFK)" },
   "special.lfk": { ru: "ЛФК (лечебная физкультура)", kz: "ЕДШ (емдік дене шынықтыру)", en: "Therapeutic exercise (LFK)" },
   "special.aba": { ru: "ABA-терапия", kz: "ABA-терапия", en: "ABA therapy" },

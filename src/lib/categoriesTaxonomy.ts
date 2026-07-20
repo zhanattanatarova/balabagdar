@@ -39,7 +39,7 @@ export const TAXONOMY: Group[] = [
   },
   {
     id: "special", emoji: "💖",
-    subs: ["asd", "zprr", "zrr", "onr", "adhd", "correction_center", "afk", "lfk", "aba", "sensory", "speech", "psychologist", "neurologist", "massage", "osteopath", "swim", "hippotherapy", "canistherapy", "art", "music", "montessori", "inclusive"],
+    subs: ["asd", "zprr", "zrr", "onr", "adhd", "correction_center", "surdo", "tiflo", "afk", "lfk", "aba", "sensory", "speech", "psychologist", "neurologist", "massage", "osteopath", "swim", "hippotherapy", "canistherapy", "art", "music", "montessori", "inclusive"],
   },
   {
     id: "health", emoji: "🏥",
