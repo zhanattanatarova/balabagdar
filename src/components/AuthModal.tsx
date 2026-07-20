@@ -32,6 +32,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [code, setCode] = useState("");
+  const [registerRole, setRegisterRole] = useState<"parent" | "club_owner">("parent");
 
 
   const [loading, setLoading] = useState(false);
