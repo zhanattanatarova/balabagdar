@@ -179,20 +179,28 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    await processTelegramUpdates(supabase);
-
-    const { data: candidates } = await supabase
-      .from("phone_verifications")
-      .select("phone, telegram_chat_id, created_at")
-      .not("telegram_chat_id", "is", null)
-      .order("created_at", { ascending: false })
-      .limit(100);
-
     const phoneTail = cleanPhone.slice(-10);
-    const matched = (candidates ?? []).find((row) =>
-      normalizePhone(row.phone).endsWith(phoneTail),
-    );
-    const chatId = matched?.telegram_chat_id ?? null;
+
+    const lookupChatId = async () => {
+      const { data: candidates } = await supabase
+        .from("phone_verifications")
+        .select("phone, telegram_chat_id, created_at")
+        .not("telegram_chat_id", "is", null)
+        .order("created_at", { ascending: false })
+        .limit(100);
+      const matched = (candidates ?? []).find((row) =>
+        normalizePhone(row.phone).endsWith(phoneTail),
+      );
+      return matched?.telegram_chat_id ?? null;
+    };
+
+    // Fast path: if the phone is already linked to a chat, skip the slow
+    // getUpdates poll entirely so the OTP goes out immediately.
+    let chatId = await lookupChatId();
+    if (!chatId) {
+      await processTelegramUpdates(supabase);
+      chatId = await lookupChatId();
+    }
 
     await supabase.from("phone_verifications").delete().eq("phone", cleanPhone);
 
