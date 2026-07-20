@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { phone, code, password, mode } = await req.json();
+    const { phone, code, password, mode, role } = await req.json();
 
     if (!phone || !code) {
       return json(400, { error: "Phone and code required" });
@@ -31,6 +31,8 @@ Deno.serve(async (req) => {
 
     // mode: "register" | "reset"
     const flow: "register" | "reset" = mode === "reset" ? "reset" : "register";
+    const chosenRole: "parent" | "club_owner" =
+      role === "club_owner" ? "club_owner" : "parent";
 
     if (!password || typeof password !== "string" || password.length < 6) {
       return json(400, { error: "Password must be at least 6 characters" });
