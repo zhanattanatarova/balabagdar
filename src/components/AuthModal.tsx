@@ -162,7 +162,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("verify-code", {
-        body: { phone: digits(), code, password: newPassword, mode: flow },
+        body: { phone: digits(), code, password: newPassword, mode: flow, role: registerRole },
       });
       if (error) throw error;
       if (data?.error === "already_registered") {
