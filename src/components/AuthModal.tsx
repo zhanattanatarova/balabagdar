@@ -260,6 +260,35 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                     Код подтверждения придёт в Telegram
                   </p>
                   <div className="mt-6 space-y-3">
+                    {flow === "register" && (
+                      <div>
+                        <p className="text-xs font-bold text-muted-foreground mb-2 px-1">Кто вы?</p>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setRegisterRole("parent")}
+                            className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition ${
+                              registerRole === "parent"
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "bg-muted text-foreground border-transparent"
+                            }`}
+                          >
+                            👨‍👩‍👧 Родитель
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setRegisterRole("club_owner")}
+                            className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition ${
+                              registerRole === "club_owner"
+                                ? "bg-primary text-primary-foreground border-primary"
+                                : "bg-muted text-foreground border-transparent"
+                            }`}
+                          >
+                            🏫 Кружок / Центр
+                          </button>
+                        </div>
+                      </div>
+                    )}
                     <div className="relative">
                       <Phone size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t("auth.phone_placeholder")}
