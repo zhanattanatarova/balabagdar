@@ -8,8 +8,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthModal from "@/components/AuthModal";
 
-const CONTACT_PHONE = "+7 747 480 7286";
-const CONTACT_PHONE_RAW = "77474807286";
+const CONTACT_PHONE = "+7 777 685 6591";
+const CONTACT_PHONE_RAW = "77776856591";
 
 const ProfilePage = () => {
   const { user, signOut } = useAuth();
