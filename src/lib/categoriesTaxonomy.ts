@@ -71,6 +71,12 @@ export const TAXONOMY: Group[] = [
     id: "camp", emoji: "🏕️", subs: [] },
   {
     id: "scouts", emoji: "🧭", subs: [] },
+  {
+    id: "kids_cafe", emoji: "🍰", subs: [] },
+  {
+    id: "animators", emoji: "🤹", subs: [] },
+  {
+    id: "play_center", emoji: "🎠", subs: [] },
 ];
 
 
