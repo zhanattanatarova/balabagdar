@@ -71,6 +71,9 @@ export const translations = {
   "cat.it": { ru: "IT и программирование", kz: "IT және бағдарламалау", en: "IT & Coding" },
   "cat.camp": { ru: "Лагеря", kz: "Лагерьлер", en: "Camps" },
   "cat.scouts": { ru: "Скауты", kz: "Скауттар", en: "Scouts" },
+  "cat.kids_cafe": { ru: "Детские кафе", kz: "Балалар кафесі", en: "Kids cafes" },
+  "cat.animators": { ru: "Аниматоры", kz: "Аниматорлар", en: "Animators" },
+  "cat.play_center": { ru: "Игровые центры", kz: "Ойын орталықтары", en: "Play centers" },
 
   // Special needs subcategories
   "special.title": { ru: "Выберите направление", kz: "Бағытты таңдаңыз", en: "Choose a direction" },
