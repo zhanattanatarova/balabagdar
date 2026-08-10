@@ -470,6 +470,7 @@ const AdminPage = () => {
             </div>
           )}
         </div>
+        )}
 
         {tab === "users" && (
         <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
