@@ -54,6 +54,10 @@ const AdminPage = () => {
   const [usersLoading, setUsersLoading] = useState(false);
   const [userQuery, setUserQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "parent" | "club_owner" | "admin">("all");
+  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "create">("clubs");
+  const [clubs, setClubs] = useState<any[]>([]);
+  const [clubsLoading, setClubsLoading] = useState(false);
+  const [clubQuery, setClubQuery] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -148,6 +152,25 @@ const AdminPage = () => {
     setBookingsLoading(false);
   };
 
+  const loadClubs = async () => {
+    setClubsLoading(true);
+    const { data, error } = await supabase
+      .from("clubs")
+      .select("id, name_ru, city, phone, categories, is_active, rating, reviews_count, created_at")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    if (error) toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    setClubs(data || []);
+    setClubsLoading(false);
+  };
+
+  const toggleClubActive = async (id: string, next: boolean) => {
+    const { error } = await supabase.from("clubs").update({ is_active: next }).eq("id", id);
+    if (error) return toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    setClubs((prev) => prev.map((c) => (c.id === id ? { ...c, is_active: next } : c)));
+    toast({ title: next ? "Кружок опубликован" : "Кружок скрыт" });
+  };
+
   const loadUsers = async () => {
     setUsersLoading(true);
     const { data, error } = await (supabase as any).rpc("admin_list_users");
@@ -160,8 +183,11 @@ const AdminPage = () => {
     if (role === "admin") {
       loadBookings();
       loadUsers();
+      loadClubs();
     }
   }, [role]);
+
+
 
 
   const updateBookingStatus = async (id: string, status: string) => {
@@ -252,8 +278,85 @@ const AdminPage = () => {
           <ArrowLeft size={16} /> Назад
         </button>
         <h1 className="text-3xl font-black mb-1">Админ-панель</h1>
-        <p className="text-muted-foreground mb-6">Массовое создание кружков с логином и паролем</p>
+        <p className="text-muted-foreground mb-4">База платформы: кружки, заявки и пользователи</p>
 
+        <div className="flex flex-wrap gap-2 mb-6">
+          {([
+            ["clubs", `🏫 Кружки (${clubs.length})`],
+            ["bookings", `📨 Заявки (${bookings.length})`],
+            ["users", `👥 Пользователи (${users.length})`],
+            ["create", "➕ Создать кружок"],
+          ] as const).map(([k, label]) => (
+            <button
+              key={k}
+              onClick={() => setTab(k as any)}
+              className={`px-4 py-2 rounded-full text-xs font-black border-2 ${tab === k ? "bg-primary text-primary-foreground border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]" : "bg-card border-border"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "clubs" && (
+          <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+            <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+              <h2 className="text-lg font-black">🏫 Все кружки и центры ({clubs.length})</h2>
+              <button onClick={loadClubs} className="text-xs font-bold text-primary">Обновить</button>
+            </div>
+            <input
+              value={clubQuery}
+              onChange={(e) => setClubQuery(e.target.value)}
+              placeholder="Поиск по названию, городу или телефону"
+              className="w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm mb-3"
+            />
+            {clubsLoading ? (
+              <div className="flex justify-center py-6"><Loader2 className="animate-spin" /></div>
+            ) : (() => {
+              const q = clubQuery.trim().toLowerCase();
+              const list = clubs.filter((c) =>
+                !q ||
+                (c.name_ru || "").toLowerCase().includes(q) ||
+                (c.city || "").toLowerCase().includes(q) ||
+                (c.phone || "").toLowerCase().includes(q)
+              );
+              if (list.length === 0) return <p className="text-sm text-muted-foreground text-center py-6">Ничего не найдено</p>;
+              return (
+                <div className="space-y-2">
+                  {list.map((c) => (
+                    <div key={c.id} className="p-3 rounded-xl bg-muted border-2 border-border">
+                      <div className="flex items-start justify-between gap-2 flex-wrap">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-black text-sm">
+                            {c.name_ru || "Без названия"}{" "}
+                            <span className="text-xs text-muted-foreground font-bold">· {c.city}</span>
+                          </div>
+                          <div className="text-xs mt-0.5">📞 <a href={`tel:${c.phone}`} className="font-bold text-primary">{c.phone || "—"}</a></div>
+                          <div className="text-xs mt-0.5 text-muted-foreground">
+                            ⭐ {c.rating ?? 0} ({c.reviews_count ?? 0}) · {(c.categories || []).length} направл.
+                          </div>
+                          <div className="text-[10px] text-muted-foreground mt-1">
+                            Создан: {c.created_at ? new Date(c.created_at).toLocaleDateString("ru") : "—"}
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1 shrink-0">
+                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full text-center ${c.is_active ? "bg-green-light text-primary" : "bg-destructive/20 text-destructive"}`}>
+                            {c.is_active ? "активен" : "скрыт"}
+                          </span>
+                          <button onClick={() => navigate(`/club/${c.id}`)} className="text-[10px] font-bold px-2 py-1 rounded-lg bg-primary text-primary-foreground">Открыть</button>
+                          <button onClick={() => toggleClubActive(c.id, !c.is_active)} className="text-[10px] font-bold px-2 py-1 rounded-lg bg-card border-2 border-border">
+                            {c.is_active ? "Скрыть" : "Показать"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {tab === "create" && (<>
         <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-3">
           <h2 className="text-lg font-black flex items-center gap-2"><Plus size={20} /> Новый кружок</h2>
 
@@ -385,7 +488,9 @@ const AdminPage = () => {
             <p className="text-xs text-muted-foreground mt-3">⚠️ Сохраните пароли — они показываются только сейчас.</p>
           </div>
         )}
+        </>)}
 
+        {tab === "bookings" && (
         <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
           <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
             <h2 className="text-lg font-black">📨 Все заявки на бронь</h2>
@@ -444,7 +549,9 @@ const AdminPage = () => {
             </div>
           )}
         </div>
+        )}
 
+        {tab === "users" && (
         <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
           <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
             <h2 className="text-lg font-black">👥 Пользователи ({users.length})</h2>
@@ -508,6 +615,7 @@ const AdminPage = () => {
             );
           })()}
         </div>
+        )}
 
       </div>
     </div>
