@@ -377,7 +377,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">🌍 {t("lang.title")}</h3>
-              <button onClick={() => setShowLanguagePicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowLanguagePicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -417,7 +417,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">💃 {t("dance.title")}</h3>
-              <button onClick={() => setShowDancePicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowDancePicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -457,7 +457,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">⚽ {t("sport.title")}</h3>
-              <button onClick={() => setShowSportPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowSportPicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -497,7 +497,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">🩺 {t("health.title")}</h3>
-              <button onClick={() => setShowHealthPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowHealthPicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -537,7 +537,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">📚 {t("tutors.title")}</h3>
-              <button onClick={() => setShowTutorsPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowTutorsPicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -577,7 +577,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">🎨 {t("creativity.title")}</h3>
-              <button onClick={() => setShowCreativityPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowCreativityPicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -617,7 +617,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">🎵 {t("music.title")}</h3>
-              <button onClick={() => setShowMusicPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowMusicPicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -657,7 +657,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">🌱 {t("development.title")}</h3>
-              <button onClick={() => setShowDevelopmentPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowDevelopmentPicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -697,7 +697,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">💖 {t("special.title")}</h3>
-              <button onClick={() => setShowSpecialPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowSpecialPicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
@@ -736,7 +736,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex justify-center pt-3 pb-1"><div className="w-12 h-1.5 rounded-full bg-primary" /></div>
             <div className="px-5 pb-3 flex items-center justify-between">
               <h3 className="font-black text-lg">🏙️ {t("home.select_city")}</h3>
-              <button onClick={() => setShowCityPicker(false)} className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
+              <button onClick={() => setShowCityPicker(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-destructive/15 flex items-center justify-center">
                 <X size={16} className="text-destructive" />
               </button>
             </div>
