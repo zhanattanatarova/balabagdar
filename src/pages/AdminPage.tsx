@@ -152,6 +152,25 @@ const AdminPage = () => {
     setBookingsLoading(false);
   };
 
+  const loadClubs = async () => {
+    setClubsLoading(true);
+    const { data, error } = await supabase
+      .from("clubs")
+      .select("id, name_ru, city, phone, categories, is_active, rating, reviews_count, created_at")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    if (error) toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    setClubs(data || []);
+    setClubsLoading(false);
+  };
+
+  const toggleClubActive = async (id: string, next: boolean) => {
+    const { error } = await supabase.from("clubs").update({ is_active: next }).eq("id", id);
+    if (error) return toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    setClubs((prev) => prev.map((c) => (c.id === id ? { ...c, is_active: next } : c)));
+    toast({ title: next ? "Кружок опубликован" : "Кружок скрыт" });
+  };
+
   const loadUsers = async () => {
     setUsersLoading(true);
     const { data, error } = await (supabase as any).rpc("admin_list_users");
@@ -164,8 +183,11 @@ const AdminPage = () => {
     if (role === "admin") {
       loadBookings();
       loadUsers();
+      loadClubs();
     }
   }, [role]);
+
+
 
 
   const updateBookingStatus = async (id: string, status: string) => {
