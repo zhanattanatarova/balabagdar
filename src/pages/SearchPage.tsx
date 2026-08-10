@@ -94,6 +94,8 @@ const SearchPage = () => {
 
   const catLabel = cat ? t(`cat.${cat}` as any) : "";
   const subLabel = cat && sub ? t(`${cat}.${sub}` as any) : "";
+  const searchTitle = subLabel || catLabel || q || (city ? city : "Все кружки");
+
 
   const ageOptions: { id: AgeKey; label: string }[] = [
     { id: "all", label: t("age.any") },
