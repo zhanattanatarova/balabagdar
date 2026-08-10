@@ -148,9 +148,21 @@ const AdminPage = () => {
     setBookingsLoading(false);
   };
 
+  const loadUsers = async () => {
+    setUsersLoading(true);
+    const { data, error } = await (supabase as any).rpc("admin_list_users");
+    if (error) toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    setUsers(data || []);
+    setUsersLoading(false);
+  };
+
   useEffect(() => {
-    if (role === "admin") loadBookings();
+    if (role === "admin") {
+      loadBookings();
+      loadUsers();
+    }
   }, [role]);
+
 
   const updateBookingStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
