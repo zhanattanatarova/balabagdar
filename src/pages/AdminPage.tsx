@@ -444,6 +444,71 @@ const AdminPage = () => {
             </div>
           )}
         </div>
+
+        <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+          <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+            <h2 className="text-lg font-black">👥 Пользователи ({users.length})</h2>
+            <button onClick={loadUsers} className="text-xs font-bold text-primary">Обновить</button>
+          </div>
+
+          <input
+            value={userQuery}
+            onChange={(e) => setUserQuery(e.target.value)}
+            placeholder="Поиск по телефону или имени"
+            className="w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm mb-3"
+          />
+
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {(["all", "parent", "club_owner", "admin"] as const).map((r) => (
+              <button
+                key={r}
+                onClick={() => setRoleFilter(r)}
+                className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${roleFilter === r ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border"}`}
+              >
+                {r === "all" ? "Все" : r === "parent" ? "Родители" : r === "club_owner" ? "Кружки/Центры" : "Админы"}
+                {" "}({r === "all" ? users.length : users.filter((u) => (u.roles || []).includes(r)).length})
+              </button>
+            ))}
+          </div>
+
+          {usersLoading ? (
+            <div className="flex justify-center py-6"><Loader2 className="animate-spin" /></div>
+          ) : (() => {
+            const q = userQuery.trim().toLowerCase();
+            const list = users.filter((u) => {
+              const okRole = roleFilter === "all" || (u.roles || []).includes(roleFilter);
+              const okQ = !q || (u.phone || "").toLowerCase().includes(q) || (u.display_name || "").toLowerCase().includes(q);
+              return okRole && okQ;
+            });
+            if (list.length === 0) return <p className="text-sm text-muted-foreground text-center py-6">Никого не найдено</p>;
+            return (
+              <div className="space-y-2">
+                {list.map((u) => (
+                  <div key={u.user_id} className="p-3 rounded-xl bg-muted border-2 border-border">
+                    <div className="flex items-start justify-between gap-2 flex-wrap">
+                      <div className="min-w-0">
+                        <div className="font-black text-sm">{u.display_name || "Без имени"}</div>
+                        <div className="text-xs mt-0.5">📞 <a href={`tel:+${u.phone}`} className="font-bold text-primary">{u.phone || "—"}</a></div>
+                        <div className="text-[10px] text-muted-foreground mt-1">
+                          Регистрация: {u.created_at ? new Date(u.created_at).toLocaleString("ru") : "—"}
+                          {" · "}Вход: {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString("ru") : "—"}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-1 shrink-0">
+                        {((u.roles || []).length ? u.roles : ["—"]).map((r: string) => (
+                          <span key={r} className={`text-[10px] font-black px-2 py-0.5 rounded-full ${r === "admin" ? "bg-destructive/20 text-destructive" : r === "club_owner" ? "bg-secondary/20 text-secondary" : "bg-green-light text-primary"}`}>
+                            {r === "parent" ? "родитель" : r === "club_owner" ? "кружок/центр" : r}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+
       </div>
     </div>
   );
