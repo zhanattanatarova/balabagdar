@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/components/AuthModal";
+import SEO from "@/components/SEO";
 
 interface EventItem {
   id: string;
@@ -196,6 +197,33 @@ const NewsPage = ({ city }: { city: string }) => {
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
+      <SEO
+        title={`События для детей в ${city} | BalaBagdar`.slice(0, 60)}
+        description={`Афиша детских событий, мастер-классов и праздников в городе ${city}. Актуальные даты, описание и контакты организаторов.`.slice(0, 159)}
+        path="/news"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: `События для детей в ${city}`,
+          itemListElement: events
+            .filter((e) => e.event_date)
+            .slice(0, 20)
+            .map((e, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              item: {
+                "@type": "Event",
+                name: e.title,
+                startDate: e.event_date,
+                description: (e.body || "").slice(0, 300),
+                eventStatus: "https://schema.org/EventScheduled",
+                location: { "@type": "Place", name: e.city, address: e.city },
+                organizer: { "@type": "Organization", name: e.name || "BalaBagdar" },
+                ...(e.image_url ? { image: e.image_url } : {}),
+              },
+            })),
+        }}
+      />
       {/* Header banner */}
       <div className="relative h-44 rounded-b-3xl overflow-hidden" style={{ background: "var(--gradient-header)" }}>
         <div className="absolute inset-0 flex items-center justify-between px-5">
@@ -263,10 +291,10 @@ const NewsPage = ({ city }: { city: string }) => {
                       )}
                       {isOwner && (
                         <div className="flex items-center gap-1 -mt-1">
-                          <button onClick={() => openEdit(e)} className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title="Редактировать">
+                          <button onClick={() => openEdit(e)} aria-label="Редактировать" className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title="Редактировать">
                             <Pencil size={12} />
                           </button>
-                          <button onClick={() => handleDelete(e.id)} className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title="Удалить">
+                          <button onClick={() => handleDelete(e.id)} aria-label="Удалить" className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title="Удалить">
                             <Trash2 size={12} />
                           </button>
                         </div>
@@ -343,7 +371,7 @@ const NewsPage = ({ city }: { city: string }) => {
               {form.image_url ? (
                 <div className="mt-1 relative">
                   <img src={form.image_url} alt="" className="w-full max-h-52 object-cover rounded-xl" />
-                  <button type="button" onClick={() => setForm({ ...form, image_url: "" })} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
+                  <button type="button" onClick={() => setForm({ ...form, image_url: "" })} aria-label="Удалить фото" className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
                 </div>
               ) : (
                 <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">

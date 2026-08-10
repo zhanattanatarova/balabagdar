@@ -1,6 +1,7 @@
 import { ArrowLeft, AlertTriangle, Info, ShieldAlert, CheckCircle2, FileWarning } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
+import SEO from "@/components/SEO";
 
 const legalStrings = {
   kz: {
@@ -74,6 +75,7 @@ const LegalPage = () => {
   const s = legalStrings[lang] || legalStrings.kz;
   return (
     <div className="min-h-screen bg-background pb-24">
+      <SEO title="Правовая информация и правила | BalaBagdar" description="Условия использования BalaBagdar: платформа носит информационный характер, ответственность центров, безопасность детей и правила размещения." path="/legal" />
       <div className="max-w-3xl mx-auto px-4 pt-6 sm:pt-10">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-bold mb-6 text-muted-foreground hover:text-foreground">
           <ArrowLeft size={16} /> {s.back}

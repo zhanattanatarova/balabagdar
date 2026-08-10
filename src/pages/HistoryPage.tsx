@@ -1,12 +1,14 @@
 import { Clock, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
+import SEO from "@/components/SEO";
 
 const HistoryPage = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   return (
     <div className="pb-24 max-w-6xl mx-auto min-h-screen">
+      <SEO title="История просмотров | BalaBagdar" description="История просмотренных детских кружков и центров на BalaBagdar — быстро найдите центр, который смотрели раньше." path="/history" />
       <div className="flex items-center gap-3 p-4">
         <button onClick={() => navigate("/profile")} className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
           <ArrowLeft size={18} />
