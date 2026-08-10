@@ -814,7 +814,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
       {/* Free banner */}
       <div className="mx-4 mt-4 p-4 rounded-2xl bg-secondary/10 border-2 border-secondary/30">
-        <h3 className="font-black text-sm">{t("home.free_banner_title")}</h3>
+        <h2 className="font-black text-sm">{t("home.free_banner_title")}</h2>
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{t("home.free_banner_text")}</p>
       </div>
 
