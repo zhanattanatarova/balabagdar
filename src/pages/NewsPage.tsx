@@ -263,10 +263,10 @@ const NewsPage = ({ city }: { city: string }) => {
                       )}
                       {isOwner && (
                         <div className="flex items-center gap-1 -mt-1">
-                          <button onClick={() => openEdit(e)} className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title="Редактировать">
+                          <button onClick={() => openEdit(e)} aria-label="Редактировать" className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title="Редактировать">
                             <Pencil size={12} />
                           </button>
-                          <button onClick={() => handleDelete(e.id)} className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title="Удалить">
+                          <button onClick={() => handleDelete(e.id)} aria-label="Удалить" className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title="Удалить">
                             <Trash2 size={12} />
                           </button>
                         </div>
@@ -343,7 +343,7 @@ const NewsPage = ({ city }: { city: string }) => {
               {form.image_url ? (
                 <div className="mt-1 relative">
                   <img src={form.image_url} alt="" className="w-full max-h-52 object-cover rounded-xl" />
-                  <button type="button" onClick={() => setForm({ ...form, image_url: "" })} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
+                  <button type="button" onClick={() => setForm({ ...form, image_url: "" })} aria-label="Удалить фото" className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
                 </div>
               ) : (
                 <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">

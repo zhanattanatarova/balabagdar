@@ -394,10 +394,10 @@ const BoardPage = ({ city }: { city: string }) => {
                 </span>
                 {isOwner && (
                   <div className="ml-auto flex items-center gap-1">
-                    <button onClick={() => openEdit(a)} className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title={tt.edit_btn}>
+                    <button onClick={() => openEdit(a)} aria-label="Редактировать" className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title={tt.edit_btn}>
                       <Pencil size={12} />
                     </button>
-                    <button onClick={() => handleDelete(a.id)} className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title={tt.delete_btn}>
+                    <button onClick={() => handleDelete(a.id)} aria-label="Удалить" className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title={tt.delete_btn}>
                       <Trash2 size={12} />
                     </button>
                   </div>
@@ -426,7 +426,7 @@ const BoardPage = ({ city }: { city: string }) => {
           <div className="bg-card rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 className="font-black">{editingId ? tt.edit_title : tt.new_title}</h2>
-              <button onClick={() => setOpen(false)} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><X size={16} /></button>
+              <button onClick={() => setOpen(false)} aria-label="Закрыть" className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><X size={16} /></button>
             </div>
             <div className="p-4 space-y-3">
               <div>
@@ -454,7 +454,7 @@ const BoardPage = ({ city }: { city: string }) => {
                 {form.image_url ? (
                   <div className="mt-1 relative">
                     <img src={form.image_url} alt="" className="w-full max-h-52 object-cover rounded-xl" />
-                    <button onClick={() => setForm({ ...form, image_url: "" })} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
+                    <button onClick={() => setForm({ ...form, image_url: "" })} aria-label="Удалить фото" className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
                   </div>
                 ) : (
                   <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">
