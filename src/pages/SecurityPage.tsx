@@ -1,10 +1,12 @@
 import { ArrowLeft, ShieldCheck, Lock, Eye, Database, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import SEO from "@/components/SEO";
 
 const SecurityPage = () => {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-background pb-24">
+      <SEO title="Безопасность и приватность | BalaBagdar" description="Как BalaBagdar защищает данные родителей и центров: доступ к контактам, хранение данных, модерация отзывов и объявлений." path="/security" />
       <div className="max-w-3xl mx-auto px-4 pt-6 sm:pt-10">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-bold mb-6 text-muted-foreground hover:text-foreground">
           <ArrowLeft size={16} /> Назад
