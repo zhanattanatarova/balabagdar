@@ -50,6 +50,11 @@ const AdminPage = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
+  const [users, setUsers] = useState<any[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [userQuery, setUserQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<"all" | "parent" | "club_owner" | "admin">("all");
+
   const [form, setForm] = useState({
     name: "",
     city: "Актау",
