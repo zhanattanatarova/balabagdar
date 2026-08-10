@@ -6,6 +6,7 @@ import { safeImageUrl } from "@/lib/safeUrl";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TAXONOMY, idsForGroup } from "@/lib/categoriesTaxonomy";
 import BottomNav from "@/components/BottomNav";
+import SEO from "@/components/SEO";
 
 type AgeKey = "all" | "0-3" | "3-7" | "7-12" | "12+";
 
@@ -104,6 +105,26 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28 max-w-6xl mx-auto">
+      <SEO
+        title={`${searchTitle} — поиск кружков | BalaBagdar`.slice(0, 60)}
+        description={`Подборка детских кружков, секций и центров${city ? ` в городе ${city}` : ""}${q ? ` по запросу «${q}»` : ""} с фильтрами по возрасту, цене и направлению.`.slice(0, 159)}
+        path={`/search${params.toString() ? `?${params.toString()}` : ""}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: `${searchTitle} — BalaBagdar`,
+          description: `Детские кружки и центры${city ? ` в городе ${city}` : ""}`,
+          mainEntity: {
+            "@type": "ItemList",
+            itemListElement: (clubs || []).slice(0, 20).map((c: any, i: number) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: tField(c, "name"),
+              url: `https://balabagdar.kz/club/${c.id}`,
+            })),
+          },
+        }}
+      />
       {/* Header */}
       <div
         className="px-4 pt-4 pb-4 border-b-[3px]"
