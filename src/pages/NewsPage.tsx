@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/components/AuthModal";
+import SEO from "@/components/SEO";
 
 interface EventItem {
   id: string;
@@ -196,6 +197,33 @@ const NewsPage = ({ city }: { city: string }) => {
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
+      <SEO
+        title={`События для детей в ${city} | BalaBagdar`.slice(0, 60)}
+        description={`Афиша детских событий, мастер-классов и праздников в городе ${city}. Актуальные даты, описание и контакты организаторов.`.slice(0, 159)}
+        path="/news"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: `События для детей в ${city}`,
+          itemListElement: events
+            .filter((e) => e.event_date)
+            .slice(0, 20)
+            .map((e, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              item: {
+                "@type": "Event",
+                name: e.title,
+                startDate: e.event_date,
+                description: (e.body || "").slice(0, 300),
+                eventStatus: "https://schema.org/EventScheduled",
+                location: { "@type": "Place", name: e.city, address: e.city },
+                organizer: { "@type": "Organization", name: e.name || "BalaBagdar" },
+                ...(e.image_url ? { image: e.image_url } : {}),
+              },
+            })),
+        }}
+      />
       {/* Header banner */}
       <div className="relative h-44 rounded-b-3xl overflow-hidden" style={{ background: "var(--gradient-header)" }}>
         <div className="absolute inset-0 flex items-center justify-between px-5">
