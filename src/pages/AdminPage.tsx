@@ -411,7 +411,9 @@ const AdminPage = () => {
             <p className="text-xs text-muted-foreground mt-3">⚠️ Сохраните пароли — они показываются только сейчас.</p>
           </div>
         )}
+        </>)}
 
+        {tab === "bookings" && (
         <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
           <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
             <h2 className="text-lg font-black">📨 Все заявки на бронь</h2>
