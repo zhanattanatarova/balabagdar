@@ -772,7 +772,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <BrandLogo size="sm" />{city}<ChevronDown size={18} className="text-primary-foreground" />
           </button>
         </div>
+        <h1 className="text-center font-black text-sm mb-2 text-primary-foreground">
+          {t("home.h1") !== "home.h1" ? t("home.h1") : `Детские кружки, секции и центры в ${city}`}
+        </h1>
         <div className="relative">
+
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "hsl(145, 70%, 35%)" }} />
           <input
             value={searchQuery}
