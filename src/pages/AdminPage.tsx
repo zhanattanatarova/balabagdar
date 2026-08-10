@@ -54,6 +54,10 @@ const AdminPage = () => {
   const [usersLoading, setUsersLoading] = useState(false);
   const [userQuery, setUserQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "parent" | "club_owner" | "admin">("all");
+  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "create">("clubs");
+  const [clubs, setClubs] = useState<any[]>([]);
+  const [clubsLoading, setClubsLoading] = useState(false);
+  const [clubQuery, setClubQuery] = useState("");
 
   const [form, setForm] = useState({
     name: "",
