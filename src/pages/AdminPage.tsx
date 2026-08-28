@@ -222,7 +222,7 @@ const AdminPage = () => {
     const base = slugifyEmail(form.name);
     setForm((f) => ({
       ...f,
-      email: f.email || `${base}-${Math.floor(Math.random() * 9999)}@balabagdar.kz`,
+      email: f.email || `${base}-${Math.floor(Math.random() * 9999)}@bala-hub.kz`,
       password: f.password || genPassword(),
     }));
   };

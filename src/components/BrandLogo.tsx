@@ -1,4 +1,4 @@
-import logo from "@/assets/balabagdar-logo.png";
+import logo from "@/assets/balahub-logo.png";
 import { cn } from "@/lib/utils";
 
 type BrandLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
@@ -19,7 +19,7 @@ const sizeMap: Record<BrandLogoSize, { box: string; img: string }> = {
   xl: { box: "w-36 h-36", img: "w-32 h-32" },
 };
 
-const BrandLogo = ({ size = "sm", className, alt = "BalaBagdar", framed = true }: BrandLogoProps) => {
+const BrandLogo = ({ size = "sm", className, alt = "BalaHub", framed = true }: BrandLogoProps) => {
   const { box, img } = sizeMap[size];
 
   if (!framed) {

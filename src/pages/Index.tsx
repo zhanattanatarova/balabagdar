@@ -69,29 +69,29 @@ import SEO from "@/components/SEO";
 
 const seoByPath: Record<string, { title: string; description: string; path: string; noindex?: boolean }> = {
   "/": {
-    title: "BalaBagdar — балалар үйірмелері мен мамандар Қазақстанда",
+    title: "BalaHub — балалар үйірмелері мен мамандар Қазақстанда",
     description: "Қазақстанның 35 қаласындағы балалар үйірмелері, секциялар мен мамандарды тауып, броньдаңыз.",
     path: "/",
   },
   "/map": {
-    title: "Үйірмелер картасы — BalaBagdar",
+    title: "Үйірмелер картасы — BalaHub",
     description: "Қалаңыздағы балалар үйірмелерін картадан тауып, жақын маңдағыларды көріңіз.",
     path: "/map",
   },
   "/news": {
-    title: "Балаларға арналған іс-шаралар — BalaBagdar",
+    title: "Балаларға арналған іс-шаралар — BalaHub",
     description: "Қазақстандағы балаларға арналған жаңалықтар, мерекелер мен іс-шаралар.",
     path: "/news",
   },
   "/board": {
-    title: "Хабарландыру тақтасы — BalaBagdar",
+    title: "Хабарландыру тақтасы — BalaHub",
     description: "Жұмыс іздеу, маман керек, бала күтуші — балалар саласындағы хабарландырулар.",
     path: "/board",
   },
-  "/profile": { title: "Профиль — BalaBagdar", description: "Жеке профиль және баптаулар.", path: "/profile" },
-  "/notifications": { title: "Хабарламалар — BalaBagdar", description: "Жеке хабарламалар.", path: "/notifications", noindex: true },
-  "/dashboard": { title: "Басқару панелі — BalaBagdar", description: "Үйірме иесіне арналған панель.", path: "/dashboard", noindex: true },
-  "/club/edit": { title: "Үйірмені өңдеу — BalaBagdar", description: "Үйірме профилін өңдеу.", path: "/club/edit", noindex: true },
+  "/profile": { title: "Профиль — BalaHub", description: "Жеке профиль және баптаулар.", path: "/profile" },
+  "/notifications": { title: "Хабарламалар — BalaHub", description: "Жеке хабарламалар.", path: "/notifications", noindex: true },
+  "/dashboard": { title: "Басқару панелі — BalaHub", description: "Үйірме иесіне арналған панель.", path: "/dashboard", noindex: true },
+  "/club/edit": { title: "Үйірмені өңдеу — BalaHub", description: "Үйірме профилін өңдеу.", path: "/club/edit", noindex: true },
 };
 
 const Index = () => {

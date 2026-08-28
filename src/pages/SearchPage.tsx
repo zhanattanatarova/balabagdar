@@ -108,13 +108,13 @@ const SearchPage = () => {
   return (
     <div className="min-h-screen bg-background pb-28 max-w-6xl mx-auto">
       <SEO
-        title={`${searchTitle} — поиск кружков | BalaBagdar`.slice(0, 60)}
+        title={`${searchTitle} — поиск кружков | BalaHub`.slice(0, 60)}
         description={`Подборка детских кружков, секций и центров${city ? ` в городе ${city}` : ""}${q ? ` по запросу «${q}»` : ""} с фильтрами по возрасту, цене и направлению.`.slice(0, 159)}
         path={`/search${params.toString() ? `?${params.toString()}` : ""}`}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "CollectionPage",
-          name: `${searchTitle} — BalaBagdar`,
+          name: `${searchTitle} — BalaHub`,
           description: `Детские кружки и центры${city ? ` в городе ${city}` : ""}`,
           mainEntity: {
             "@type": "ItemList",
@@ -122,7 +122,7 @@ const SearchPage = () => {
               "@type": "ListItem",
               position: i + 1,
               name: tField(c, "name"),
-              url: `https://balabagdar.kz/club/${c.id}`,
+              url: `https://bala-hub.kz/club/${c.id}`,
             })),
           },
         }}

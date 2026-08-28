@@ -10,7 +10,7 @@ export const translations = {
  "nav.board": { ru: "Доска", kz: "Тақта", en: "Board" },
 
   // Auth
-  "auth.title": { ru: "Вход в BalaBagdar", kz: "BalaBagdar-ға кіру", en: "Sign in to BalaBagdar" },
+  "auth.title": { ru: "Вход в BalaHub", kz: "BalaHub-ға кіру", en: "Sign in to BalaHub" },
   "auth.phone_label": { ru: "Номер телефона", kz: "Телефон нөмірі", en: "Phone number" },
   "auth.phone_placeholder": { ru: "+7 777 123 4567", kz: "+7 777 123 4567", en: "+7 777 123 4567" },
   "auth.get_code": { ru: "Получить код", kz: "Код алу", en: "Get code" },

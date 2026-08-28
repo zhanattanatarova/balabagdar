@@ -198,7 +198,7 @@ const NewsPage = ({ city }: { city: string }) => {
   return (
     <div className="pb-24 max-w-6xl mx-auto">
       <SEO
-        title={`События для детей в ${city} | BalaBagdar`.slice(0, 60)}
+        title={`События для детей в ${city} | BalaHub`.slice(0, 60)}
         description={`Афиша детских событий, мастер-классов и праздников в городе ${city}. Актуальные даты, описание и контакты организаторов.`.slice(0, 159)}
         path="/news"
         jsonLd={{
@@ -218,7 +218,7 @@ const NewsPage = ({ city }: { city: string }) => {
                 description: (e.body || "").slice(0, 300),
                 eventStatus: "https://schema.org/EventScheduled",
                 location: { "@type": "Place", name: e.city, address: e.city },
-                organizer: { "@type": "Organization", name: e.name || "BalaBagdar" },
+                organizer: { "@type": "Organization", name: e.name || "BalaHub" },
                 ...(e.image_url ? { image: e.image_url } : {}),
               },
             })),

@@ -60,7 +60,7 @@ const ClubDetailPage = () => {
   return (
     <div className="pb-24 max-w-2xl mx-auto">
       <SEO
-        title={`${name} — ${club.city} | BalaBagdar`}
+        title={`${name} — ${club.city} | BalaHub`}
         description={(description || `${name} — балалар үйірмесі ${club.city} қаласында.`).slice(0, 160)}
         path={`/club/${club.id}`}
         image={safeImageUrl(club.avatar_url) || undefined}

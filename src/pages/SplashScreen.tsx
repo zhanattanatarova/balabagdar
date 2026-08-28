@@ -25,7 +25,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         <BrandLogo size="xl" className="drop-shadow-2xl" />
       </div>
       <h1 className="text-4xl font-black text-primary-foreground tracking-tight mt-4 animate-fade-in drop-shadow-lg">
-        BalaBagdar
+        BalaHub
       </h1>
       <p className="text-primary-foreground/80 mt-2 text-sm font-bold animate-fade-in" style={{ animationDelay: "0.15s" }}>
         Все кружки и специалисты для детей
