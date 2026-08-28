@@ -298,6 +298,7 @@ const MapPage = ({ city }: { city: string }) => {
           <FitBounds points={markers.map((m) => [m.lat!, m.lng!])} />
         </MapContainer>
       </div>
+      )}
 
       <div className="px-4 mt-5">
         <h2 className="section-title mb-3 flex items-center gap-2">
