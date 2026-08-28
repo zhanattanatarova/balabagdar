@@ -6,14 +6,14 @@ const SecurityPage = () => {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-background pb-24">
-      <SEO title="Безопасность и приватность | BalaBagdar" description="Как BalaBagdar защищает данные родителей и центров: доступ к контактам, хранение данных, модерация отзывов и объявлений." path="/security" />
+      <SEO title="Безопасность и приватность | BalaHub" description="Как BalaHub защищает данные родителей и центров: доступ к контактам, хранение данных, модерация отзывов и объявлений." path="/security" />
       <div className="max-w-3xl mx-auto px-4 pt-6 sm:pt-10">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-bold mb-6 text-muted-foreground hover:text-foreground">
           <ArrowLeft size={16} /> Назад
         </button>
 
         <h1 className="text-3xl sm:text-4xl font-black mb-2">Безопасность и приватность</h1>
-        <p className="text-muted-foreground mb-6">Как мы защищаем ваши данные на BalaBagdar.</p>
+        <p className="text-muted-foreground mb-6">Как мы защищаем ваши данные на BalaHub.</p>
 
         <Section icon={<ShieldCheck className="text-primary" size={22} />} title="Что мы защищаем">
           Учётные записи, ваши заявки, отзывы и контактные данные. Доступ к личной информации
@@ -38,7 +38,7 @@ const SecurityPage = () => {
 
         <Section icon={<Mail className="text-primary" size={22} />} title="Связь по вопросам безопасности">
           Если вы заметили уязвимость или подозрительную активность — напишите нам:
-          <a href="mailto:support@balabagdar.kz" className="text-primary font-bold ml-1">support@balabagdar.kz</a>.
+          <a href="mailto:support@bala-hub.kz" className="text-primary font-bold ml-1">support@bala-hub.kz</a>.
         </Section>
 
         <p className="text-xs text-muted-foreground mt-6">

@@ -18,4 +18,4 @@ Disallow: /club/edit
 Disallow: /notifications
 Disallow: /security
 
-Sitemap: https://balabagdar.kz/sitemap.xml
+Sitemap: https://bala-hub.kz/sitemap.xml

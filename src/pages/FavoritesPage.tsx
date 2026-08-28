@@ -8,7 +8,7 @@ const FavoritesPage = () => {
   const { t } = useLanguage();
   return (
     <div className="pb-24 max-w-6xl mx-auto min-h-screen">
-      <SEO title="Мои кружки — сохранённые центры | BalaBagdar" description="Список кружков и детских центров, которые вы сохранили на BalaBagdar. Возвращайтесь к понравившимся секциям в один клик." path="/favorites" />
+      <SEO title="Мои кружки — сохранённые центры | BalaHub" description="Список кружков и детских центров, которые вы сохранили на BalaHub. Возвращайтесь к понравившимся секциям в один клик." path="/favorites" />
       <div className="flex items-center gap-3 p-4">
         <button onClick={() => navigate("/profile")} className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
           <ArrowLeft size={18} />

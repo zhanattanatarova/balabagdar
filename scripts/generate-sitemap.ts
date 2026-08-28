@@ -2,7 +2,7 @@
 import { writeFileSync } from "fs";
 import { resolve } from "path";
 
-const BASE_URL = "https://balabagdar.kz";
+const BASE_URL = "https://bala-hub.kz";
 
 interface SitemapEntry {
   path: string;
