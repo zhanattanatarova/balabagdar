@@ -9,9 +9,9 @@ import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const mapStrings = {
-  kz: { title: "🗺️ Үйірмелер картасы", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық үйірмелер", no_clubs: "Бұл қалада әзірге үйірмелер жоқ" },
-  ru: { title: "🗺️ Карта кружков", geocoding: "геокодинг…", nearby: "Рядом со мной", profile: "Профиль", call: "Звонок", open_profile: "Открыть профиль", phone: "Позвонить", all_clubs: "Все кружки", no_clubs: "Пока нет кружков в этом городе" },
-  en: { title: "🗺️ Clubs map", geocoding: "geocoding…", nearby: "Near me", profile: "Profile", call: "Call", open_profile: "Open profile", phone: "Call", all_clubs: "All clubs", no_clubs: "No clubs in this city yet" },
+  kz: { title: "🏫 Орталықтар мен үйірмелер", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық орталықтар", no_clubs: "Бұл қалада әзірге үйірмелер жоқ", show_map: "Картаны көрсету", hide_map: "Картаны жасыру" },
+  ru: { title: "🏫 Центры и кружки", geocoding: "геокодинг…", nearby: "Рядом со мной", profile: "Профиль", call: "Звонок", open_profile: "Открыть профиль", phone: "Позвонить", all_clubs: "Все центры", no_clubs: "Пока нет кружков в этом городе", show_map: "Показать карту", hide_map: "Скрыть карту" },
+  en: { title: "🏫 Centers & clubs", geocoding: "geocoding…", nearby: "Near me", profile: "Profile", call: "Call", open_profile: "Open profile", phone: "Call", all_clubs: "All centers", no_clubs: "No clubs in this city yet", show_map: "Show map", hide_map: "Hide map" },
 };
 
 // Fix default marker icons (Vite asset URLs)
