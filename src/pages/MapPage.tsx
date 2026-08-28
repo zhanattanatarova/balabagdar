@@ -117,6 +117,7 @@ const MapPage = ({ city }: { city: string }) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showMap, setShowMap] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
