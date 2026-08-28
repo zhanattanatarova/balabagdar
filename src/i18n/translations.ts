@@ -3,7 +3,7 @@ export type Lang = "ru" | "kz" | "en";
 export const translations = {
   // Nav
   "nav.home": { ru: "Главная", kz: "Басты бет", en: "Home" },
-  "nav.map": { ru: "Карта", kz: "Карта", en: "Map" },
+  "nav.map": { ru: "Центры", kz: "Орталықтар", en: "Centers" },
   "nav.events": { ru: "События", kz: "Оқиғалар", en: "Events" },
   "nav.profile": { ru: "Профиль", kz: "Профиль", en: "Profile" },
  "nav.dashboard": { ru: "Кабинет", kz: "Кабинет", en: "Dashboard" },

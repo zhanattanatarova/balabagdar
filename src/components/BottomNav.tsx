@@ -12,7 +12,7 @@ const BottomNav = () => {
 
   const tabs = [
     { path: "/", icon: Home, label: t("nav.home") },
-    { path: "/map", icon: MapPin, label: t("nav.map") },
+    { path: "/map", icon: Building2, label: t("nav.map") },
     { path: "/board", icon: Megaphone, label: t("nav.board") },
     { path: "/news", icon: Calendar, label: t("nav.events") },
     { path: "/profile", icon: User, label: t("nav.profile") },

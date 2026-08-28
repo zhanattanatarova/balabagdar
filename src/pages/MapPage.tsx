@@ -9,9 +9,9 @@ import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const mapStrings = {
-  kz: { title: "🗺️ Үйірмелер картасы", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық үйірмелер", no_clubs: "Бұл қалада әзірге үйірмелер жоқ" },
-  ru: { title: "🗺️ Карта кружков", geocoding: "геокодинг…", nearby: "Рядом со мной", profile: "Профиль", call: "Звонок", open_profile: "Открыть профиль", phone: "Позвонить", all_clubs: "Все кружки", no_clubs: "Пока нет кружков в этом городе" },
-  en: { title: "🗺️ Clubs map", geocoding: "geocoding…", nearby: "Near me", profile: "Profile", call: "Call", open_profile: "Open profile", phone: "Call", all_clubs: "All clubs", no_clubs: "No clubs in this city yet" },
+  kz: { title: "🏫 Орталықтар мен үйірмелер", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық орталықтар", no_clubs: "Бұл қалада әзірге үйірмелер жоқ", show_map: "Картаны көрсету", hide_map: "Картаны жасыру" },
+  ru: { title: "🏫 Центры и кружки", geocoding: "геокодинг…", nearby: "Рядом со мной", profile: "Профиль", call: "Звонок", open_profile: "Открыть профиль", phone: "Позвонить", all_clubs: "Все центры", no_clubs: "Пока нет кружков в этом городе", show_map: "Показать карту", hide_map: "Скрыть карту" },
+  en: { title: "🏫 Centers & clubs", geocoding: "geocoding…", nearby: "Near me", profile: "Profile", call: "Call", open_profile: "Open profile", phone: "Call", all_clubs: "All centers", no_clubs: "No clubs in this city yet", show_map: "Show map", hide_map: "Hide map" },
 };
 
 // Fix default marker icons (Vite asset URLs)
@@ -117,6 +117,7 @@ const MapPage = ({ city }: { city: string }) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showMap, setShowMap] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
@@ -220,14 +221,24 @@ const MapPage = ({ city }: { city: string }) => {
           )}
         </div>
         <button
-          onClick={handleLocate}
-          className="inline-flex items-center gap-2 bg-card border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full shrink-0"
+          onClick={() => setShowMap((v) => !v)}
+          className={`inline-flex items-center gap-2 border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full shrink-0 ${showMap ? "bg-primary text-primary-foreground" : "bg-card"}`}
           style={{ boxShadow: "var(--shadow-cartoon)" }}
         >
-          <Navigation size={14} /> {mt.nearby}
+          <MapIcon size={14} /> {showMap ? mt.hide_map : mt.show_map}
         </button>
+        {showMap && (
+          <button
+            onClick={handleLocate}
+            className="inline-flex items-center gap-2 bg-card border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full shrink-0"
+            style={{ boxShadow: "var(--shadow-cartoon)" }}
+          >
+            <Navigation size={14} /> {mt.nearby}
+          </button>
+        )}
       </div>
 
+      {showMap && (
       <div
         className="mx-4 rounded-2xl overflow-hidden border-[3px] border-foreground/8 bg-muted"
         style={{ boxShadow: "var(--shadow-cartoon-lg)", height: "55vh", minHeight: 360 }}
@@ -287,6 +298,7 @@ const MapPage = ({ city }: { city: string }) => {
           <FitBounds points={markers.map((m) => [m.lat!, m.lng!])} />
         </MapContainer>
       </div>
+      )}
 
       <div className="px-4 mt-5">
         <h2 className="section-title mb-3 flex items-center gap-2">
