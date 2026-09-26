@@ -45,6 +45,8 @@ interface Club {
   avatar_url: string | null;
   twogis_url?: string | null;
   city: string;
+  latitude?: number | null;
+  longitude?: number | null;
   lat?: number;
   lng?: number;
 }
@@ -133,16 +135,21 @@ const MapPage = ({ city }: { city: string }) => {
       setLoading(true);
       const { data } = await supabase
         .from("clubs")
-        .select("id,name_ru,name_kz,name_en,address,phone,rating,reviews_count,price_from,price_currency,categories,age_min,age_max,avatar_url,twogis_url,city")
+        .select("id,name_ru,name_kz,name_en,address,phone,rating,reviews_count,price_from,price_currency,categories,age_min,age_max,avatar_url,twogis_url,city,latitude,longitude")
         .eq("is_active", true)
         .eq("city", city);
-      const list = ((data as any) || []) as Club[];
+      const list = (((data as any) || []) as Club[]).map((club) => ({
+        ...club,
+        lat: club.latitude ?? undefined,
+        lng: club.longitude ?? undefined,
+      }));
       setClubs(list);
       setLoading(false);
 
       // Geocode addresses progressively
       setGeocoding(true);
       for (const club of list) {
+        if (club.lat && club.lng) continue;
         if (!club.address) continue;
         const coords = await geocode(`${club.address}, ${club.city}, Казахстан`);
         if (coords) {
