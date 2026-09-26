@@ -26,7 +26,7 @@ const getInitial = (name?: string | null) => {
 
 const ClubInitialAvatar = ({ name, size = "md", className }: ClubInitialAvatarProps) => {
   const initial = getInitial(name);
-  const tone = toneClasses[initial.codePointAt(0)! % toneClasses.length];
+  const tone = toneClasses[(initial.codePointAt(0) ?? 0) % toneClasses.length];
 
   return (
     <div
