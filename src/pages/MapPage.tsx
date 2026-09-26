@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
 import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
 import { useLanguage } from "@/hooks/useLanguage";
+import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 
 const mapStrings = {
   kz: { title: "🏫 Орталықтар мен үйірмелер", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық орталықтар", no_clubs: "Бұл қалада әзірге үйірмелер жоқ", show_map: "Картаны көрсету", hide_map: "Картаны жасыру" },
@@ -342,12 +343,7 @@ const MapPage = ({ city }: { city: string }) => {
                       style={{ width: 52, height: 52 }}
                     />
                   ) : (
-                    <div
-                      className="rounded-xl bg-muted flex items-center justify-center"
-                      style={{ width: 52, height: 52 }}
-                    >
-                      <MapPin size={20} className="text-muted-foreground" />
-                    </div>
+                    <ClubInitialAvatar name={club.name_ru} size="md" className="h-[52px] w-[52px]" />
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="font-black text-sm truncate">{club.name_ru}</p>
