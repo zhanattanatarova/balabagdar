@@ -24,6 +24,16 @@ export const translations = {
   "auth.open_bot": { ru: "Открыть бота", kz: "Ботты ашу", en: "Open bot" },
   "auth.waiting": { ru: "Ожидаю привязку…", kz: "Байланысты күтемін…", en: "Waiting for link…" },
   "auth.retry": { ru: "Повторить", kz: "Қайталау", en: "Retry" },
+  "auth.login": { ru: "Вход", kz: "Кіру", en: "Sign in" },
+  "auth.register": { ru: "Регистрация", kz: "Тіркелу", en: "Register" },
+  "auth.login_subtitle": { ru: "Номер телефона и пароль", kz: "Телефон нөмірі және құпиясөз", en: "Phone number and password" },
+  "auth.password": { ru: "Пароль", kz: "Құпиясөз", en: "Password" },
+  "auth.forgot_password": { ru: "Забыли пароль?", kz: "Құпиясөзді ұмыттыңыз ба?", en: "Forgot password?" },
+  "auth.reset_password": { ru: "Восстановление пароля", kz: "Құпиясөзді қалпына келтіру", en: "Reset password" },
+  "auth.telegram_code_hint": { ru: "Код подтверждения придёт в Telegram", kz: "Растау коды Telegram-ға келеді", en: "The confirmation code will arrive in Telegram" },
+  "auth.new_password": { ru: "Новый пароль (мин. 6 символов)", kz: "Жаңа құпиясөз (кемінде 6 таңба)", en: "New password (min. 6 characters)" },
+  "auth.create_password": { ru: "Придумайте пароль (мин. 6 символов)", kz: "Құпиясөз ойлап табыңыз (кемінде 6 таңба)", en: "Create a password (min. 6 characters)" },
+  "auth.back_to_login": { ru: "Назад ко входу", kz: "Кіруге оралу", en: "Back to sign in" },
 
   // Role selection
   "role.title": { ru: "Кто вы?", kz: "Сіз кімсіз?", en: "Who are you?" },
@@ -42,6 +52,8 @@ export const translations = {
   "home.not_found": { ru: "Ничего не найдено", kz: "Ештеңе табылмады", en: "Nothing found" },
   "home.free_banner_title": { ru: "🎉 Бесплатная доска объявлений", kz: "🎉 Тегін хабарландырулар тақтасы", en: "🎉 Free bulletin board" },
   "home.free_banner_text": { ru: "Размещайте кружки и события бесплатно — мы собираем лучшую базу детских занятий Казахстана!", kz: "Үйірмелер мен оқиғаларды тегін орналастырыңыз — біз Қазақстанның балалар сабақтарының ең жақсы базасын жинаймыз!", en: "List clubs and events for free — we're building the best database of children's activities in Kazakhstan!" },
+  "home.city_heading": { ru: "Детские кружки, секции и центры в {city}", kz: "{city} қаласындағы балалар үйірмелері, секциялар мен орталықтар", en: "Kids' clubs, activities and centers in {city}" },
+  "home.find": { ru: "Найти", kz: "Іздеу", en: "Search" },
   "age.label": { ru: "Возраст:", kz: "Жас:", en: "Age:" },
   "age.any": { ru: "Любой", kz: "Кез келген", en: "Any" },
   "age.0_3": { ru: "0–3 лет", kz: "0–3 жас", en: "0–3 yrs" },
@@ -378,6 +390,12 @@ export const translations = {
   "profile.guest_desc": { ru: "Войдите для полного доступа", kz: "Толық қол жеткізу үшін кіріңіз", en: "Sign in for full access" },
   "profile.free_access": { ru: "🎉 Бесплатный доступ ко всем функциям", kz: "🎉 Барлық функцияларға тегін қол жеткізу", en: "🎉 Free access to all features" },
   "profile.language": { ru: "Язык", kz: "Тіл", en: "Language" },
+  "profile.legal": { ru: "Правовая информация", kz: "Құқықтық ақпарат", en: "Legal information" },
+  "profile.contact_hint": { ru: "Выберите удобный способ связи:", kz: "Ыңғайлы байланыс тәсілін таңдаңыз:", en: "Choose a contact method:" },
+  "profile.write_chat": { ru: "Написать в чат", kz: "Чатқа жазу", en: "Message us" },
+  "profile.open_telegram": { ru: "Открыть в Telegram", kz: "Telegram-да ашу", en: "Open in Telegram" },
+  "profile.copy_phone": { ru: "Скопировать номер", kz: "Нөмірді көшіру", en: "Copy number" },
+  "profile.phone_copied": { ru: "Номер скопирован", kz: "Нөмір көшірілді", en: "Number copied" },
 
   // Club dashboard
   "dashboard.my_club": { ru: "Мой кабинет", kz: "Менің кабинетім", en: "My cabinet" },
@@ -422,6 +440,14 @@ export const translations = {
   "common.loading": { ru: "Загрузка...", kz: "Жүктеу...", en: "Loading..." },
   "common.logged_out": { ru: "Вы вышли", kz: "Сіз шықтыңыз", en: "You logged out" },
   "common.bye": { ru: "До встречи! 👋", kz: "Кездескенше! 👋", en: "See you! 👋" },
+  "common.close": { ru: "Закрыть", kz: "Жабу", en: "Close" },
+  "common.clear": { ru: "Очистить", kz: "Тазалау", en: "Clear" },
+  "common.found": { ru: "Найдено", kz: "Табылды", en: "Found" },
+  "search.filter": { ru: "Фильтр:", kz: "Сүзгі:", en: "Filter:" },
+  "search.all_city": { ru: "все кружки в городе", kz: "қаладағы барлық үйірмелер", en: "all clubs in the city" },
+  "search.try_filters": { ru: "Попробуйте убрать часть фильтров или сменить город", kz: "Кейбір сүзгілерді алып тастаңыз немесе қаланы ауыстырыңыз", en: "Try removing some filters or changing the city" },
+  "search.all_category": { ru: "Все", kz: "Барлығы", en: "All" },
+  "map.search": { ru: "Поиск по названию или адресу", kz: "Атауы немесе мекенжайы бойынша іздеу", en: "Search by name or address" },
 
   // News
   "news.today_in": { ru: "Сегодня в", kz: "Бүгін", en: "Today in" },
