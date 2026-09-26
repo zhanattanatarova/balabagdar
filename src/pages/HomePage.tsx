@@ -217,31 +217,6 @@ const distanceInKm = (fromLat: number, fromLng: number, toLat: number, toLng: nu
   return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
-const geocodeClub = async (club: Record<string, any>): Promise<[number, number] | null> => {
-  if (typeof club.latitude === "number" && typeof club.longitude === "number") {
-    return [club.latitude, club.longitude];
-  }
-  if (!club.address) return null;
-  const query = `${club.address}, ${club.city}, Казахстан`;
-  const key = `geo:${query}`;
-  try {
-    const cached = localStorage.getItem(key);
-    if (cached) return JSON.parse(cached) as [number, number];
-  } catch {}
-  try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`, {
-      headers: { "Accept-Language": "ru" },
-    });
-    const result = await response.json();
-    if (!result?.[0]) return null;
-    const coordinates: [number, number] = [Number(result[0].lat), Number(result[0].lon)];
-    try { localStorage.setItem(key, JSON.stringify(coordinates)); } catch {}
-    return coordinates;
-  } catch {
-    return null;
-  }
-};
-
 interface HomePageProps {
   city: string;
   setCity: (city: string) => void;
@@ -393,9 +368,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         query = query.lte("age_min", hi).gte("age_max", lo);
       }
 
-      const { data } = await query
-        .order("rating", { ascending: false })
-        .limit(50);
+      const { data } = await query;
       setClubs(data || []);
       setLoadingClubs(false);
     };
@@ -426,11 +399,10 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         .eq("is_active", true);
       const located: NearbyClub[] = [];
       for (const club of data || []) {
-        const position = await geocodeClub(club);
-        if (!position) continue;
+        if (typeof club.latitude !== "number" || typeof club.longitude !== "number") continue;
         located.push({
           ...club,
-          distanceKm: distanceInKm(coords.latitude, coords.longitude, position[0], position[1]),
+          distanceKm: distanceInKm(coords.latitude, coords.longitude, club.latitude, club.longitude),
         });
       }
       setNearbyClubs(located.sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 3));
