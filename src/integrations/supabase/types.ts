@@ -177,6 +177,8 @@ export type Database = {
           id: string
           instagram: string | null
           is_active: boolean | null
+          latitude: number | null
+          longitude: number | null
           name_en: string | null
           name_kz: string | null
           name_ru: string
@@ -189,6 +191,7 @@ export type Database = {
           twogis_url: string | null
           updated_at: string
           user_id: string
+          views_count: number
           whatsapp: string | null
         }
         Insert: {
@@ -207,6 +210,8 @@ export type Database = {
           id?: string
           instagram?: string | null
           is_active?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
           name_en?: string | null
           name_kz?: string | null
           name_ru?: string
@@ -219,6 +224,7 @@ export type Database = {
           twogis_url?: string | null
           updated_at?: string
           user_id: string
+          views_count?: number
           whatsapp?: string | null
         }
         Update: {
@@ -237,6 +243,8 @@ export type Database = {
           id?: string
           instagram?: string | null
           is_active?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
           name_en?: string | null
           name_kz?: string | null
           name_ru?: string
@@ -249,6 +257,7 @@ export type Database = {
           twogis_url?: string | null
           updated_at?: string
           user_id?: string
+          views_count?: number
           whatsapp?: string | null
         }
         Relationships: []
@@ -474,6 +483,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_club_views: { Args: { _club_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "parent" | "club_owner" | "admin"
