@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Loader2 } from "lucide-react";
+import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Loader2, Navigation } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
@@ -206,6 +206,17 @@ const developmentOptions = [
   { id: "fine_motor", emoji: "✌️" },
 ];
 
+type NearbyClub = Record<string, any> & { distanceKm: number };
+
+const distanceInKm = (fromLat: number, fromLng: number, toLat: number, toLng: number) => {
+  const toRadians = (value: number) => value * Math.PI / 180;
+  const latDistance = toRadians(toLat - fromLat);
+  const lngDistance = toRadians(toLng - fromLng);
+  const a = Math.sin(latDistance / 2) ** 2
+    + Math.cos(toRadians(fromLat)) * Math.cos(toRadians(toLat)) * Math.sin(lngDistance / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
 interface HomePageProps {
   city: string;
   setCity: (city: string) => void;
@@ -249,6 +260,9 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
+  const [nearbyClubs, setNearbyClubs] = useState<NearbyClub[]>([]);
+  const [locating, setLocating] = useState(false);
+  const [locationFailed, setLocationFailed] = useState(false);
   const [ageFilter, setAgeFilter] = useState<"all" | "0-3" | "3-7" | "7-12" | "12+">("all");
 
   // Map a search query to matching club category ids by scanning translations.
@@ -354,9 +368,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         query = query.lte("age_min", hi).gte("age_max", lo);
       }
 
-      const { data } = await query
-        .order("rating", { ascending: false })
-        .limit(50);
+      const { data } = await query;
       setClubs(data || []);
       setLoadingClubs(false);
     };
@@ -364,6 +376,44 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
     const debounce = setTimeout(fetchClubs, searchQuery ? 300 : 0);
     return () => clearTimeout(debounce);
   }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery, ageFilter, matchedCategoryIds]);
+
+  const popularClubs = useMemo(() => [...clubs].sort((a, b) => {
+    const aComplete = Boolean(safeImageUrl(a.avatar_url)) && Number(a.price_from) > 0 ? 1 : 0;
+    const bComplete = Boolean(safeImageUrl(b.avatar_url)) && Number(b.price_from) > 0 ? 1 : 0;
+    return bComplete - aComplete
+      || Number(b.reviews_count || 0) - Number(a.reviews_count || 0)
+      || Number(b.views_count || 0) - Number(a.views_count || 0);
+  }).slice(0, 10), [clubs]);
+
+  const showNearby = () => {
+    if (!navigator.geolocation) {
+      setLocationFailed(true);
+      return;
+    }
+    setLocating(true);
+    setLocationFailed(false);
+    navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+      const { data } = await supabase
+        .from("clubs")
+        .select("*")
+        .eq("is_active", true);
+      const located: NearbyClub[] = [];
+      for (const club of data || []) {
+        if (typeof club.latitude !== "number" || typeof club.longitude !== "number") continue;
+        located.push({
+          ...club,
+          distanceKm: distanceInKm(coords.latitude, coords.longitude, club.latitude, club.longitude),
+        });
+      }
+      setNearbyClubs(located.sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 3));
+      setLocationFailed(located.length === 0);
+      setLocating(false);
+    }, () => {
+      setNearbyClubs([]);
+      setLocationFailed(true);
+      setLocating(false);
+    }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 300000 });
+  };
 
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
@@ -970,7 +1020,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           </div>
         ) : (
           <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
-            {clubs.map((club, i) => {
+            {popularClubs.map((club, i) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
               const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
@@ -1021,14 +1071,23 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         )}
       </div>
 
-      {/* Nearby */}
       <div className="px-4 mt-5">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="section-title">{t("home.nearby")}</h2>
-          <button onClick={() => navigate("/map")} className="text-primary text-sm font-black">{t("home.all")}</button>
-        </div>
+        {nearbyClubs.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 py-2">
+            <button onClick={showNearby} disabled={locating} className="cartoon-btn bg-primary text-primary-foreground px-4 py-2.5 flex items-center gap-2 disabled:opacity-60">
+              {locating ? <Loader2 size={16} className="animate-spin" /> : <Navigation size={16} />}
+              {t(locating ? "home.locating" : "home.show_nearby")}
+            </button>
+            {locationFailed && <p className="text-xs font-bold text-muted-foreground">{t("home.location_unavailable")}</p>}
+          </div>
+        ) : (
+          <>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="section-title">{t("home.nearby")}</h2>
+            <button onClick={() => navigate("/map")} className="text-primary text-sm font-black">{t("home.all")}</button>
+          </div>
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {clubs.slice(0, 3).map((club, i) => {
+          {nearbyClubs.map((club, i) => {
             const name = tField(club.name_ru, club.name_kz, club.name_en);
             const categoryLabels = clubCategoryLabels(club.categories, t);
             return (
@@ -1044,6 +1103,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 </div>
                 <div className="flex-1 min-w-0 py-0.5">
                   <h3 className="font-black text-sm truncate">{name}</h3>
+                   <p className="text-xs font-black text-primary mt-0.5">{club.distanceKm.toLocaleString(lang === "en" ? "en-US" : lang === "kz" ? "kk-KZ" : "ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} {t("common.km")}</p>
                   <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 font-bold"><MapPin size={10} className="text-primary" />{clubLocation(club.city, club.address)}</p>
                   {club.reviews_count > 0 && (
                     <div className="flex items-center gap-3 mt-1.5">
@@ -1068,6 +1128,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             );
           })}
         </div>
+          </>
+        )}
       </div>
     </div>
   );
