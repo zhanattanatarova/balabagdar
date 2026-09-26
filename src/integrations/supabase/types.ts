@@ -122,6 +122,35 @@ export type Database = {
           },
         ]
       }
+      club_events: {
+        Row: {
+          club_id: string
+          created_at: string
+          event_type: string
+          id: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "club_events_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       club_schedules: {
         Row: {
           club_id: string
@@ -476,6 +505,16 @@ export type Database = {
           user_id: string
         }[]
       }
+      club_event_stats: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          calls: number
+          club_id: string
+          instagram: number
+          views: number
+          whatsapp: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -484,6 +523,10 @@ export type Database = {
         Returns: boolean
       }
       increment_club_views: { Args: { _club_id: string }; Returns: undefined }
+      log_club_event: {
+        Args: { _club_id: string; _event_type: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "parent" | "club_owner" | "admin"

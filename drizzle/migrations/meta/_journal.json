@@ -8,6 +8,13 @@
       "when": 1790444552889,
       "tag": "0000_add_club_location_and_views",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790447132263,
+      "tag": "0001_club_events",
+      "breakpoints": true
     }
   ]
 }

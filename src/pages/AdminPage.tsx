@@ -6,6 +6,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
+import AdminClubStats from "@/components/AdminClubStats";
 import { TAXONOMY } from "@/lib/categoriesTaxonomy";
 import { validateImageFileDeep } from "@/lib/uploadValidation";
 import { Button } from "@/components/ui/button";
@@ -67,7 +68,7 @@ const AdminPage = () => {
   const [usersLoading, setUsersLoading] = useState(false);
   const [userQuery, setUserQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "parent" | "club_owner" | "admin">("all");
-  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "posts" | "create">("clubs");
+  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "posts" | "stats" | "create">("clubs");
   const [clubs, setClubs] = useState<any[]>([]);
   const [clubsLoading, setClubsLoading] = useState(false);
   const [clubQuery, setClubQuery] = useState("");
@@ -365,6 +366,7 @@ const AdminPage = () => {
             ["bookings", `📨 Заявки (${bookings.length})`],
             ["users", `👥 Пользователи (${users.length})`],
             ["posts", "📣 Публикации"],
+            ["stats", "📊 Статистика"],
             ["create", "➕ Создать кружок"],
           ] as const).map(([k, label]) => (
             <button
@@ -376,6 +378,8 @@ const AdminPage = () => {
             </button>
           ))}
         </div>
+
+        {tab === "stats" && <AdminClubStats clubs={clubs} />}
 
         {tab === "clubs" && (
           <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">

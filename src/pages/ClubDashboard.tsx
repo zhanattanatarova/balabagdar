@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { Calendar } from "@/components/ui/calendar";
+import PartnerStats from "@/components/PartnerStats";
 import { cn } from "@/lib/utils";
 
 const ClubDashboard = () => {
@@ -89,6 +90,8 @@ const ClubDashboard = () => {
           <Edit size={14} /> {t("dashboard.edit_profile")}
         </button>
       </div>
+
+      <PartnerStats clubId={club.id} />
 
       {/* Tabs */}
       <div className="flex gap-1 px-4 mt-4">
