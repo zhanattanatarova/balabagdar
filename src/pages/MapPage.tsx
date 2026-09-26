@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
 import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
 import { useLanguage } from "@/hooks/useLanguage";
+import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 
 const mapStrings = {
   kz: { title: "🏫 Орталықтар мен үйірмелер", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық орталықтар", no_clubs: "Бұл қалада әзірге үйірмелер жоқ", show_map: "Картаны көрсету", hide_map: "Картаны жасыру" },
@@ -30,6 +31,8 @@ L.Icon.Default.mergeOptions({
 interface Club {
   id: string;
   name_ru: string;
+  name_kz?: string | null;
+  name_en?: string | null;
   address: string | null;
   phone: string | null;
   rating: number | null;
@@ -114,7 +117,7 @@ function FitBounds({ points }: { points: [number, number][] }) {
 }
 
 const MapPage = ({ city }: { city: string }) => {
-  const { lang, t } = useLanguage();
+  const { lang, t, tField } = useLanguage();
   const mt = mapStrings[lang] || mapStrings.ru;
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
@@ -130,7 +133,7 @@ const MapPage = ({ city }: { city: string }) => {
       setLoading(true);
       const { data } = await supabase
         .from("clubs")
-        .select("id,name_ru,address,phone,rating,reviews_count,price_from,price_currency,categories,age_min,age_max,avatar_url,twogis_url,city")
+        .select("id,name_ru,name_kz,name_en,address,phone,rating,reviews_count,price_from,price_currency,categories,age_min,age_max,avatar_url,twogis_url,city")
         .eq("is_active", true)
         .eq("city", city);
       const list = ((data as any) || []) as Club[];
@@ -320,6 +323,7 @@ const MapPage = ({ city }: { city: string }) => {
         ) : (
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
             {filteredClubs.map((club) => {
+              const clubName = tField(club.name_ru, club.name_kz, club.name_en);
               const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
               <div
@@ -342,15 +346,10 @@ const MapPage = ({ city }: { city: string }) => {
                       style={{ width: 52, height: 52 }}
                     />
                   ) : (
-                    <div
-                      className="rounded-xl bg-muted flex items-center justify-center"
-                      style={{ width: 52, height: 52 }}
-                    >
-                      <MapPin size={20} className="text-muted-foreground" />
-                    </div>
+                    <ClubInitialAvatar name={clubName} size="md" className="h-[52px] w-[52px]" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-black text-sm truncate">{club.name_ru}</p>
+                    <p className="font-black text-sm truncate">{clubName}</p>
                     <p className="text-[10px] text-muted-foreground font-bold truncate">{clubLocation(club.city, club.address)}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {clubAge(club.age_min, club.age_max, lang) && (

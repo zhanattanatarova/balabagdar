@@ -8,6 +8,7 @@ import { TAXONOMY, idsForGroup } from "@/lib/categoriesTaxonomy";
 import BottomNav from "@/components/BottomNav";
 import SEO from "@/components/SEO";
 import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
+import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 
 type AgeKey = "all" | "0-3" | "3-7" | "7-12" | "12+";
 
@@ -284,7 +285,7 @@ const SearchPage = () => {
                     {safeImageUrl(club.avatar_url) ? (
                       <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-primary/10 flex items-center justify-center"><span className="text-3xl">🏫</span></div>
+                      <div className="w-full h-full bg-primary/10 flex items-center justify-center"><ClubInitialAvatar name={name} size="md" /></div>
                     )}
                   </div>
                   <div className="p-2.5">

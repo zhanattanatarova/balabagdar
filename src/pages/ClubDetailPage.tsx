@@ -9,6 +9,7 @@ import ClubReviews from "@/components/ClubReviews";
 import SEO from "@/components/SEO";
 import { safeImageUrl } from "@/lib/safeUrl";
 import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
+import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 
 const ClubDetailPage = () => {
   const { id } = useParams();
@@ -84,7 +85,7 @@ const ClubDetailPage = () => {
           <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-primary/10">
-            <span className="text-5xl">🏫</span>
+            <ClubInitialAvatar name={name} size="lg" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />

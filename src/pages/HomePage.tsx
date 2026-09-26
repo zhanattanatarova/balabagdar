@@ -8,6 +8,7 @@ import { safeImageUrl } from "@/lib/safeUrl";
 import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
 import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
+import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 import iconCreativity from "@/assets/icon-creativity.png";
 import iconSport from "@/assets/icon-sport.png";
 import iconDevelopment from "@/assets/icon-development.png";
@@ -980,7 +981,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                     {safeImageUrl(club.avatar_url) ? (
                       <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-primary/10 flex items-center justify-center"><span className="text-3xl">🏫</span></div>
+                      <div className="w-full h-full bg-primary/10 flex items-center justify-center"><ClubInitialAvatar name={name} size="md" /></div>
                     )}
                   </div>
                   <div className="p-2.5">
@@ -1038,7 +1039,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   {safeImageUrl(club.avatar_url) ? (
                     <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-primary/10 flex items-center justify-center"><span className="text-xl">🏫</span></div>
+                    <div className="w-full h-full bg-primary/10 flex items-center justify-center"><ClubInitialAvatar name={name} size="md" className="h-full w-full rounded-none shadow-none" /></div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0 py-0.5">
