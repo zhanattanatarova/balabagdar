@@ -23,6 +23,7 @@ const ClubDetailPage = () => {
 
   useEffect(() => {
     if (!id) return;
+    void supabase.rpc("increment_club_views", { _club_id: id });
     const fetchClub = async () => {
       const { data } = await supabase.from("clubs").select("*").eq("id", id).single();
       setClub(data);
