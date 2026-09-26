@@ -5,6 +5,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { safeImageUrl } from "@/lib/safeUrl";
+import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
 import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
 import iconCreativity from "@/assets/icon-creativity.png";
@@ -211,7 +212,7 @@ interface HomePageProps {
 
 const HomePage = ({ city, setCity }: HomePageProps) => {
   const { user } = useAuth();
-  const { t, tField } = useLanguage();
+  const { t, tField, lang } = useLanguage();
   const navigate = useNavigate();
   const goSearch = (cat: string, sub?: string | null) => {
     const sp = new URLSearchParams();
@@ -970,6 +971,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
             {clubs.map((club, i) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
+              const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
                 <div key={club.id} onClick={() => navigate(`/club/${club.id}`)}
                   className="min-w-[160px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
@@ -983,17 +985,33 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   </div>
                   <div className="p-2.5">
                     <h3 className="font-black text-xs leading-snug line-clamp-1">{name}</h3>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star size={11} className="text-secondary fill-secondary" />
-                      <span className="text-xs font-black">{club.rating || "—"}</span>
-                      <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
-                    </div>
+                    {club.reviews_count > 0 && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <Star size={11} className="text-secondary fill-secondary" />
+                        <span className="text-xs font-black">{club.rating}</span>
+                        <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
+                      </div>
+                    )}
                     <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold">
-                      <MapPin size={10} className="text-primary" />{club.address || club.city}
+                      <MapPin size={10} className="text-primary" />{clubLocation(club.city, club.address)}
                     </p>
-                    <p className="text-[10px] font-bold text-primary mt-1">
-                      {t("club.price")} {club.price_from?.toLocaleString()} {club.price_currency}
-                    </p>
+                    {club.price_from > 0 && (
+                      <p className="text-[10px] font-bold text-primary mt-1">
+                        {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
+                      </p>
+                    )}
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {clubAge(club.age_min, club.age_max, lang) && (
+                        <span className="text-[9px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-lg">
+                          {clubAge(club.age_min, club.age_max, lang)}
+                        </span>
+                      )}
+                      {categoryLabels.map((category) => (
+                        <span key={category.id} className="text-[9px] font-bold bg-muted px-1.5 py-0.5 rounded-lg">
+                          {category.label}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );
@@ -1011,6 +1029,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {clubs.slice(0, 3).map((club, i) => {
             const name = tField(club.name_ru, club.name_kz, club.name_en);
+            const categoryLabels = clubCategoryLabels(club.categories, t);
             return (
               <div key={`nearby-${club.id}`} onClick={() => navigate(`/club/${club.id}`)}
                 className="flex gap-3 cartoon-card p-3 cursor-pointer animate-slide-up"
@@ -1024,13 +1043,23 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 </div>
                 <div className="flex-1 min-w-0 py-0.5">
                   <h3 className="font-black text-sm truncate">{name}</h3>
-                  <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 font-bold"><MapPin size={10} className="text-primary" />{club.address || club.city}</p>
-                  <div className="flex items-center gap-3 mt-1.5">
-                    <div className="flex items-center gap-1">
-                      <Star size={11} className="text-secondary fill-secondary" />
-                      <span className="text-xs font-black">{club.rating || "—"}</span>
+                  <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1 font-bold"><MapPin size={10} className="text-primary" />{clubLocation(club.city, club.address)}</p>
+                  {club.reviews_count > 0 && (
+                    <div className="flex items-center gap-3 mt-1.5">
+                      <div className="flex items-center gap-1">
+                        <Star size={11} className="text-secondary fill-secondary" />
+                        <span className="text-xs font-black">{club.rating}</span>
+                      </div>
+                      <span className="text-xs font-bold text-muted-foreground">{club.reviews_count} {t("club.reviews")}</span>
                     </div>
-                    <span className="text-xs font-bold text-muted-foreground">{club.reviews_count} {t("club.reviews")}</span>
+                  )}
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {clubAge(club.age_min, club.age_max, lang) && (
+                      <span className="text-[9px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-lg">{clubAge(club.age_min, club.age_max, lang)}</span>
+                    )}
+                    {categoryLabels.map((category) => (
+                      <span key={category.id} className="text-[9px] font-bold bg-muted px-1.5 py-0.5 rounded-lg">{category.label}</span>
+                    ))}
                   </div>
                 </div>
                 <ArrowRight size={16} className="text-primary shrink-0 mt-5" />

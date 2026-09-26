@@ -6,6 +6,7 @@ import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon,
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
+import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const mapStrings = {
@@ -32,6 +33,10 @@ interface Club {
   address: string | null;
   phone: string | null;
   rating: number | null;
+  reviews_count: number | null;
+  price_from: number | null;
+  price_currency: string | null;
+  categories: string[] | null;
   age_min: number | null;
   age_max: number | null;
   avatar_url: string | null;
@@ -109,7 +114,7 @@ function FitBounds({ points }: { points: [number, number][] }) {
 }
 
 const MapPage = ({ city }: { city: string }) => {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const mt = mapStrings[lang] || mapStrings.kz;
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
@@ -125,7 +130,7 @@ const MapPage = ({ city }: { city: string }) => {
       setLoading(true);
       const { data } = await supabase
         .from("clubs")
-        .select("id,name_ru,address,phone,rating,age_min,age_max,avatar_url,twogis_url,city")
+        .select("id,name_ru,address,phone,rating,reviews_count,price_from,price_currency,categories,age_min,age_max,avatar_url,twogis_url,city")
         .eq("is_active", true)
         .eq("city", city);
       const list = ((data as any) || []) as Club[];
@@ -263,7 +268,7 @@ const MapPage = ({ city }: { city: string }) => {
             >
               <Popup>
                 <div className="font-bold text-sm">{club.name_ru}</div>
-                {club.address && <div className="text-xs opacity-70">{club.address}</div>}
+                {clubLocation(club.city, club.address) && <div className="text-xs opacity-70">{clubLocation(club.city, club.address)}</div>}
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   <Link
                     to={`/club/${club.id}`}
@@ -314,7 +319,9 @@ const MapPage = ({ city }: { city: string }) => {
           </div>
         ) : (
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
-            {filteredClubs.map((club) => (
+            {filteredClubs.map((club) => {
+              const categoryLabels = clubCategoryLabels(club.categories, t);
+              return (
               <div
                 key={club.id}
                 onClick={() => {
@@ -344,15 +351,28 @@ const MapPage = ({ city }: { city: string }) => {
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="font-black text-sm truncate">{club.name_ru}</p>
-                    <p className="text-[10px] text-muted-foreground font-bold truncate">{club.address}</p>
+                    <p className="text-[10px] text-muted-foreground font-bold truncate">{clubLocation(club.city, club.address)}</p>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {clubAge(club.age_min, club.age_max, lang) && (
+                        <span className="text-[9px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-lg">{clubAge(club.age_min, club.age_max, lang)}</span>
+                      )}
+                      {categoryLabels.map((category) => (
+                        <span key={category.id} className="text-[9px] font-bold bg-muted px-1.5 py-0.5 rounded-lg">{category.label}</span>
+                      ))}
+                    </div>
                   </div>
-                  {club.rating ? (
+                  {(club.reviews_count || 0) > 0 ? (
                     <div className="flex items-center gap-0.5 bg-yellow-light px-2 py-0.5 rounded-full shrink-0">
                       <Star size={10} className="text-primary fill-primary" />
                       <span className="text-xs font-black">{club.rating}</span>
                     </div>
                   ) : null}
                 </div>
+                {club.price_from != null && club.price_from > 0 && (
+                  <p className="text-[10px] font-bold text-primary mt-2">
+                    {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
+                  </p>
+                )}
                 {selected === club.id && (
                   <div className="mt-3 pt-3 border-t border-border flex flex-wrap gap-2">
                     <Link
@@ -385,7 +405,8 @@ const MapPage = ({ city }: { city: string }) => {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
