@@ -138,14 +138,36 @@ const ClubDetailPage = () => {
         </div>
       </div>
 
-      {/* Book button */}
-      <div className="px-4 mt-4">
-        <button
-          onClick={() => setShowBooking(true)}
-          className="w-full bg-primary text-primary-foreground font-black text-base py-3.5 rounded-2xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all"
-        >
-          <Calendar size={18} /> {t("club.book")}
-        </button>
+      {/* Primary actions */}
+      <div className="px-4 mt-4 space-y-2">
+        {(() => {
+          const wa = (club.whatsapp || "").replace(/\D/g, "");
+          const msg = lang === "kz"
+            ? "Сәлеметсіз бе! Сізді BalaHub-тан таптым. Балаға арналған сабақтар туралы білгім келеді."
+            : lang === "en"
+            ? "Hello! I found you on BalaHub. I'd like to learn about classes for my child."
+            : "Здравствуйте! Нашла вас на BalaHub. Хочу узнать про занятия для ребёнка.";
+          const cls = "w-full bg-primary text-primary-foreground font-black text-lg py-4 rounded-2xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all";
+          if (wa) return (
+            <a href={`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`} target="_blank" rel="noopener noreferrer" className={cls}>
+              <MessageCircle size={20} /> {lang === "kz" ? "WhatsApp-қа жазу" : lang === "en" ? "Message on WhatsApp" : "Написать в WhatsApp"}
+            </a>
+          );
+          if (club.phone) return (
+            <a href={`tel:${club.phone.replace(/[^\d+]/g, "")}`} className={cls}>
+              <Phone size={20} /> {t("club.call")}
+            </a>
+          );
+          return null;
+        })()}
+        {schedules.length > 0 && (
+          <button
+            onClick={() => setShowBooking(true)}
+            className="w-full bg-muted text-foreground font-bold text-sm py-3 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+          >
+            <Calendar size={16} /> {t("club.book")}
+          </button>
+        )}
       </div>
 
       {/* Contacts */}
