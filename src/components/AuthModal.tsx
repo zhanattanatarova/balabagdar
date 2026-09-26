@@ -69,7 +69,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       return;
     }
     if (!password) {
-      toast({ title: t("common.error"), description: t("auth.password"), variant: "destructive" });
+      toast({ title: t("common.error"), description: t("auth.enter_password"), variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -80,13 +80,13 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       });
       if (error) {
         toast({
-          title: "Ошибка входа",
-          description: "Неверный номер или пароль. Если забыли пароль — нажмите «Забыли пароль?»",
+          title: t("auth.login_error"),
+          description: t("auth.invalid_credentials"),
           variant: "destructive",
         });
         return;
       }
-      toast({ title: "Вход выполнен" });
+      toast({ title: t("auth.login_success") });
       resetState();
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
@@ -107,7 +107,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       return;
     }
     if (!newPassword || newPassword.length < 6) {
-      toast({ title: t("common.error"), description: "Пароль должен быть не менее 6 символов", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("auth.password_short"), variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -167,8 +167,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       if (error) throw error;
       if (data?.error === "already_registered") {
         toast({
-          title: "Уже зарегистрированы",
-          description: "Этот номер уже зарегистрирован. Войдите по паролю.",
+          title: t("auth.already_registered"),
+          description: t("auth.already_registered_desc"),
           variant: "destructive",
         });
         setFlow("login"); resetState();
@@ -176,8 +176,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       }
       if (data?.error === "not_registered") {
         toast({
-          title: "Не зарегистрированы",
-          description: "Этот номер не зарегистрирован. Пройдите регистрацию.",
+          title: t("auth.not_registered"),
+          description: t("auth.not_registered_desc"),
           variant: "destructive",
         });
         setFlow("register"); resetState();
@@ -190,7 +190,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           refresh_token: data.session.refresh_token,
         });
       }
-      toast({ title: flow === "register" ? "Регистрация завершена" : "Пароль обновлён" });
+      toast({ title: flow === "register" ? t("auth.register_success") : t("auth.password_updated") });
       resetState();
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });

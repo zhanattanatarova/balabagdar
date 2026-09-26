@@ -34,6 +34,17 @@ export const translations = {
   "auth.new_password": { ru: "Новый пароль (мин. 6 символов)", kz: "Жаңа құпиясөз (кемінде 6 таңба)", en: "New password (min. 6 characters)" },
   "auth.create_password": { ru: "Придумайте пароль (мин. 6 символов)", kz: "Құпиясөз ойлап табыңыз (кемінде 6 таңба)", en: "Create a password (min. 6 characters)" },
   "auth.back_to_login": { ru: "Назад ко входу", kz: "Кіруге оралу", en: "Back to sign in" },
+  "auth.enter_password": { ru: "Введите пароль", kz: "Құпиясөзді енгізіңіз", en: "Enter your password" },
+  "auth.login_error": { ru: "Ошибка входа", kz: "Кіру қатесі", en: "Sign-in error" },
+  "auth.invalid_credentials": { ru: "Неверный номер или пароль. Если забыли пароль — нажмите «Забыли пароль?»", kz: "Нөмір немесе құпиясөз қате. Құпиясөзді ұмытсаңыз — «Құпиясөзді ұмыттыңыз ба?» түймесін басыңыз", en: "Incorrect number or password. If you forgot it, tap “Forgot password?”" },
+  "auth.login_success": { ru: "Вход выполнен", kz: "Сәтті кірдіңіз", en: "Signed in" },
+  "auth.password_short": { ru: "Пароль должен быть не менее 6 символов", kz: "Құпиясөз кемінде 6 таңбадан тұруы керек", en: "Password must be at least 6 characters" },
+  "auth.already_registered": { ru: "Уже зарегистрированы", kz: "Бұрын тіркелгенсіз", en: "Already registered" },
+  "auth.already_registered_desc": { ru: "Этот номер уже зарегистрирован. Войдите по паролю.", kz: "Бұл нөмір бұрын тіркелген. Құпиясөзбен кіріңіз.", en: "This number is already registered. Sign in with your password." },
+  "auth.not_registered": { ru: "Не зарегистрированы", kz: "Тіркелмегенсіз", en: "Not registered" },
+  "auth.not_registered_desc": { ru: "Этот номер не зарегистрирован. Пройдите регистрацию.", kz: "Бұл нөмір тіркелмеген. Тіркеуден өтіңіз.", en: "This number is not registered. Please register." },
+  "auth.register_success": { ru: "Регистрация завершена", kz: "Тіркелу аяқталды", en: "Registration complete" },
+  "auth.password_updated": { ru: "Пароль обновлён", kz: "Құпиясөз жаңартылды", en: "Password updated" },
 
   // Role selection
   "role.title": { ru: "Кто вы?", kz: "Сіз кімсіз?", en: "Who are you?" },
@@ -408,6 +419,14 @@ export const translations = {
   "notifications.unread": { ru: "непрочитанных", kz: "оқылмаған", en: "unread" },
   "notifications.done": { ru: "Готово", kz: "Дайын", en: "Done" },
   "notifications.done_desc": { ru: "Все уведомления отмечены как прочитанные", kz: "Барлық хабарламалар оқылды деп белгіленді", en: "All notifications marked as read" },
+  "notifications.event_1_title": { ru: "Фестиваль «Жулдыз» уже завтра!", kz: "«Жұлдыз» фестивалі ертең!", en: "The Zhuldyz Festival is tomorrow!" },
+  "notifications.event_1_desc": { ru: "Не забудьте — 15 марта, парк Горького", kz: "Ұмытпаңыз — 15 наурыз, Горький саябағы", en: "Don't forget — March 15, Gorky Park" },
+  "notifications.promo_title": { ru: "Скидка 20% на первое занятие", kz: "Алғашқы сабаққа 20% жеңілдік", en: "20% off your first class" },
+  "notifications.promo_desc": { ru: "Студия рисования «Кисточка» приглашает!", kz: "«Кисточка» сурет студиясы шақырады!", en: "Kistochka art studio invites you!" },
+  "notifications.new_club_title": { ru: "Новый кружок в вашем районе", kz: "Ауданыңызда жаңа үйірме ашылды", en: "A new club in your area" },
+  "notifications.new_club_desc": { ru: "Робототехника KidsTech открыл филиал рядом", kz: "KidsTech робототехникасы жақын жерде филиал ашты", en: "KidsTech Robotics opened a branch nearby" },
+  "notifications.yesterday": { ru: "Вчера", kz: "Кеше", en: "Yesterday" },
+  "notifications.hours_ago": { ru: "{count} часа назад", kz: "{count} сағат бұрын", en: "{count} hours ago" },
 
   // Club dashboard
   "dashboard.my_club": { ru: "Мой кабинет", kz: "Менің кабинетім", en: "My cabinet" },
