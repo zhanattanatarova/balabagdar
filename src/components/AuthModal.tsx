@@ -69,7 +69,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       return;
     }
     if (!password) {
-      toast({ title: t("common.error"), description: "Введите пароль", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("auth.enter_password"), variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -80,13 +80,13 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       });
       if (error) {
         toast({
-          title: "Ошибка входа",
-          description: "Неверный номер или пароль. Если забыли пароль — нажмите «Забыли пароль?»",
+          title: t("auth.login_error"),
+          description: t("auth.invalid_credentials"),
           variant: "destructive",
         });
         return;
       }
-      toast({ title: "Вход выполнен" });
+      toast({ title: t("auth.login_success") });
       resetState();
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
@@ -107,7 +107,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       return;
     }
     if (!newPassword || newPassword.length < 6) {
-      toast({ title: t("common.error"), description: "Пароль должен быть не менее 6 символов", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("auth.password_short"), variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -167,8 +167,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       if (error) throw error;
       if (data?.error === "already_registered") {
         toast({
-          title: "Уже зарегистрированы",
-          description: "Этот номер уже зарегистрирован. Войдите по паролю.",
+          title: t("auth.already_registered"),
+          description: t("auth.already_registered_desc"),
           variant: "destructive",
         });
         setFlow("login"); resetState();
@@ -176,8 +176,8 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
       }
       if (data?.error === "not_registered") {
         toast({
-          title: "Не зарегистрированы",
-          description: "Этот номер не зарегистрирован. Пройдите регистрацию.",
+          title: t("auth.not_registered"),
+          description: t("auth.not_registered_desc"),
           variant: "destructive",
         });
         setFlow("register"); resetState();
@@ -190,7 +190,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
           refresh_token: data.session.refresh_token,
         });
       }
-      toast({ title: flow === "register" ? "Регистрация завершена" : "Пароль обновлён" });
+      toast({ title: flow === "register" ? t("auth.register_success") : t("auth.password_updated") });
       resetState();
     } catch (err: any) {
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
@@ -217,18 +217,18 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               <div className="flex gap-1 p-1 bg-muted/60 rounded-full mb-4 text-xs">
                 <button onClick={() => switchFlow("login")}
                   className={`flex-1 py-2 rounded-full font-bold transition ${flow === "login" ? "bg-card shadow" : "text-muted-foreground"}`}>
-                  Вход
+                  {t("auth.login")}
                 </button>
                 <button onClick={() => switchFlow("register")}
                   className={`flex-1 py-2 rounded-full font-bold transition ${flow === "register" ? "bg-card shadow" : "text-muted-foreground"}`}>
-                  Регистрация
+                  {t("auth.register")}
                 </button>
               </div>
 
               {flow === "login" && (
                 <>
-                  <h2 className="text-xl font-black text-center">Вход</h2>
-                  <p className="text-sm text-muted-foreground text-center mt-1">Номер телефона и пароль</p>
+                  <h2 className="text-xl font-black text-center">{t("auth.login")}</h2>
+                  <p className="text-sm text-muted-foreground text-center mt-1">{t("auth.login_subtitle")}</p>
                   <div className="mt-6 space-y-3">
                     <div className="relative">
                       <Phone size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -237,15 +237,15 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                     </div>
                     <div className="relative">
                       <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Пароль"
+                      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t("auth.password")}
                         className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold focus:outline-none focus:ring-2 focus:ring-primary" />
                     </div>
                     <button onClick={handleLogin} disabled={loading}
                       className="w-full bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50">
-                      {loading ? <Loader2 size={18} className="animate-spin" /> : <>Войти <ArrowRight size={18} /></>}
+                      {loading ? <Loader2 size={18} className="animate-spin" /> : <>{t("auth.login")} <ArrowRight size={18} /></>}
                     </button>
                     <button onClick={() => switchFlow("reset")} className="w-full text-xs font-bold text-primary py-2">
-                      Забыли пароль?
+                      {t("auth.forgot_password")}
                     </button>
                   </div>
                 </>
@@ -254,15 +254,15 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
               {(flow === "register" || flow === "reset") && step === "phone" && (
                 <>
                   <h2 className="text-xl font-black text-center">
-                    {flow === "register" ? "Регистрация" : "Восстановление пароля"}
+                    {flow === "register" ? t("auth.register") : t("auth.reset_password")}
                   </h2>
                   <p className="text-sm text-muted-foreground text-center mt-1">
-                    Код подтверждения придёт в Telegram
+                    {t("auth.telegram_code_hint")}
                   </p>
                   <div className="mt-6 space-y-3">
                     {flow === "register" && (
                       <div>
-                        <p className="text-xs font-bold text-muted-foreground mb-2 px-1">Кто вы?</p>
+                        <p className="text-xs font-bold text-muted-foreground mb-2 px-1">{t("role.title")}</p>
                         <div className="flex gap-2">
                           <button
                             type="button"
@@ -273,7 +273,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                                 : "bg-muted text-foreground border-transparent"
                             }`}
                           >
-                            👨‍👩‍👧 Родитель
+                            👨‍👩‍👧 {t("role.parent")}
                           </button>
                           <button
                             type="button"
@@ -284,7 +284,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                                 : "bg-muted text-foreground border-transparent"
                             }`}
                           >
-                            🏫 Кружок / Центр
+                            🏫 {t("role.club")}
                           </button>
                         </div>
                       </div>
@@ -297,7 +297,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                     <div className="relative">
                       <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder={flow === "register" ? "Придумайте пароль (мин. 6 символов)" : "Новый пароль (мин. 6 символов)"}
+                        placeholder={flow === "register" ? t("auth.create_password") : t("auth.new_password")}
                         className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-muted text-foreground text-base font-bold focus:outline-none focus:ring-2 focus:ring-primary" />
                     </div>
                     <div className="flex items-center gap-2 p-3 rounded-xl bg-blue-sky">
@@ -310,7 +310,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                     </button>
                     {flow === "reset" && (
                       <button onClick={() => switchFlow("login")} className="w-full text-xs font-bold text-muted-foreground py-2">
-                        Назад ко входу
+                        {t("auth.back_to_login")}
                       </button>
                     )}
                   </div>

@@ -40,6 +40,12 @@ const emptyForm = (): FormState => ({
   title: "", body: "", name: "", phone: "", event_date: "", image_url: "", period: "week",
 });
 
+const newsUi = {
+  ru: { add: "Добавить событие", add_title: "Добавить событие в городе", empty: "Пока нет событий в {city}", empty_desc: "Будьте первым — расскажите о своём событии!", edit: "Редактировать", del: "Удалить", collapse: "Свернуть", read: "Читать полностью", edit_event: "Редактировать событие", publish_event: "Опубликовать событие в {city}", form_desc: "Расскажите, что и когда будет в городе.", name: "Название события *", name_ph: "Например: Детский фестиваль науки", date: "Дата и время события *", desc: "Описание *", desc_ph: "Где, для кого, цена, программа...", photo: "Фото (необязательно)", remove_photo: "Удалить фото", uploading: "Загрузка...", add_photo: "Добавить фото (любой формат)", organizer: "Имя организатора", organizer_ph: "Центр / контакт", phone: "Телефон", period: "Период публикации", week: "Неделя", month: "Месяц", save: "Сохранить", publish: "Опубликовать", confirm_del: "Удалить событие?" },
+  kz: { add: "Оқиға қосу", add_title: "Қаладағы оқиғаны қосу", empty: "{city} қаласында әзірге оқиғалар жоқ", empty_desc: "Бірінші болып өз оқиғаңыз туралы айтыңыз!", edit: "Өңдеу", del: "Жою", collapse: "Жасыру", read: "Толық оқу", edit_event: "Оқиғаны өңдеу", publish_event: "{city} қаласында оқиға жариялау", form_desc: "Қалада не және қашан болатынын айтыңыз.", name: "Оқиға атауы *", name_ph: "Мысалы: Балалар ғылыми фестивалі", date: "Оқиға күні мен уақыты *", desc: "Сипаттама *", desc_ph: "Қайда, кім үшін, бағасы, бағдарламасы...", photo: "Фото (міндетті емес)", remove_photo: "Фотосуретті жою", uploading: "Жүктелуде...", add_photo: "Фото қосу (кез келген формат)", organizer: "Ұйымдастырушының аты", organizer_ph: "Орталық / байланыс", phone: "Телефон", period: "Жариялау мерзімі", week: "Апта", month: "Ай", save: "Сақтау", publish: "Жариялау", confirm_del: "Оқиғаны жою керек пе?" },
+  en: { add: "Add event", add_title: "Add an event in the city", empty: "No events in {city} yet", empty_desc: "Be the first to share your event!", edit: "Edit", del: "Delete", collapse: "Collapse", read: "Read more", edit_event: "Edit event", publish_event: "Publish an event in {city}", form_desc: "Tell people what is happening and when.", name: "Event name *", name_ph: "For example: Children's science festival", date: "Event date and time *", desc: "Description *", desc_ph: "Where, for whom, price, program...", photo: "Photo (optional)", remove_photo: "Remove photo", uploading: "Uploading...", add_photo: "Add photo (any format)", organizer: "Organizer name", organizer_ph: "Center / contact", phone: "Phone", period: "Publication period", week: "Week", month: "Month", save: "Save", publish: "Publish", confirm_del: "Delete event?" },
+};
+
 const toLocalInput = (iso: string | null) => {
   if (!iso) return "";
   const d = new Date(iso);
@@ -48,7 +54,8 @@ const toLocalInput = (iso: string | null) => {
 };
 
 const NewsPage = ({ city }: { city: string }) => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const ui = newsUi[lang] || newsUi.ru;
   const { user } = useAuth();
   const titleLines = t("news.title").split("\n");
 
@@ -179,7 +186,7 @@ const NewsPage = ({ city }: { city: string }) => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Удалить событие?")) return;
+    if (!confirm(ui.confirm_del)) return;
     const { error } = await supabase.from("announcements").delete().eq("id", id);
     if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
     toast({ title: "Удалено" });
@@ -189,7 +196,7 @@ const NewsPage = ({ city }: { city: string }) => {
   const formatDate = (iso: string | null) => {
     if (!iso) return "";
     try {
-      return new Date(iso).toLocaleString("ru-RU", {
+      return new Date(iso).toLocaleString(lang === "kz" ? "kk-KZ" : lang === "en" ? "en-US" : "ru-RU", {
         day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
       });
     } catch { return ""; }
@@ -240,8 +247,8 @@ const NewsPage = ({ city }: { city: string }) => {
           </div>
           <button
             onClick={openPostForm}
-            aria-label="Добавить событие"
-            title="Добавить событие в городе"
+            aria-label={ui.add}
+            title={ui.add_title}
             className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30 active:scale-95 transition-all cursor-pointer"
           >
             <Plus size={20} className="text-primary-foreground" />
@@ -257,15 +264,15 @@ const NewsPage = ({ city }: { city: string }) => {
         {!loading && events.length === 0 && (
           <div className="cartoon-card flex flex-col items-center justify-center text-center py-14 px-6">
             <div className="text-5xl mb-4">🎉</div>
-            <h3 className="font-black text-lg">Пока нет событий в {city}</h3>
+            <h3 className="font-black text-lg">{ui.empty.replace("{city}", city)}</h3>
             <p className="text-sm text-muted-foreground font-bold mt-1">
-              Будьте первым — расскажите о своём событии!
+              {ui.empty_desc}
             </p>
             <button
               onClick={openPostForm}
               className="mt-5 flex items-center gap-2 bg-primary text-primary-foreground font-black text-sm px-6 py-3 rounded-full shadow-md"
             >
-              <Plus size={16} /> Добавить событие
+              <Plus size={16} /> {ui.add}
             </button>
           </div>
         )}
@@ -291,10 +298,10 @@ const NewsPage = ({ city }: { city: string }) => {
                       )}
                       {isOwner && (
                         <div className="flex items-center gap-1 -mt-1">
-                          <button onClick={() => openEdit(e)} aria-label="Редактировать" className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title="Редактировать">
+                          <button onClick={() => openEdit(e)} aria-label={ui.edit} className="p-1.5 rounded-full bg-muted hover:bg-muted/70" title={ui.edit}>
                             <Pencil size={12} />
                           </button>
-                          <button onClick={() => handleDelete(e.id)} aria-label="Удалить" className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title="Удалить">
+                          <button onClick={() => handleDelete(e.id)} aria-label={ui.del} className="p-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20" title={ui.del}>
                             <Trash2 size={12} />
                           </button>
                         </div>
@@ -307,7 +314,7 @@ const NewsPage = ({ city }: { city: string }) => {
                         onClick={() => setExpanded((s) => ({ ...s, [e.id]: !s[e.id] }))}
                         className="mt-1 text-xs font-black text-primary hover:underline"
                       >
-                        {expanded[e.id] ? "Свернуть" : "Читать полностью"}
+                        {expanded[e.id] ? ui.collapse : ui.read}
                       </button>
                     )}
                     <div className="mt-3 pt-3 border-t border-border flex items-center justify-between flex-wrap gap-2">
@@ -333,23 +340,23 @@ const NewsPage = ({ city }: { city: string }) => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Редактировать событие" : `Опубликовать событие в ${city}`}</DialogTitle>
+            <DialogTitle>{editingId ? ui.edit_event : ui.publish_event.replace("{city}", city)}</DialogTitle>
             <DialogDescription>
-              Расскажите, что и когда будет в городе.
+              {ui.form_desc}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label>Название события *</Label>
+              <Label>{ui.name}</Label>
               <Input
                 value={form.title}
                 maxLength={120}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="Например: Детский фестиваль науки"
+                placeholder={ui.name_ph}
               />
             </div>
             <div>
-              <Label>Дата и время события *</Label>
+              <Label>{ui.date}</Label>
               <Input
                 type="datetime-local"
                 value={form.event_date}
@@ -357,26 +364,26 @@ const NewsPage = ({ city }: { city: string }) => {
               />
             </div>
             <div>
-              <Label>Описание *</Label>
+              <Label>{ui.desc}</Label>
               <Textarea
                 value={form.body}
                 maxLength={1500}
                 rows={4}
                 onChange={(e) => setForm({ ...form, body: e.target.value })}
-                placeholder="Где, для кого, цена, программа..."
+                placeholder={ui.desc_ph}
               />
             </div>
             <div>
-              <Label>Фото (необязательно)</Label>
+              <Label>{ui.photo}</Label>
               {form.image_url ? (
                 <div className="mt-1 relative">
                   <img src={form.image_url} alt="" className="w-full max-h-52 object-cover rounded-xl" />
-                  <button type="button" onClick={() => setForm({ ...form, image_url: "" })} aria-label="Удалить фото" className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
+                  <button type="button" onClick={() => setForm({ ...form, image_url: "" })} aria-label={ui.remove_photo} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
                 </div>
               ) : (
                 <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">
                   {uploading ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
-                  {uploading ? "Загрузка..." : "Добавить фото (любой формат)"}
+                  {uploading ? ui.uploading : ui.add_photo}
                   <input
                     type="file"
                     accept="*/*"
@@ -388,16 +395,16 @@ const NewsPage = ({ city }: { city: string }) => {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>Имя организатора</Label>
+                <Label>{ui.organizer}</Label>
                 <Input
                   value={form.name}
                   maxLength={100}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Центр / контакт"
+                  placeholder={ui.organizer_ph}
                 />
               </div>
               <div>
-                <Label>Телефон</Label>
+                <Label>{ui.phone}</Label>
                 <Input
                   value={form.phone}
                   maxLength={30}
@@ -408,28 +415,28 @@ const NewsPage = ({ city }: { city: string }) => {
             </div>
             {!editingId && (
               <div>
-                <Label>Период публикации</Label>
+                <Label>{ui.period}</Label>
                 <div className="flex gap-2 mt-1">
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, period: "week" })}
                     className={`flex-1 py-2 rounded-md border-2 font-bold text-sm ${form.period === "week" ? "bg-primary text-primary-foreground border-primary" : "border-input"}`}
                   >
-                    Неделя
+                    {ui.week}
                   </button>
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, period: "month" })}
                     className={`flex-1 py-2 rounded-md border-2 font-bold text-sm ${form.period === "month" ? "bg-primary text-primary-foreground border-primary" : "border-input"}`}
                   >
-                    Месяц
+                    {ui.month}
                   </button>
                 </div>
               </div>
             )}
             <Button onClick={submit} disabled={submitting || uploading} className="w-full">
               {submitting && <Loader2 className="animate-spin" size={16} />}
-              {editingId ? "Сохранить" : "Опубликовать"}
+              {editingId ? ui.save : ui.publish}
             </Button>
           </div>
         </DialogContent>

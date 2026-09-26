@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { translations, Lang, TranslationKey } from "@/i18n/translations";
 
 interface LanguageContextType {
@@ -8,7 +8,15 @@ interface LanguageContextType {
   tField: (fieldRu: string, fieldKz?: string | null, fieldEn?: string | null) => string;
 }
 
-const defaultLang: Lang = (typeof localStorage !== "undefined" && (localStorage.getItem("balahub_lang") as Lang)) || "kz";
+const LANGUAGE_STORAGE_KEY = "balahub_lang";
+
+const getSavedLanguage = (): Lang => {
+  if (typeof localStorage === "undefined") return "ru";
+  const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  return saved === "ru" || saved === "kz" || saved === "en" ? saved : "ru";
+};
+
+const defaultLang: Lang = getSavedLanguage();
 
 const fallbackContext: LanguageContextType = {
   lang: defaultLang,
@@ -25,14 +33,18 @@ const LanguageContext = createContext<LanguageContextType>(fallbackContext);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLangState] = useState<Lang>(() => {
-    const saved = localStorage.getItem("balahub_lang");
-    return (saved as Lang) || "kz";
+    return getSavedLanguage();
   });
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
-    localStorage.setItem("balahub_lang", l);
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, l);
+    document.documentElement.lang = l === "kz" ? "kk" : l;
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = lang === "kz" ? "kk" : lang;
+  }, [lang]);
 
   const t = useCallback((key: TranslationKey) => {
     return translations[key]?.[lang] || translations[key]?.["ru"] || key;

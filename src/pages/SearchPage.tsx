@@ -7,12 +7,13 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TAXONOMY, idsForGroup } from "@/lib/categoriesTaxonomy";
 import BottomNav from "@/components/BottomNav";
 import SEO from "@/components/SEO";
+import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
 
 type AgeKey = "all" | "0-3" | "3-7" | "7-12" | "12+";
 
 const SearchPage = () => {
   const navigate = useNavigate();
-  const { t, tField } = useLanguage();
+  const { t, tField, lang } = useLanguage();
   const [params, setParams] = useSearchParams();
 
   const cat = params.get("cat") || "";
@@ -94,7 +95,7 @@ const SearchPage = () => {
 
   const catLabel = cat ? t(`cat.${cat}` as any) : "";
   const subLabel = cat && sub ? t(`${cat}.${sub}` as any) : "";
-  const searchTitle = subLabel || catLabel || q || (city ? city : "Все кружки");
+  const searchTitle = subLabel || catLabel || q || (city ? city : t("search.all_city"));
 
 
   const ageOptions: { id: AgeKey; label: string }[] = [
@@ -136,7 +137,7 @@ const SearchPage = () => {
           <button
             onClick={() => navigate(-1)}
             className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30"
-            aria-label="Назад"
+            aria-label={t("common.back")}
           >
             <ArrowLeft size={18} className="text-primary-foreground" />
           </button>
@@ -168,7 +169,7 @@ const SearchPage = () => {
       {/* Active filter chips */}
       <div className="px-4 pt-3 pb-2 sticky top-0 z-20 bg-background/95 backdrop-blur border-b border-border">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-black text-muted-foreground">🔎 Фильтр:</span>
+          <span className="text-xs font-black text-muted-foreground">🔎 {t("search.filter")}</span>
           {cat && (
             <button
               onClick={() => update({ cat: null, sub: null })}
@@ -206,7 +207,7 @@ const SearchPage = () => {
             </button>
           )}
           {!cat && !sub && !q && age === "all" && (
-            <span className="text-xs font-bold text-muted-foreground">все кружки в городе</span>
+            <span className="text-xs font-bold text-muted-foreground">{t("search.all_city")}</span>
           )}
         </div>
 
@@ -233,7 +234,7 @@ const SearchPage = () => {
               onClick={() => update({ sub: null })}
               className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border-2 ${!sub ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
             >
-              Все {catLabel.toLowerCase()}
+              {t("search.all_category")} {catLabel.toLowerCase()}
             </button>
             {group.subs.map((s) => {
               const active = sub === s;
@@ -254,7 +255,7 @@ const SearchPage = () => {
       {/* Results */}
       <div className="px-4 pt-4">
         <p className="text-xs font-bold text-muted-foreground mb-2">
-          Найдено: {loading ? "…" : clubs.length}
+          {t("common.found")}: {loading ? "…" : clubs.length}
         </p>
 
         {loading ? (
@@ -264,13 +265,14 @@ const SearchPage = () => {
             <div className="text-5xl mb-3">🔍</div>
             <h3 className="font-black text-lg">{t("home.not_found")}</h3>
             <p className="text-sm text-muted-foreground font-bold mt-1">
-              Попробуйте убрать часть фильтров или сменить город
+              {t("search.try_filters")}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {clubs.map((club, i) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
+              const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
                 <div
                   key={club.id}
@@ -287,19 +289,29 @@ const SearchPage = () => {
                   </div>
                   <div className="p-2.5">
                     <h3 className="font-black text-xs leading-snug line-clamp-1">{name}</h3>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star size={11} className="text-secondary fill-secondary" />
-                      <span className="text-xs font-black">{club.rating || "—"}</span>
-                      <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
-                    </div>
+                    {club.reviews_count > 0 && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <Star size={11} className="text-secondary fill-secondary" />
+                        <span className="text-xs font-black">{club.rating}</span>
+                        <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
+                      </div>
+                    )}
                     <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold">
-                      <MapPin size={10} className="text-primary" />{club.address || club.city}
+                      <MapPin size={10} className="text-primary" />{clubLocation(club.city, club.address)}
                     </p>
-                    {club.price_from != null && (
+                    {club.price_from > 0 && (
                       <p className="text-[10px] font-bold text-primary mt-1">
-                        {t("club.price")} {club.price_from?.toLocaleString()} {club.price_currency}
+                        {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
                       </p>
                     )}
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {clubAge(club.age_min, club.age_max, lang) && (
+                        <span className="text-[9px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-lg">{clubAge(club.age_min, club.age_max, lang)}</span>
+                      )}
+                      {categoryLabels.map((category) => (
+                        <span key={category.id} className="text-[9px] font-bold bg-muted px-1.5 py-0.5 rounded-lg">{category.label}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );

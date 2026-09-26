@@ -115,7 +115,7 @@ function FitBounds({ points }: { points: [number, number][] }) {
 
 const MapPage = ({ city }: { city: string }) => {
   const { lang, t } = useLanguage();
-  const mt = mapStrings[lang] || mapStrings.kz;
+  const mt = mapStrings[lang] || mapStrings.ru;
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
   const [geocoding, setGeocoding] = useState(false);
@@ -211,7 +211,7 @@ const MapPage = ({ city }: { city: string }) => {
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Поиск по названию или адресу"
+            placeholder={t("map.search")}
             className="w-full pl-9 pr-9 py-2 rounded-full text-xs font-bold bg-card border-[3px] border-foreground/8 focus:outline-none focus:border-primary"
             style={{ boxShadow: "var(--shadow-cartoon)" }}
           />
@@ -219,7 +219,7 @@ const MapPage = ({ city }: { city: string }) => {
             <button
               onClick={() => setSearchQuery("")}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-muted flex items-center justify-center"
-              aria-label="Очистить"
+              aria-label={t("common.clear")}
             >
               <X size={12} />
             </button>
@@ -315,7 +315,7 @@ const MapPage = ({ city }: { city: string }) => {
           </div>
         ) : filteredClubs.length === 0 ? (
           <div className="text-center py-10 text-sm text-muted-foreground font-bold">
-            {searchQuery ? "Ничего не найдено" : mt.no_clubs}
+            {searchQuery ? t("home.not_found") : mt.no_clubs}
           </div>
         ) : (
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">

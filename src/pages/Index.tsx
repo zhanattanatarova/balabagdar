@@ -66,6 +66,7 @@ import ClubDashboard from "./ClubDashboard";
 import ClubEditPage from "./ClubEditPage";
 import BottomNav from "@/components/BottomNav";
 import SEO from "@/components/SEO";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const seoByPath: Record<string, { title: string; description: string; path: string; noindex?: boolean }> = {
   "/": {
@@ -95,6 +96,7 @@ const seoByPath: Record<string, { title: string; description: string; path: stri
 };
 
 const Index = () => {
+  const { lang } = useLanguage();
   const [showSplash, setShowSplash] = useState(true);
   const [city, setCity] = useState(() => {
     try { return localStorage.getItem("bb_city") || "Актау"; } catch { return "Актау"; }
@@ -179,10 +181,16 @@ const Index = () => {
   };
 
   const seo = seoByPath[location.pathname] || seoByPath["/"];
+  const localizedHomeSeo = lang === "ru"
+    ? { title: "BalaHub — детские кружки и центры Казахстана", description: "Найдите и забронируйте детские кружки, секции и специалистов в 35 городах Казахстана." }
+    : lang === "en"
+      ? { title: "BalaHub — kids' clubs and centers in Kazakhstan", description: "Find and book kids' clubs, activities and specialists in 35 cities across Kazakhstan." }
+      : { title: seo.title, description: seo.description };
+  const activeSeo = location.pathname === "/" ? { ...seo, ...localizedHomeSeo } : seo;
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO title={seo.title} description={seo.description} path={seo.path} />
+      <SEO title={activeSeo.title} description={activeSeo.description} path={activeSeo.path} />
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       {renderPage()}
       <BottomNav />

@@ -26,7 +26,7 @@ const ProfilePage = () => {
   const copyPhone = async () => {
     try {
       await navigator.clipboard.writeText(CONTACT_PHONE);
-      toast({ title: "Номер скопирован", description: CONTACT_PHONE });
+      toast({ title: t("profile.phone_copied"), description: CONTACT_PHONE });
     } catch {
       toast({ title: CONTACT_PHONE });
     }
@@ -40,7 +40,7 @@ const ProfilePage = () => {
 
   const settingsItems = [
     { icon: MessageCircle, label: t("profile.contact_us"), color: "bg-primary/10", iconColor: "text-primary", onClick: () => setShowContact(true) },
-    { icon: FileText, label: "Правовая информация", color: "bg-muted", iconColor: "text-foreground", onClick: () => navigate("/legal") },
+    { icon: FileText, label: t("profile.legal"), color: "bg-muted", iconColor: "text-foreground", onClick: () => navigate("/legal") },
   ];
 
   return (
@@ -141,7 +141,7 @@ const ProfilePage = () => {
                 <X size={16} />
               </button>
             </div>
-            <p className="text-sm text-muted-foreground font-medium mb-4">Выберите удобный способ связи:</p>
+            <p className="text-sm text-muted-foreground font-medium mb-4">{t("profile.contact_hint")}</p>
             <div className="space-y-2">
               <a href={`tel:+${CONTACT_PHONE_RAW}`}
                 className="flex items-center gap-3 p-3 rounded-2xl bg-primary/10 hover:bg-primary/20 transition-colors">
@@ -149,7 +149,7 @@ const ProfilePage = () => {
                   <Phone size={18} className="text-primary-foreground" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-black text-sm">Позвонить</p>
+                  <p className="font-black text-sm">{t("club.call")}</p>
                   <p className="text-xs text-muted-foreground font-bold">{CONTACT_PHONE}</p>
                 </div>
               </a>
@@ -160,7 +160,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="flex-1">
                   <p className="font-black text-sm">WhatsApp</p>
-                  <p className="text-xs text-muted-foreground font-bold">Написать в чат</p>
+                  <p className="text-xs text-muted-foreground font-bold">{t("profile.write_chat")}</p>
                 </div>
               </a>
               <a href={`https://t.me/+${CONTACT_PHONE_RAW}`} target="_blank" rel="noopener noreferrer"
@@ -170,7 +170,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="flex-1">
                   <p className="font-black text-sm">Telegram</p>
-                  <p className="text-xs text-muted-foreground font-bold">Открыть в Telegram</p>
+                  <p className="text-xs text-muted-foreground font-bold">{t("profile.open_telegram")}</p>
                 </div>
               </a>
               <button onClick={copyPhone}
@@ -179,7 +179,7 @@ const ProfilePage = () => {
                   <Copy size={18} className="text-foreground" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-black text-sm">Скопировать номер</p>
+                  <p className="font-black text-sm">{t("profile.copy_phone")}</p>
                   <p className="text-xs text-muted-foreground font-bold">{CONTACT_PHONE}</p>
                 </div>
               </button>
