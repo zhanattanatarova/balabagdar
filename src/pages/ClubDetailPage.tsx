@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Star, MapPin, Phone, MessageCircle, Calendar, Clock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,10 +20,14 @@ const ClubDetailPage = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showBooking, setShowBooking] = useState(false);
+  const viewedClubId = useRef<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
-    void supabase.rpc("increment_club_views", { _club_id: id });
+    if (viewedClubId.current !== id) {
+      viewedClubId.current = id;
+      void supabase.rpc("increment_club_views", { _club_id: id });
+    }
     const fetchClub = async () => {
       const { data } = await supabase.from("clubs").select("*").eq("id", id).single();
       setClub(data);

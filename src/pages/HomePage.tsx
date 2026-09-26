@@ -420,8 +420,12 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
     setLocating(true);
     setLocationFailed(false);
     navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+      const { data } = await supabase
+        .from("clubs")
+        .select("*")
+        .eq("is_active", true);
       const located: NearbyClub[] = [];
-      for (const club of clubs) {
+      for (const club of data || []) {
         const position = await geocodeClub(club);
         if (!position) continue;
         located.push({
