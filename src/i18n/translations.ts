@@ -65,6 +65,7 @@ export const translations = {
   "home.free_banner_text": { ru: "Размещайте кружки и события бесплатно — мы собираем лучшую базу детских занятий Казахстана!", kz: "Үйірмелер мен оқиғаларды тегін орналастырыңыз — біз Қазақстанның балалар сабақтарының ең жақсы базасын жинаймыз!", en: "List clubs and events for free — we're building the best database of children's activities in Kazakhstan!" },
   "home.city_heading": { ru: "Детские кружки, секции и центры в {city}", kz: "{city} қаласындағы балалар үйірмелері, секциялар мен орталықтар", en: "Kids' clubs, activities and centers in {city}" },
   "home.find": { ru: "Найти", kz: "Іздеу", en: "Search" },
+  "splash.tagline": { ru: "Все кружки и специалисты для детей", kz: "Балаларға арналған барлық үйірмелер мен мамандар", en: "All clubs and specialists for children" },
   "age.label": { ru: "Возраст:", kz: "Жас:", en: "Age:" },
   "age.any": { ru: "Любой", kz: "Кез келген", en: "Any" },
   "age.0_3": { ru: "0–3 лет", kz: "0–3 жас", en: "0–3 yrs" },

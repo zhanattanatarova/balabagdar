@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface SplashScreenProps {
   onComplete: () => void;
 }
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
+  const { t } = useLanguage();
   const [phase, setPhase] = useState<"enter" | "exit">("enter");
 
   useEffect(() => {
@@ -28,7 +30,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         BalaHub
       </h1>
       <p className="text-primary-foreground/80 mt-2 text-sm font-bold animate-fade-in" style={{ animationDelay: "0.15s" }}>
-        Все кружки и специалисты для детей
+        {t("splash.tagline")}
       </p>
     </div>
   );
