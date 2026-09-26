@@ -346,6 +346,7 @@ export const translations = {
   "club.whatsapp": { ru: "WhatsApp", kz: "WhatsApp", en: "WhatsApp" },
   "club.telegram_link": { ru: "Telegram", kz: "Telegram", en: "Telegram" },
   "club.gallery": { ru: "Галерея", kz: "Галерея", en: "Gallery" },
+  "club.directions": { ru: "Направления", kz: "Бағыттар", en: "Activities" },
 
   // Reviews
   "reviews.title": { ru: "Отзывы", kz: "Пікірлер", en: "Reviews" },
@@ -396,6 +397,17 @@ export const translations = {
   "profile.open_telegram": { ru: "Открыть в Telegram", kz: "Telegram-да ашу", en: "Open in Telegram" },
   "profile.copy_phone": { ru: "Скопировать номер", kz: "Нөмірді көшіру", en: "Copy number" },
   "profile.phone_copied": { ru: "Номер скопирован", kz: "Нөмір көшірілді", en: "Number copied" },
+  "favorites.empty": { ru: "Пока пусто", kz: "Әзірге бос", en: "Nothing here yet" },
+  "favorites.empty_desc": { ru: "Добавляйте кружки в избранное, нажимая на сердечко на карточке кружка", kz: "Үйірме картасындағы жүрекшені басып, таңдаулыларға қосыңыз", en: "Tap the heart on a club card to add it to your favorites" },
+  "favorites.find": { ru: "Найти кружки", kz: "Үйірмелерді табу", en: "Find clubs" },
+  "history.empty": { ru: "История пуста", kz: "Тарих бос", en: "History is empty" },
+  "history.empty_desc": { ru: "Здесь будут отображаться кружки, которые вы недавно просматривали", kz: "Мұнда жақында көрген үйірмелеріңіз көрсетіледі", en: "Clubs you recently viewed will appear here" },
+  "history.open_clubs": { ru: "Перейти к кружкам", kz: "Үйірмелерге өту", en: "Browse clubs" },
+  "notifications.read_all": { ru: "Прочитать все", kz: "Барлығын оқу", en: "Read all" },
+  "notifications.none": { ru: "Нет новых", kz: "Жаңа хабарлама жоқ", en: "No new notifications" },
+  "notifications.unread": { ru: "непрочитанных", kz: "оқылмаған", en: "unread" },
+  "notifications.done": { ru: "Готово", kz: "Дайын", en: "Done" },
+  "notifications.done_desc": { ru: "Все уведомления отмечены как прочитанные", kz: "Барлық хабарламалар оқылды деп белгіленді", en: "All notifications marked as read" },
 
   // Club dashboard
   "dashboard.my_club": { ru: "Мой кабинет", kz: "Менің кабинетім", en: "My cabinet" },

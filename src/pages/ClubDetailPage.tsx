@@ -181,7 +181,7 @@ const ClubDetailPage = () => {
       {/* Categories / sections offered */}
       {Array.isArray(club.categories) && club.categories.length > 0 && (
         <div className="px-4 mt-4">
-          <h2 className="font-black text-sm mb-2">Направления</h2>
+          <h2 className="font-black text-sm mb-2">{t("club.directions")}</h2>
           <div className="flex flex-wrap gap-1.5">
             {club.categories.map((id: string) => {
               const key = id.includes(".") ? id : `cat.${id}`;

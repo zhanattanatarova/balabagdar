@@ -1,6 +1,7 @@
 import { Bell, Calendar, MapPin, Star, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const notifications = [
   { id: 1, type: "event", title: "Фестиваль «Жулдыз» уже завтра!", desc: "Не забудьте — 15 марта, парк Горького", time: "2 часа назад", read: false },
@@ -18,11 +19,12 @@ const typeEmoji: Record<string, string> = {
 };
 
 const NotificationsPage = () => {
+  const { t } = useLanguage();
   const [items, setItems] = useState(notifications);
 
   const markAllRead = () => {
     setItems(items.map((n) => ({ ...n, read: true })));
-    toast({ title: "Готово", description: "Все уведомления отмечены как прочитанные" });
+    toast({ title: t("notifications.done"), description: t("notifications.done_desc") });
   };
 
   const unreadCount = items.filter((n) => !n.read).length;
@@ -33,13 +35,13 @@ const NotificationsPage = () => {
         <div>
           <h1 className="text-lg font-black flex items-center gap-2">
             <Bell size={20} className="text-primary" />
-            Уведомления
+            {t("profile.notifications")}
           </h1>
-          <p className="text-xs text-muted-foreground">{unreadCount > 0 ? `${unreadCount} непрочитанных` : "Нет новых"}</p>
+          <p className="text-xs text-muted-foreground">{unreadCount > 0 ? `${unreadCount} ${t("notifications.unread")}` : t("notifications.none")}</p>
         </div>
         {unreadCount > 0 && (
           <button onClick={markAllRead} className="flex items-center gap-1 text-accent text-xs font-bold">
-            <Check size={12} />Прочитать все
+            <Check size={12} />{t("notifications.read_all")}
           </button>
         )}
       </div>

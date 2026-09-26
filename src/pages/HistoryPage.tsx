@@ -19,12 +19,12 @@ const HistoryPage = () => {
         <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mb-4">
           <Clock size={36} className="text-secondary" />
         </div>
-        <h2 className="font-black text-base mb-1">История пуста</h2>
+        <h2 className="font-black text-base mb-1">{t("history.empty")}</h2>
         <p className="text-sm text-muted-foreground font-medium max-w-xs">
-          Здесь будут отображаться кружки, которые вы недавно просматривали
+          {t("history.empty_desc")}
         </p>
         <button onClick={() => navigate("/")} className="mt-6 px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-black text-sm cartoon-card border-primary">
-          Перейти к кружкам
+          {t("history.open_clubs")}
         </button>
       </div>
     </div>

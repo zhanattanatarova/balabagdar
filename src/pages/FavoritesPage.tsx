@@ -19,12 +19,12 @@ const FavoritesPage = () => {
         <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
           <Heart size={36} className="text-destructive" />
         </div>
-        <h2 className="font-black text-base mb-1">Пока пусто</h2>
+        <h2 className="font-black text-base mb-1">{t("favorites.empty")}</h2>
         <p className="text-sm text-muted-foreground font-medium max-w-xs">
-          Добавляйте кружки в избранное, нажимая на сердечко на карточке кружка
+          {t("favorites.empty_desc")}
         </p>
         <button onClick={() => navigate("/")} className="mt-6 px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-black text-sm cartoon-card border-primary">
-          Найти кружки
+          {t("favorites.find")}
         </button>
       </div>
     </div>
