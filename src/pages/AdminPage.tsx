@@ -8,8 +8,21 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
 import { TAXONOMY } from "@/lib/categoriesTaxonomy";
 import { validateImageFileDeep } from "@/lib/uploadValidation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 type Credential = { name: string; email: string; password: string; city: string };
+
+const POST_CATEGORIES = [
+  ["other", "Другое"],
+  ["masterclass", "Мастер-класс"],
+  ["job_seek", "Ищу работу"],
+  ["specialist", "Нужен специалист"],
+  ["nanny", "Ищу няню"],
+  ["opening", "Мы открылись"],
+] as const;
 
 const CITIES = [
   "Алматы", "Астана", "Шымкент",
@@ -54,7 +67,7 @@ const AdminPage = () => {
   const [usersLoading, setUsersLoading] = useState(false);
   const [userQuery, setUserQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "parent" | "club_owner" | "admin">("all");
-  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "create">("clubs");
+  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "posts" | "create">("clubs");
   const [clubs, setClubs] = useState<any[]>([]);
   const [clubsLoading, setClubsLoading] = useState(false);
   const [clubQuery, setClubQuery] = useState("");
@@ -76,6 +89,19 @@ const AdminPage = () => {
   });
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
+  const [postSaving, setPostSaving] = useState(false);
+  const [postUploading, setPostUploading] = useState(false);
+  const [postForm, setPostForm] = useState({
+    type: "event" as "event" | "announcement",
+    category: "other",
+    city: "Актау",
+    title: "",
+    body: "",
+    event_date: "",
+    name: "BalaHub",
+    phone: "",
+    image_url: "",
+  });
 
   const uploadFile = async (file: File): Promise<string> => {
     if (!user) throw new Error("Не авторизован");
@@ -125,6 +151,59 @@ const AdminPage = () => {
 
   const removeGalleryPhoto = (url: string) => {
     setForm((f) => ({ ...f, gallery: f.gallery.filter((g) => g !== url) }));
+  };
+
+  const handlePostImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPostUploading(true);
+    try {
+      const url = await uploadFile(file);
+      setPostForm((current) => ({ ...current, image_url: url }));
+    } catch (error: any) {
+      toast({ title: "Ошибка загрузки", description: error.message, variant: "destructive" });
+    } finally {
+      setPostUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const publishPost = async () => {
+    if (!user || !postForm.title.trim() || !postForm.body.trim()) {
+      toast({ title: "Заполните заголовок и текст", variant: "destructive" });
+      return;
+    }
+    if (postForm.type === "event" && !postForm.event_date) {
+      toast({ title: "Укажите дату и время события", variant: "destructive" });
+      return;
+    }
+    setPostSaving(true);
+    const { error } = await supabase.from("announcements").insert({
+      user_id: user.id,
+      category: postForm.type === "event" ? "event" : postForm.category,
+      title: postForm.title.trim(),
+      body: postForm.body.trim(),
+      city: postForm.city,
+      name: postForm.name.trim(),
+      phone: postForm.phone.trim(),
+      image_url: postForm.image_url || null,
+      event_date: postForm.type === "event" ? new Date(postForm.event_date).toISOString() : null,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    } as any);
+    setPostSaving(false);
+    if (error) {
+      toast({ title: "Не удалось опубликовать", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: postForm.type === "event" ? "Событие опубликовано" : "Объявление опубликовано" });
+    setPostForm((current) => ({
+      ...current,
+      title: "",
+      body: "",
+      event_date: "",
+      phone: "",
+      image_url: "",
+    }));
   };
 
   const toggleCategory = (c: string) => {
@@ -285,6 +364,7 @@ const AdminPage = () => {
             ["clubs", `🏫 Кружки (${clubs.length})`],
             ["bookings", `📨 Заявки (${bookings.length})`],
             ["users", `👥 Пользователи (${users.length})`],
+            ["posts", "📣 Публикации"],
             ["create", "➕ Создать кружок"],
           ] as const).map(([k, label]) => (
             <button
@@ -489,6 +569,86 @@ const AdminPage = () => {
           </div>
         )}
         </>)}
+
+        {tab === "posts" && (
+          <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-4">
+            <div>
+              <h2 className="text-lg font-black">Новая публикация</h2>
+              <p className="text-xs text-muted-foreground font-bold mt-1">Публикацию увидят все посетители, включая гостей.</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <Button type="button" variant={postForm.type === "event" ? "default" : "outline"} onClick={() => setPostForm({ ...postForm, type: "event" })}>
+                Событие
+              </Button>
+              <Button type="button" variant={postForm.type === "announcement" ? "default" : "outline"} onClick={() => setPostForm({ ...postForm, type: "announcement", event_date: "" })}>
+                Объявление
+              </Button>
+            </div>
+
+            <Select label="Город*" value={postForm.city} options={CITIES} onChange={(city) => setPostForm({ ...postForm, city })} />
+
+            {postForm.type === "announcement" && (
+              <div>
+                <Label>Категория</Label>
+                <select value={postForm.category} onChange={(e) => setPostForm({ ...postForm, category: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm font-bold">
+                  {POST_CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="admin-post-title">Заголовок*</Label>
+              <Input id="admin-post-title" value={postForm.title} maxLength={120} onChange={(e) => setPostForm({ ...postForm, title: e.target.value })} placeholder={postForm.type === "event" ? "Название события" : "Заголовок объявления"} />
+            </div>
+
+            {postForm.type === "event" && (
+              <div>
+                <Label htmlFor="admin-post-date">Дата и время события*</Label>
+                <Input id="admin-post-date" type="datetime-local" value={postForm.event_date} onChange={(e) => setPostForm({ ...postForm, event_date: e.target.value })} />
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="admin-post-body">Текст*</Label>
+              <Textarea id="admin-post-body" value={postForm.body} maxLength={2000} rows={6} onChange={(e) => setPostForm({ ...postForm, body: e.target.value })} placeholder="Описание, место, условия и другая важная информация" />
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="admin-post-name">Автор / организатор</Label>
+                <Input id="admin-post-name" value={postForm.name} maxLength={80} onChange={(e) => setPostForm({ ...postForm, name: e.target.value })} />
+              </div>
+              <div>
+                <Label htmlFor="admin-post-phone">Телефон</Label>
+                <Input id="admin-post-phone" value={postForm.phone} maxLength={30} onChange={(e) => setPostForm({ ...postForm, phone: e.target.value })} placeholder="+7 ..." />
+              </div>
+            </div>
+
+            <div>
+              <Label>Фото</Label>
+              {postForm.image_url ? (
+                <div className="relative mt-2 w-fit">
+                  <img src={postForm.image_url} alt="Фото публикации" className="w-36 h-28 rounded-xl object-cover border-2 border-border" />
+                  <Button type="button" size="icon" variant="destructive" aria-label="Удалить фото" onClick={() => setPostForm({ ...postForm, image_url: "" })} className="absolute -top-2 -right-2 h-7 w-7 rounded-full">
+                    <X size={13} />
+                  </Button>
+                </div>
+              ) : (
+                <label className="mt-2 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">
+                  {postUploading ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
+                  {postUploading ? "Загрузка..." : "Добавить фото"}
+                  <input type="file" accept="image/*" className="hidden" onChange={handlePostImageUpload} disabled={postUploading} />
+                </label>
+              )}
+            </div>
+
+            <Button type="button" className="w-full" size="lg" onClick={publishPost} disabled={postSaving || postUploading}>
+              {postSaving && <Loader2 size={16} className="animate-spin" />}
+              Опубликовать
+            </Button>
+          </div>
+        )}
 
         {tab === "bookings" && (
         <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
