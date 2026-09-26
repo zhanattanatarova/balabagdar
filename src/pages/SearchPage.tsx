@@ -7,12 +7,13 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TAXONOMY, idsForGroup } from "@/lib/categoriesTaxonomy";
 import BottomNav from "@/components/BottomNav";
 import SEO from "@/components/SEO";
+import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
 
 type AgeKey = "all" | "0-3" | "3-7" | "7-12" | "12+";
 
 const SearchPage = () => {
   const navigate = useNavigate();
-  const { t, tField } = useLanguage();
+  const { t, tField, lang } = useLanguage();
   const [params, setParams] = useSearchParams();
 
   const cat = params.get("cat") || "";
@@ -94,7 +95,7 @@ const SearchPage = () => {
 
   const catLabel = cat ? t(`cat.${cat}` as any) : "";
   const subLabel = cat && sub ? t(`${cat}.${sub}` as any) : "";
-  const searchTitle = subLabel || catLabel || q || (city ? city : "Все кружки");
+  const searchTitle = subLabel || catLabel || q || (city ? city : t("search.all_city"));
 
 
   const ageOptions: { id: AgeKey; label: string }[] = [
@@ -271,6 +272,7 @@ const SearchPage = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {clubs.map((club, i) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
+              const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
                 <div
                   key={club.id}
@@ -287,19 +289,29 @@ const SearchPage = () => {
                   </div>
                   <div className="p-2.5">
                     <h3 className="font-black text-xs leading-snug line-clamp-1">{name}</h3>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star size={11} className="text-secondary fill-secondary" />
-                      <span className="text-xs font-black">{club.rating || "—"}</span>
-                      <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
-                    </div>
+                    {club.reviews_count > 0 && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <Star size={11} className="text-secondary fill-secondary" />
+                        <span className="text-xs font-black">{club.rating}</span>
+                        <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
+                      </div>
+                    )}
                     <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold">
-                      <MapPin size={10} className="text-primary" />{club.address || club.city}
+                      <MapPin size={10} className="text-primary" />{clubLocation(club.city, club.address)}
                     </p>
-                    {club.price_from != null && (
+                    {club.price_from > 0 && (
                       <p className="text-[10px] font-bold text-primary mt-1">
-                        {t("club.price")} {club.price_from?.toLocaleString()} {club.price_currency}
+                        {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
                       </p>
                     )}
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {clubAge(club.age_min, club.age_max, lang) && (
+                        <span className="text-[9px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-lg">{clubAge(club.age_min, club.age_max, lang)}</span>
+                      )}
+                      {categoryLabels.map((category) => (
+                        <span key={category.id} className="text-[9px] font-bold bg-muted px-1.5 py-0.5 rounded-lg">{category.label}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               );
