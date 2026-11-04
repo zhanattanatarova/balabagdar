@@ -1,5 +1,5 @@
 // Runs before `vite dev` and `vite build` (predev/prebuild hooks); writes public/sitemap.xml.
-import { writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 
 const BASE_URL = "https://bala-hub.kz";
@@ -37,5 +37,45 @@ function generateSitemap(items: SitemapEntry[]) {
   ].join("\n");
 }
 
-writeFileSync(resolve("public/sitemap.xml"), generateSitemap(entries));
-console.log(`sitemap.xml written (${entries.length} entries)`);
+function readEnv(): Record<string, string> {
+  const env: Record<string, string> = { ...(process.env as Record<string, string>) };
+  const file = resolve(".env");
+  if (existsSync(file)) {
+    for (const line of readFileSync(file, "utf8").split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"]*)"?\s*$/);
+      if (m && !env[m[1]]) env[m[1]] = m[2];
+    }
+  }
+  return env;
+}
+
+// Adds every active club page (/club/<id>) using the public, read-only API key.
+async function clubEntries(): Promise<SitemapEntry[]> {
+  const env = readEnv();
+  const url = env.VITE_SUPABASE_URL;
+  const key = env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) return [];
+  const out: SitemapEntry[] = [];
+  const pageSize = 1000;
+  for (let from = 0; ; from += pageSize) {
+    const res = await fetch(`${url}/rest/v1/clubs?select=id&is_active=eq.true&order=created_at.asc`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + pageSize - 1}` },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`clubs request failed: ${res.status}`);
+    const rows = (await res.json()) as { id: string }[];
+    for (const r of rows) out.push({ path: `/club/${r.id}`, changefreq: "weekly", priority: "0.6" });
+    if (rows.length < pageSize) break;
+  }
+  return out;
+}
+
+let clubs: SitemapEntry[] = [];
+try {
+  clubs = await clubEntries();
+} catch (e) {
+  console.warn("sitemap: could not load clubs, writing static pages only", e);
+}
+const all = [...entries, ...clubs];
+writeFileSync(resolve("public/sitemap.xml"), generateSitemap(all));
+console.log(`sitemap.xml written (${all.length} entries, ${clubs.length} clubs)`);
