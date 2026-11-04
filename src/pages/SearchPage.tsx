@@ -9,6 +9,7 @@ import BottomNav from "@/components/BottomNav";
 import SEO from "@/components/SEO";
 import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
+import TwoGisBadge from "@/components/TwoGisBadge";
 
 type AgeKey = "all" | "0-3" | "3-7" | "7-12" | "12+";
 
@@ -297,6 +298,7 @@ const SearchPage = () => {
                         <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
                       </div>
                     )}
+                    <TwoGisBadge rating={club.twogis_rating} count={club.twogis_reviews_count} className="mt-1" />
                     <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold">
                       <MapPin size={10} className="text-primary" />{clubLocation(club.city, club.address)}
                     </p>

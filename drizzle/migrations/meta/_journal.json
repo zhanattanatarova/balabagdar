@@ -22,6 +22,20 @@
       "when": 1793813241386,
       "tag": "0002_board_visibility_reviews_rating_age_defaults",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793814868299,
+      "tag": "0003_add_twogis_rating",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793815024775,
+      "tag": "0004_protect_twogis_fields",
+      "breakpoints": true
     }
   ]
 }
