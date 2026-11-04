@@ -8,7 +8,7 @@ import BookingModal from "@/components/BookingModal";
 import ClubReviews from "@/components/ClubReviews";
 import SEO from "@/components/SEO";
 import { safeImageUrl } from "@/lib/safeUrl";
-import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
+import { clubAge, clubCategoryLabels, clubLocation, clubPrice, hasRealAge } from "@/lib/clubDisplay";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 
 const ClubDetailPage = () => {
@@ -70,13 +70,29 @@ const ClubDetailPage = () => {
   const name = tField(club.name_ru, club.name_kz, club.name_en);
   const description = tField(club.description_ru, club.description_kz, club.description_en);
   const categoryLabels = clubCategoryLabels(club.categories, t);
+  const mainCategory = categoryLabels[0]?.label || "";
+  const seoTitle = lang === "en"
+    ? `${name}${mainCategory ? ` — ${mainCategory}` : ""} in ${club.city} | BalaHub`
+    : lang === "kz"
+      ? `${name}${mainCategory ? ` — ${mainCategory}` : ""}, ${club.city} | BalaHub`
+      : `${name}${mainCategory ? ` — ${mainCategory}` : ""} в ${club.city} | BalaHub`;
+  const plainDescription = (description || "").replace(/\s+/g, " ").trim();
+  const ageText = hasRealAge(club.age_min, club.age_max) ? clubAge(club.age_min, club.age_max, lang) : "";
+  const placeText = clubLocation(club.city, club.address);
+  const generatedDescription = lang === "en"
+    ? [`${name}${mainCategory ? ` — ${mainCategory.toLowerCase()} for kids` : " — kids' club"}`, placeText && `Address: ${placeText}`, ageText && `Age: ${ageText}`].filter(Boolean).join(". ")
+    : lang === "kz"
+      ? [`${name}${mainCategory ? ` — балаларға арналған ${mainCategory.toLowerCase()}` : " — балалар үйірмесі"}`, placeText && `Мекенжайы: ${placeText}`, ageText && `Жасы: ${ageText}`].filter(Boolean).join(". ")
+      : [`${name}${mainCategory ? ` — ${mainCategory.toLowerCase()} для детей` : " — детский кружок"}`, placeText && `Адрес: ${placeText}`, ageText && `Возраст: ${ageText}`].filter(Boolean).join(". ");
+  const seoDescription = (plainDescription || `${generatedDescription}.`).slice(0, 160);
+  const allCategoryLabels = clubCategoryLabels(club.categories, t, 100);
   const days = ["day.0", "day.1", "day.2", "day.3", "day.4", "day.5", "day.6"] as const;
 
   return (
     <div className="pb-24 max-w-2xl mx-auto">
       <SEO
-        title={`${name} — ${club.city} | BalaHub`}
-        description={(description || `${name} — балалар үйірмесі ${club.city} қаласында.`).slice(0, 160)}
+        title={seoTitle}
+        description={seoDescription}
         path={`/club/${club.id}`}
         image={safeImageUrl(club.avatar_url) || undefined}
         jsonLd={{
@@ -133,7 +149,7 @@ const ClubDetailPage = () => {
             )}
             {club.price_from > 0 && (
               <span className="text-xs font-bold bg-secondary/10 text-secondary px-2 py-1 rounded-lg">
-                {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
+                {clubPrice(club.price_from, club.price_currency, lang)}
               </span>
             )}
             {categoryLabels.map((category) => (
@@ -214,19 +230,15 @@ const ClubDetailPage = () => {
       </div>
 
       {/* Categories / sections offered */}
-      {Array.isArray(club.categories) && club.categories.length > 0 && (
+      {allCategoryLabels.length > 0 && (
         <div className="px-4 mt-4">
           <h2 className="font-black text-sm mb-2">{t("club.directions")}</h2>
           <div className="flex flex-wrap gap-1.5">
-            {club.categories.map((id: string) => {
-              const key = id.includes(".") ? id : `cat.${id}`;
-              const label = t(key as any);
-              return (
-                <span key={id} className="px-2.5 py-1 rounded-full bg-primary/15 border-2 border-primary/40 text-[11px] font-bold text-foreground">
-                  {label === key ? id : label}
-                </span>
-              );
-            })}
+            {allCategoryLabels.map((category) => (
+              <span key={category.id} className="px-2.5 py-1 rounded-full bg-primary/15 border-2 border-primary/40 text-[11px] font-bold text-foreground">
+                {category.label}
+              </span>
+            ))}
           </div>
         </div>
       )}

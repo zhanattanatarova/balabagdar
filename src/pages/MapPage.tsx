@@ -6,7 +6,7 @@ import { MapPin, Star, Phone, ExternalLink, Loader2, Navigation, Map as MapIcon,
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
-import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
+import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import { useLanguage } from "@/hooks/useLanguage";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 
@@ -376,7 +376,7 @@ const MapPage = ({ city }: { city: string }) => {
                 </div>
                 {club.price_from != null && club.price_from > 0 && (
                   <p className="text-[10px] font-bold text-primary mt-2">
-                    {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
+                    {clubPrice(club.price_from, club.price_currency, lang)}
                   </p>
                 )}
                 {selected === club.id && (

@@ -15,6 +15,13 @@
       "when": 1790447132263,
       "tag": "0001_club_events",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793813241386,
+      "tag": "0002_board_visibility_reviews_rating_age_defaults",
+      "breakpoints": true
     }
   ]
 }

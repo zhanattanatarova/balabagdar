@@ -2,10 +2,11 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Loader2, Navigation } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { supabase } from "@/integrations/supabase/client";
 import { safeImageUrl } from "@/lib/safeUrl";
-import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
+import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
@@ -226,15 +227,16 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const { user } = useAuth();
   const { t, tField, lang } = useLanguage();
   const navigate = useNavigate();
-  const goSearch = (cat: string, sub?: string | null) => {
+  const searchHref = (cat: string, sub?: string | null) => {
     const sp = new URLSearchParams();
     sp.set("cat", cat);
     if (sub) sp.set("sub", sub);
     if (city) sp.set("city", city);
     if (ageFilter !== "all") sp.set("age", ageFilter);
     if (searchQuery.trim()) sp.set("q", searchQuery.trim());
-    navigate(`/search?${sp.toString()}`);
+    return `/search?${sp.toString()}`;
   };
+  const goSearch = (cat: string, sub?: string | null) => navigate(searchHref(cat, sub));
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -817,12 +819,13 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       {/* Header */}
       <div className="mx-4 mt-3 px-4 pt-4 pb-4 rounded-3xl border-[3px]"
         style={{ background: "var(--gradient-header)", boxShadow: "var(--shadow-cartoon-lg)", borderColor: "hsl(145, 90%, 30% / 0.5)" }}>
-        <div className="flex items-center justify-center mb-3">
+        <div className="flex items-center justify-center gap-2 mb-3">
           <button onClick={() => setShowCityPicker(true)}
             className="flex items-center gap-1.5 font-black text-lg px-4 py-2 rounded-full border-[3px]"
             style={{ background: "hsl(145, 85%, 38%)", color: "white", borderColor: "hsl(145, 90%, 28% / 0.5)" }}>
             <BrandLogo size="sm" />{city}<ChevronDown size={18} className="text-primary-foreground" />
           </button>
+          <LanguageSwitcher compact />
         </div>
         <h1 className="text-center font-black text-sm mb-2 text-primary-foreground">
           {t("home.city_heading").replace("{city}", city)}
@@ -944,11 +947,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 setSelectedCategory("special");
                 return;
               }
-              goSearch(id);
             };
+            const opensPicker = ["languages", "dance", "sport", "health", "tutors", "creativity", "music", "development", "special"].includes(id);
             const isActive = selectedCategory === id;
             return (
-              <button key={id} className="cat-card" onClick={handleClick}>
+              <Link key={id} to={searchHref(id)} className="cat-card" onClick={(e) => { if (opensPicker) { e.preventDefault(); handleClick(); } }}>
                 <div className={`cat-card-img ${isActive ? "!border-primary ring-2 ring-primary/30" : ""}`}>
                   <img src={categoryIcons[id]} alt="" className="w-full h-full object-contain" />
                 </div>
@@ -998,7 +1001,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                     {specialOptions.find((o) => o.id === selectedSpecial)?.emoji} {t(`special.${selectedSpecial}` as any)}
                   </span>
                 )}
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -1008,7 +1011,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       <div className="mt-5">
         <div className="flex items-center justify-between px-4 mb-3">
           <h2 className="section-title">{t("home.popular")}</h2>
-          <button onClick={() => navigate("/map")} className="text-primary text-sm font-black">{t("home.all")}</button>
+          <Link to="/map" className="text-primary text-sm font-black">{t("home.all")}</Link>
         </div>
 
         {loadingClubs ? (
@@ -1024,8 +1027,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
               const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
-                <div key={club.id} onClick={() => navigate(`/club/${club.id}`)}
-                  className="min-w-[160px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
+                <Link key={club.id} to={`/club/${club.id}`}
+                  className="block min-w-[160px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
                   style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
                   <div className="relative h-24">
                     {safeImageUrl(club.avatar_url) ? (
@@ -1048,7 +1051,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                     </p>
                     {club.price_from > 0 && (
                       <p className="text-[10px] font-bold text-primary mt-1">
-                        {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
+                        {clubPrice(club.price_from, club.price_currency, lang)}
                       </p>
                     )}
                     <div className="flex flex-wrap gap-1 mt-1.5">
@@ -1064,7 +1067,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                       ))}
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -1084,14 +1087,14 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           <>
           <div className="flex items-center justify-between mb-3">
             <h2 className="section-title">{t("home.nearby")}</h2>
-            <button onClick={() => navigate("/map")} className="text-primary text-sm font-black">{t("home.all")}</button>
+            <Link to="/map" className="text-primary text-sm font-black">{t("home.all")}</Link>
           </div>
         <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           {nearbyClubs.map((club, i) => {
             const name = tField(club.name_ru, club.name_kz, club.name_en);
             const categoryLabels = clubCategoryLabels(club.categories, t);
             return (
-              <div key={`nearby-${club.id}`} onClick={() => navigate(`/club/${club.id}`)}
+              <Link key={`nearby-${club.id}`} to={`/club/${club.id}`}
                 className="flex gap-3 cartoon-card p-3 cursor-pointer animate-slide-up"
                 style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
                 <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2" style={{ borderColor: "hsl(var(--foreground) / 0.06)" }}>
@@ -1124,7 +1127,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   </div>
                 </div>
                 <ArrowRight size={16} className="text-primary shrink-0 mt-5" />
-              </div>
+              </Link>
             );
           })}
         </div>
