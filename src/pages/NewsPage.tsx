@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { Plus, Loader2, Calendar as CalendarIcon, MapPin, Phone, Pencil, Trash2, ImagePlus, X } from "lucide-react";
+import { Plus, Loader2, Calendar as CalendarIcon, MapPin, Phone, Pencil, Trash2, ImagePlus, X, ChevronDown, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import CityPickerSheet from "@/components/CityPickerSheet";
+import { upcomingCityEvents } from "@/lib/events";
 import { toast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -41,9 +44,9 @@ const emptyForm = (): FormState => ({
 });
 
 const newsUi = {
-  ru: { add: "Добавить событие", add_title: "Добавить событие в городе", empty: "Пока нет событий в {city}", empty_desc: "Будьте первым — расскажите о своём событии!", edit: "Редактировать", del: "Удалить", collapse: "Свернуть", read: "Читать полностью", edit_event: "Редактировать событие", publish_event: "Опубликовать событие в {city}", form_desc: "Расскажите, что и когда будет в городе.", name: "Название события *", name_ph: "Например: Детский фестиваль науки", date: "Дата и время события *", desc: "Описание *", desc_ph: "Где, для кого, цена, программа...", photo: "Фото (необязательно)", remove_photo: "Удалить фото", uploading: "Загрузка...", add_photo: "Добавить фото (любой формат)", organizer: "Имя организатора", organizer_ph: "Центр / контакт", phone: "Телефон", period: "Период публикации", week: "Неделя", month: "Месяц", save: "Сохранить", publish: "Опубликовать", confirm_del: "Удалить событие?" },
-  kz: { add: "Оқиға қосу", add_title: "Қаладағы оқиғаны қосу", empty: "{city} қаласында әзірге оқиғалар жоқ", empty_desc: "Бірінші болып өз оқиғаңыз туралы айтыңыз!", edit: "Өңдеу", del: "Жою", collapse: "Жасыру", read: "Толық оқу", edit_event: "Оқиғаны өңдеу", publish_event: "{city} қаласында оқиға жариялау", form_desc: "Қалада не және қашан болатынын айтыңыз.", name: "Оқиға атауы *", name_ph: "Мысалы: Балалар ғылыми фестивалі", date: "Оқиға күні мен уақыты *", desc: "Сипаттама *", desc_ph: "Қайда, кім үшін, бағасы, бағдарламасы...", photo: "Фото (міндетті емес)", remove_photo: "Фотосуретті жою", uploading: "Жүктелуде...", add_photo: "Фото қосу (кез келген формат)", organizer: "Ұйымдастырушының аты", organizer_ph: "Орталық / байланыс", phone: "Телефон", period: "Жариялау мерзімі", week: "Апта", month: "Ай", save: "Сақтау", publish: "Жариялау", confirm_del: "Оқиғаны жою керек пе?" },
-  en: { add: "Add event", add_title: "Add an event in the city", empty: "No events in {city} yet", empty_desc: "Be the first to share your event!", edit: "Edit", del: "Delete", collapse: "Collapse", read: "Read more", edit_event: "Edit event", publish_event: "Publish an event in {city}", form_desc: "Tell people what is happening and when.", name: "Event name *", name_ph: "For example: Children's science festival", date: "Event date and time *", desc: "Description *", desc_ph: "Where, for whom, price, program...", photo: "Photo (optional)", remove_photo: "Remove photo", uploading: "Uploading...", add_photo: "Add photo (any format)", organizer: "Organizer name", organizer_ph: "Center / contact", phone: "Phone", period: "Publication period", week: "Week", month: "Month", save: "Save", publish: "Publish", confirm_del: "Delete event?" },
+  ru: { add: "Добавить событие", add_title: "Добавить событие в городе", empty: "Пока нет событий в {city}", empty_desc: "Будьте первым — расскажите о своём событии!", edit: "Редактировать", del: "Удалить", collapse: "Свернуть", read: "Читать полностью", edit_event: "Редактировать событие", publish_event: "Опубликовать событие в {city}", form_desc: "Расскажите, что и когда будет в городе.", name: "Название события *", name_ph: "Например: Детский фестиваль науки", date: "Дата и время события *", desc: "Описание *", desc_ph: "Где, для кого, цена, программа...", photo: "Фото (необязательно)", remove_photo: "Удалить фото", uploading: "Загрузка...", add_photo: "Добавить фото (любой формат)", organizer: "Имя организатора", organizer_ph: "Центр / контакт", phone: "Телефон", period: "Период публикации", week: "Неделя", month: "Месяц", save: "Сохранить", publish: "Опубликовать", confirm_del: "Удалить событие?", browse: "Смотреть кружки", empty_upcoming: "В городе {city} пока нет предстоящих событий" },
+  kz: { add: "Оқиға қосу", add_title: "Қаладағы оқиғаны қосу", empty: "{city} қаласында әзірге оқиғалар жоқ", empty_desc: "Бірінші болып өз оқиғаңыз туралы айтыңыз!", edit: "Өңдеу", del: "Жою", collapse: "Жасыру", read: "Толық оқу", edit_event: "Оқиғаны өңдеу", publish_event: "{city} қаласында оқиға жариялау", form_desc: "Қалада не және қашан болатынын айтыңыз.", name: "Оқиға атауы *", name_ph: "Мысалы: Балалар ғылыми фестивалі", date: "Оқиға күні мен уақыты *", desc: "Сипаттама *", desc_ph: "Қайда, кім үшін, бағасы, бағдарламасы...", photo: "Фото (міндетті емес)", remove_photo: "Фотосуретті жою", uploading: "Жүктелуде...", add_photo: "Фото қосу (кез келген формат)", organizer: "Ұйымдастырушының аты", organizer_ph: "Орталық / байланыс", phone: "Телефон", period: "Жариялау мерзімі", week: "Апта", month: "Ай", save: "Сақтау", publish: "Жариялау", confirm_del: "Оқиғаны жою керек пе?", browse: "Үйірмелерді қарау", empty_upcoming: "{city} қаласында алдағы оқиғалар әзірге жоқ" },
+  en: { add: "Add event", add_title: "Add an event in the city", empty: "No events in {city} yet", empty_desc: "Be the first to share your event!", edit: "Edit", del: "Delete", collapse: "Collapse", read: "Read more", edit_event: "Edit event", publish_event: "Publish an event in {city}", form_desc: "Tell people what is happening and when.", name: "Event name *", name_ph: "For example: Children's science festival", date: "Event date and time *", desc: "Description *", desc_ph: "Where, for whom, price, program...", photo: "Photo (optional)", remove_photo: "Remove photo", uploading: "Uploading...", add_photo: "Add photo (any format)", organizer: "Organizer name", organizer_ph: "Center / contact", phone: "Phone", period: "Publication period", week: "Week", month: "Month", save: "Save", publish: "Publish", confirm_del: "Delete event?", browse: "Browse clubs", empty_upcoming: "No upcoming events in {city} yet" },
 };
 
 const toLocalInput = (iso: string | null) => {
@@ -53,7 +56,9 @@ const toLocalInput = (iso: string | null) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const NewsPage = ({ city }: { city: string }) => {
+const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) => void }) => {
+  const navigate = useNavigate();
+  const [showCityPicker, setShowCityPicker] = useState(false);
   const { t, lang } = useLanguage();
   const ui = newsUi[lang] || newsUi.ru;
   const { user } = useAuth();
@@ -81,7 +86,7 @@ const NewsPage = ({ city }: { city: string }) => {
       .eq("category", "event")
       .gt("expires_at", new Date().toISOString())
       .order("event_date", { ascending: true, nullsFirst: false });
-    const list = ((data as any[]) || []).filter((e) => !city || e.city === city);
+    const list = upcomingCityEvents((data as any[]) || [], city);
     setEvents(list);
     setLoading(false);
   };
@@ -204,10 +209,13 @@ const NewsPage = ({ city }: { city: string }) => {
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
+      {setCity && (
+        <CityPickerSheet open={showCityPicker} city={city} onClose={() => setShowCityPicker(false)} onSelect={setCity} />
+      )}
       <SEO
         title={`События для детей в ${city} | BalaHub`.slice(0, 60)}
         description={`Афиша детских событий, мастер-классов и праздников в городе ${city}. Актуальные даты, описание и контакты организаторов.`.slice(0, 159)}
-        path="/news"
+        path="/"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "ItemList",
@@ -237,7 +245,17 @@ const NewsPage = ({ city }: { city: string }) => {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <BrandLogo size="xs" />
-              <span className="text-primary-foreground/80 text-xs font-bold">{t("news.today_in")} {city}</span>
+              {setCity ? (
+                <button
+                  onClick={() => setShowCityPicker(true)}
+                  aria-label={t("home.select_city")}
+                  className="flex items-center gap-1 text-primary-foreground text-xs font-black px-2.5 py-1 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/30"
+                >
+                  <MapPin size={12} />{city}<ChevronDown size={14} />
+                </button>
+              ) : (
+                <span className="text-primary-foreground/80 text-xs font-bold">{t("news.today_in")} {city}</span>
+              )}
             </div>
             <h1 className="text-xl font-black text-primary-foreground leading-snug">
               {titleLines.map((line, i) => (
@@ -264,7 +282,7 @@ const NewsPage = ({ city }: { city: string }) => {
         {!loading && events.length === 0 && (
           <div className="cartoon-card flex flex-col items-center justify-center text-center py-14 px-6">
             <div className="text-5xl mb-4">🎉</div>
-            <h3 className="font-black text-lg">{ui.empty.replace("{city}", city)}</h3>
+            <h3 className="font-black text-lg">{ui.empty_upcoming.replace("{city}", city)}</h3>
             <p className="text-sm text-muted-foreground font-bold mt-1">
               {ui.empty_desc}
             </p>
@@ -273,6 +291,12 @@ const NewsPage = ({ city }: { city: string }) => {
               className="mt-5 flex items-center gap-2 bg-primary text-primary-foreground font-black text-sm px-6 py-3 rounded-full shadow-md"
             >
               <Plus size={16} /> {ui.add}
+            </button>
+            <button
+              onClick={() => navigate("/clubs")}
+              className="mt-3 flex items-center gap-2 bg-muted text-foreground font-black text-sm px-6 py-3 rounded-full border-2 border-border"
+            >
+              <Search size={16} /> {ui.browse}
             </button>
           </div>
         )}

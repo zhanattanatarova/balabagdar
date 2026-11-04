@@ -23,7 +23,7 @@ const HistoryPage = () => {
         <p className="text-sm text-muted-foreground font-medium max-w-xs">
           {t("history.empty_desc")}
         </p>
-        <button onClick={() => navigate("/")} className="mt-6 px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-black text-sm cartoon-card border-primary">
+        <button onClick={() => navigate("/clubs")} className="mt-6 px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-black text-sm cartoon-card border-primary">
           {t("history.open_clubs")}
         </button>
       </div>
