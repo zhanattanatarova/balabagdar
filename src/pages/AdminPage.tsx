@@ -8,6 +8,8 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
 import AdminClubStats from "@/components/AdminClubStats";
 import { TAXONOMY } from "@/lib/categoriesTaxonomy";
+import { uniqueCategories } from "@/lib/clubDisplay";
+import CoordinatePicker from "@/components/CoordinatePicker";
 import { validateImageFileDeep } from "@/lib/uploadValidation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -85,6 +87,10 @@ const AdminPage = () => {
     instagram_url: "",
     twogis_url: "",
     price_from: "",
+    age_min: "",
+    age_max: "",
+    latitude: null as number | null,
+    longitude: null as number | null,
     avatar_url: "",
     gallery: [] as string[],
   });
@@ -316,12 +322,26 @@ const AdminPage = () => {
       toast({ title: "Выберите хотя бы одну категорию", variant: "destructive" });
       return;
     }
+    const ageMin = parseInt(form.age_min, 10);
+    const ageMax = parseInt(form.age_max, 10);
+    const priceFrom = parseInt(form.price_from, 10);
+    if (!Number.isFinite(ageMin) || !Number.isFinite(ageMax) || !Number.isFinite(priceFrom)) {
+      toast({ title: "Заполните возраст от, возраст до и цену от", variant: "destructive" });
+      return;
+    }
+    if (ageMin < 0 || ageMax > 99 || ageMin > ageMax || priceFrom < 0) {
+      toast({ title: "Проверьте возраст и цену", description: "Возраст «от» не больше «до», цена не меньше 0", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke("admin-create-club", {
         body: {
           ...form,
-          price_from: form.price_from ? Number(form.price_from) : null,
+          categories: uniqueCategories(form.categories),
+          price_from: priceFrom,
+          age_min: ageMin,
+          age_max: ageMax,
         },
       });
       if (error) throw error;
@@ -333,6 +353,7 @@ const AdminPage = () => {
         name: "", city: form.city, categories: [],
         email: "", password: "", phone: "", address: "", description: "",
         instagram_url: "", twogis_url: "", price_from: "",
+        age_min: "", age_max: "", latitude: null, longitude: null,
         avatar_url: "", gallery: [],
       });
     } catch (e: any) {
@@ -536,7 +557,23 @@ const AdminPage = () => {
           <Field label="Телефон владельца* (для входа через Telegram)" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
           <Field label="Instagram URL" value={form.instagram_url} onChange={(v) => setForm({ ...form, instagram_url: v })} />
           <Field label="2GIS URL (заполняется автоматически из адреса)" value={form.twogis_url} onChange={(v) => setForm({ ...form, twogis_url: v })} />
-          <Field label="Цена от (₸)" value={form.price_from} onChange={(v) => setForm({ ...form, price_from: v })} />
+          <div className="grid grid-cols-3 gap-2">
+            <Field label="Возраст от*" value={form.age_min} onChange={(v) => setForm({ ...form, age_min: v.replace(/\D/g, "") })} />
+            <Field label="Возраст до*" value={form.age_max} onChange={(v) => setForm({ ...form, age_max: v.replace(/\D/g, "") })} />
+            <Field label="Цена от (₸)*" value={form.price_from} onChange={(v) => setForm({ ...form, price_from: v.replace(/\D/g, "") })} />
+          </div>
+          <div>
+            <label className="text-xs font-bold uppercase text-muted-foreground">Точка на карте</label>
+            <div className="mt-2">
+              <CoordinatePicker
+                latitude={form.latitude}
+                longitude={form.longitude}
+                onChange={(lat, lng) => setForm((f) => ({ ...f, latitude: lat, longitude: lng }))}
+                inputClassName="w-full mt-1 px-3 py-2.5 rounded-xl bg-muted border-2 border-border text-sm font-bold focus:outline-none focus:border-primary"
+                labelClassName="text-xs font-bold text-muted-foreground"
+              />
+            </div>
+          </div>
           <Field label="Описание" value={form.description} onChange={(v) => setForm({ ...form, description: v })} multiline />
 
           <p className="text-xs text-muted-foreground pt-2 border-t-2 border-dashed border-border">

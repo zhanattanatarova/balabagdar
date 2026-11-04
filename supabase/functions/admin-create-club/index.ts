@@ -39,10 +39,18 @@ Deno.serve(async (req) => {
       email: emailIn, password: passIn,
       name, city, category, categories, phone, address, description,
       instagram_url, twogis_url, price_from, avatar_url, gallery,
+      age_min, age_max, latitude, longitude,
     } = body ?? {};
+    const toInt = (v: unknown) => { const n = Number(v); return Number.isFinite(n) && v !== "" && v != null ? Math.round(n) : null; };
+    const toCoord = (v: unknown, max: number) => { const n = Number(v); return v != null && v !== "" && Number.isFinite(n) && Math.abs(n) <= max ? n : null; };
+    const ageMin = toInt(age_min);
+    const ageMax = toInt(age_max);
+    const priceFrom = toInt(price_from);
+    if (ageMin == null || ageMax == null || priceFrom == null) return json({ error: "Укажите возраст от, возраст до и цену от" });
+    if (ageMin < 0 || ageMax > 99 || ageMin > ageMax || priceFrom < 0) return json({ error: "Проверьте возраст и цену" });
 
     const catList: string[] = Array.isArray(categories) && categories.length
-      ? categories.filter((c: any) => typeof c === "string" && c.trim())
+      ? [...new Set<string>(categories.filter((c: any) => typeof c === "string" && c.trim()).map((c: string) => c.trim()))]
       : (category ? [category] : []);
     const primaryCategory = (catList[0] ?? "development").split(".")[0];
 
@@ -103,7 +111,11 @@ Deno.serve(async (req) => {
         description_en: description ?? null,
         instagram: instagram_url ?? null,
         twogis_url: twogis_url ?? null,
-        price_from: price_from ?? null,
+        price_from: priceFrom,
+        age_min: ageMin,
+        age_max: ageMax,
+        latitude: toCoord(latitude, 90),
+        longitude: toCoord(longitude, 180),
         avatar_url: avatar_url ?? null,
         gallery: Array.isArray(gallery) ? gallery : [],
       })
