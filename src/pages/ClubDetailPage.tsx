@@ -8,7 +8,7 @@ import BookingModal from "@/components/BookingModal";
 import ClubReviews from "@/components/ClubReviews";
 import SEO from "@/components/SEO";
 import { safeImageUrl } from "@/lib/safeUrl";
-import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
+import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 
 const ClubDetailPage = () => {
@@ -133,7 +133,7 @@ const ClubDetailPage = () => {
             )}
             {club.price_from > 0 && (
               <span className="text-xs font-bold bg-secondary/10 text-secondary px-2 py-1 rounded-lg">
-                {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
+                {clubPrice(club.price_from, club.price_currency, lang)}
               </span>
             )}
             {categoryLabels.map((category) => (

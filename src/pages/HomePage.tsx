@@ -5,7 +5,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { safeImageUrl } from "@/lib/safeUrl";
-import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
+import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
@@ -1048,7 +1048,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                     </p>
                     {club.price_from > 0 && (
                       <p className="text-[10px] font-bold text-primary mt-1">
-                        {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
+                        {clubPrice(club.price_from, club.price_currency, lang)}
                       </p>
                     )}
                     <div className="flex flex-wrap gap-1 mt-1.5">

@@ -7,7 +7,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { TAXONOMY, idsForGroup } from "@/lib/categoriesTaxonomy";
 import BottomNav from "@/components/BottomNav";
 import SEO from "@/components/SEO";
-import { clubAge, clubCategoryLabels, clubLocation } from "@/lib/clubDisplay";
+import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 
 type AgeKey = "all" | "0-3" | "3-7" | "7-12" | "12+";
@@ -302,7 +302,7 @@ const SearchPage = () => {
                     </p>
                     {club.price_from > 0 && (
                       <p className="text-[10px] font-bold text-primary mt-1">
-                        {t("club.price")} {club.price_from.toLocaleString()} {club.price_currency}
+                        {clubPrice(club.price_from, club.price_currency, lang)}
                       </p>
                     )}
                     <div className="flex flex-wrap gap-1 mt-1.5">
