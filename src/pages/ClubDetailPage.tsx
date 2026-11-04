@@ -10,6 +10,7 @@ import SEO from "@/components/SEO";
 import { safeImageUrl } from "@/lib/safeUrl";
 import { clubAge, clubCategoryLabels, clubLocation, clubPrice, hasRealAge } from "@/lib/clubDisplay";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
+import TwoGisBadge from "@/components/TwoGisBadge";
 
 const ClubDetailPage = () => {
   const { id } = useParams();
@@ -102,7 +103,7 @@ const ClubDetailPage = () => {
           address: { "@type": "PostalAddress", addressLocality: club.city, streetAddress: club.address, addressCountry: "KZ" },
           telephone: club.phone,
           image: safeImageUrl(club.avatar_url) || undefined,
-          aggregateRating: club.rating ? { "@type": "AggregateRating", ratingValue: club.rating, reviewCount: club.reviews_count || 0 } : undefined,
+          aggregateRating: club.reviews_count > 0 ? { "@type": "AggregateRating", ratingValue: club.rating, reviewCount: club.reviews_count || 0 } : undefined,
         }}
       />
       <BookingModal open={showBooking} onClose={() => setShowBooking(false)} club={club} schedules={schedules} />
@@ -136,6 +137,11 @@ const ClubDetailPage = () => {
                 <span className="text-sm font-black">{club.rating}</span>
               </div>
               <span className="text-xs text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
+            </div>
+          )}
+          {club.twogis_rating != null && (
+            <div className="mt-1.5">
+              <TwoGisBadge rating={club.twogis_rating} count={club.twogis_reviews_count} url={club.twogis_url} size="md" />
             </div>
           )}
           <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1 font-bold">

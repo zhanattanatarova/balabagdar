@@ -141,7 +141,7 @@ const ClubReviews = ({ clubId }: Props) => {
       <h2 className="font-black text-sm mb-2">{t("reviews.title")}</h2>
 
       {/* Form */}
-      <div className="cartoon-card p-4 mb-3">
+      <div id="balahub-review-form" className="cartoon-card p-4 mb-3 scroll-mt-4">
         <p className="text-xs font-bold text-muted-foreground mb-2">{t("reviews.your_rating")}</p>
         <StarPicker value={rating} onChange={setRating} />
         <textarea
@@ -206,6 +206,18 @@ const ClubReviews = ({ clubId }: Props) => {
           ))}
         </div>
       )}
+
+      <button
+        type="button"
+        onClick={() => {
+          if (!user) { setShowAuth(true); return; }
+          document.getElementById("balahub-review-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          (document.querySelector("#balahub-review-form textarea") as HTMLTextAreaElement | null)?.focus({ preventScroll: true });
+        }}
+        className="mt-3 w-full flex items-center justify-center gap-2 bg-secondary/15 text-foreground font-black text-sm py-3 rounded-xl border-2 border-secondary/40 hover:bg-secondary/25 transition-colors"
+      >
+        ⭐ {t("reviews.rate_on_balahub")}
+      </button>
     </div>
   );
 };

@@ -11,6 +11,7 @@ import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
 import { CITIES } from "@/lib/cities";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
+import TwoGisBadge from "@/components/TwoGisBadge";
 import iconCreativity from "@/assets/icon-creativity.png";
 import iconSport from "@/assets/icon-sport.png";
 import iconDevelopment from "@/assets/icon-development.png";
@@ -1039,6 +1040,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                         <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
                       </div>
                     )}
+                    <TwoGisBadge rating={club.twogis_rating} count={club.twogis_reviews_count} className="mt-1" />
                     <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold">
                       <MapPin size={10} className="text-primary" />{clubLocation(club.city, club.address)}
                     </p>
@@ -1110,6 +1112,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                       <span className="text-xs font-bold text-muted-foreground">{club.reviews_count} {t("club.reviews")}</span>
                     </div>
                   )}
+                  <TwoGisBadge rating={club.twogis_rating} count={club.twogis_reviews_count} className="mt-1.5" />
                   <div className="flex flex-wrap gap-1 mt-1.5">
                     {clubAge(club.age_min, club.age_max, lang) && (
                       <span className="text-[9px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-lg">{clubAge(club.age_min, club.age_max, lang)}</span>

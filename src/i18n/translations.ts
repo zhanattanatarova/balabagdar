@@ -358,6 +358,7 @@ export const translations = {
   "club.age": { ru: "Возраст", kz: "Жас", en: "Age" },
   "club.price": { ru: "Цена от", kz: "Бағасы", en: "Price from" },
   "club.reviews": { ru: "отзывов", kz: "пікір", en: "reviews" },
+  "reviews.rate_on_balahub": { ru: "Оцените центр на BalaHub", kz: "Орталықты BalaHub-та бағалаңыз", en: "Rate this center on BalaHub" },
   "club.call": { ru: "Позвонить", kz: "Қоңырау шалу", en: "Call" },
   "club.whatsapp": { ru: "WhatsApp", kz: "WhatsApp", en: "WhatsApp" },
   "club.telegram_link": { ru: "Telegram", kz: "Telegram", en: "Telegram" },

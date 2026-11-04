@@ -9,6 +9,7 @@ import { safeUrl, safeImageUrl } from "@/lib/safeUrl";
 import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import { useLanguage } from "@/hooks/useLanguage";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
+import TwoGisBadge from "@/components/TwoGisBadge";
 
 const mapStrings = {
   kz: { title: "🏫 Орталықтар мен үйірмелер", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық орталықтар", no_clubs: "Бұл қалада әзірге үйірмелер жоқ", show_map: "Картаны көрсету", hide_map: "Картаны жасыру" },
@@ -37,6 +38,8 @@ interface Club {
   phone: string | null;
   rating: number | null;
   reviews_count: number | null;
+  twogis_rating: number | null;
+  twogis_reviews_count: number | null;
   price_from: number | null;
   price_currency: string | null;
   categories: string[] | null;
@@ -135,7 +138,7 @@ const MapPage = ({ city }: { city: string }) => {
       setLoading(true);
       const { data } = await supabase
         .from("clubs")
-        .select("id,name_ru,name_kz,name_en,address,phone,rating,reviews_count,price_from,price_currency,categories,age_min,age_max,avatar_url,twogis_url,city,latitude,longitude")
+        .select("id,name_ru,name_kz,name_en,address,phone,rating,reviews_count,twogis_rating,twogis_reviews_count,price_from,price_currency,categories,age_min,age_max,avatar_url,twogis_url,city,latitude,longitude")
         .eq("is_active", true)
         .eq("city", city);
       const list = (((data as any) || []) as Club[]).map((club) => ({
@@ -374,6 +377,7 @@ const MapPage = ({ city }: { city: string }) => {
                     </div>
                   ) : null}
                 </div>
+                <TwoGisBadge rating={club.twogis_rating} count={club.twogis_reviews_count} className="mt-2" />
                 {club.price_from != null && club.price_from > 0 && (
                   <p className="text-[10px] font-bold text-primary mt-2">
                     {clubPrice(club.price_from, club.price_currency, lang)}
