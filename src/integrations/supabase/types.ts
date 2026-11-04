@@ -217,6 +217,9 @@ export type Database = {
           rating: number | null
           reviews_count: number | null
           telegram: string | null
+          twogis_checked_at: string | null
+          twogis_rating: number | null
+          twogis_reviews_count: number | null
           twogis_url: string | null
           updated_at: string
           user_id: string
@@ -250,6 +253,9 @@ export type Database = {
           rating?: number | null
           reviews_count?: number | null
           telegram?: string | null
+          twogis_checked_at?: string | null
+          twogis_rating?: number | null
+          twogis_reviews_count?: number | null
           twogis_url?: string | null
           updated_at?: string
           user_id: string
@@ -283,6 +289,9 @@ export type Database = {
           rating?: number | null
           reviews_count?: number | null
           telegram?: string | null
+          twogis_checked_at?: string | null
+          twogis_rating?: number | null
+          twogis_reviews_count?: number | null
           twogis_url?: string | null
           updated_at?: string
           user_id?: string
