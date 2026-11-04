@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 
 interface SEOProps {
@@ -13,6 +14,11 @@ const BASE = "https://bala-hub.kz";
 
 const SEO = ({ title, description, path, image, type = "website", jsonLd }: SEOProps) => {
   const url = `${BASE}${path}`;
+  // Keep the static description from index.html in sync so crawlers never read two different ones.
+  useEffect(() => {
+    document.title = title;
+    document.querySelectorAll('meta[name="description"]:not([data-rh])').forEach((m) => m.setAttribute("content", description));
+  }, [title, description]);
   return (
     <Helmet>
       <title>{title}</title>
