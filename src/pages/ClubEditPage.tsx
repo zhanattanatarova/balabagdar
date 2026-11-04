@@ -6,6 +6,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { validateImageFileDeep } from "@/lib/uploadValidation";
+import { hasRealAge, uniqueCategories } from "@/lib/clubDisplay";
+import CoordinatePicker from "@/components/CoordinatePicker";
 
 const categoryOptions = [
   "creativity", "sport", "development", "speech", "dance",
@@ -68,10 +70,11 @@ const ClubEditPage = () => {
     telegram: "",
     instagram: "",
     twogis_url: "",
-    age_min: 3,
-    age_max: 18,
-    price_from: 0,
+    age_min: "",
+    age_max: "",
+    price_from: "",
   });
+  const [coords, setCoords] = useState<{ lat: number | null; lng: number | null }>({ lat: null, lng: null });
 
 
   useEffect(() => {
@@ -86,7 +89,8 @@ const ClubEditPage = () => {
         const cats: string[] = Array.isArray(c.categories) && c.categories.length > 0
           ? c.categories
           : (c.category ? [c.category] : []);
-        setCategories(cats);
+        setCategories(uniqueCategories(cats));
+        setCoords({ lat: c.latitude ?? null, lng: c.longitude ?? null });
         setForm({
           name_ru: c.name_ru || "", name_kz: c.name_kz || "", name_en: c.name_en || "",
           description_ru: c.description_ru || "", description_kz: c.description_kz || "", description_en: c.description_en || "",
@@ -97,9 +101,10 @@ const ClubEditPage = () => {
           telegram: c.telegram || "",
           instagram: c.instagram || "",
           twogis_url: c.twogis_url || "",
-          age_min: c.age_min ?? 3,
-          age_max: c.age_max ?? 18,
-          price_from: c.price_from ?? 0,
+          // 3–18 was the old database default, not a real value — ask the owner to fill it in
+          age_min: hasRealAge(c.age_min, c.age_max) && c.age_min != null ? String(c.age_min) : "",
+          age_max: hasRealAge(c.age_min, c.age_max) && c.age_max != null ? String(c.age_max) : "",
+          price_from: c.price_from != null && c.price_from > 0 ? String(c.price_from) : "",
         });
         const { data: sched } = await supabase.from("club_schedules").select("*").eq("club_id", c.id).order("day_of_week");
         if (sched) setSchedules(sched.map((s) => ({ ...s, start_time: s.start_time?.slice(0, 5), end_time: s.end_time?.slice(0, 5) })));
@@ -162,6 +167,21 @@ const ClubEditPage = () => {
       toast({ title: t("common.error"), description: "Не авторизован. Войдите снова.", variant: "destructive" });
       return;
     }
+    const ageMin = parseInt(form.age_min, 10);
+    const ageMax = parseInt(form.age_max, 10);
+    const priceFrom = parseInt(form.price_from, 10);
+    if (!Number.isFinite(ageMin) || !Number.isFinite(ageMax) || !Number.isFinite(priceFrom)) {
+      toast({ title: t("common.error"), description: "Заполните обязательные поля: возраст от, возраст до и цена от.", variant: "destructive" });
+      return;
+    }
+    if (ageMin < 0 || ageMax > 99 || ageMin > ageMax) {
+      toast({ title: t("common.error"), description: "Проверьте возраст: «от» должен быть не больше «до».", variant: "destructive" });
+      return;
+    }
+    if (priceFrom < 0) {
+      toast({ title: t("common.error"), description: "Цена не может быть отрицательной.", variant: "destructive" });
+      return;
+    }
     setSaving(true);
 
     try {
@@ -196,13 +216,19 @@ const ClubEditPage = () => {
         description_kz: form.description_kz || anyDesc,
         description_en: form.description_en || anyDesc,
         city: form.city || "Астана",
-        age_min: Number.isFinite(form.age_min) ? form.age_min : 3,
-        age_max: Number.isFinite(form.age_max) ? form.age_max : 18,
-        price_from: Number.isFinite(form.price_from) ? form.price_from : 0,
+        age_min: ageMin,
+        age_max: ageMax,
+        price_from: priceFrom,
       };
-      const safeCategories = categories.length > 0 ? categories : ["other"];
+      const cleanCategories = uniqueCategories(categories);
+      const safeCategories = cleanCategories.length > 0 ? cleanCategories : ["other"];
 
-      const payload = { ...safeForm, user_id: user.id, avatar_url: avatarUrl, gallery, categories: safeCategories, category: safeCategories[0] };
+      const payload = {
+        ...safeForm,
+        user_id: user.id, avatar_url: avatarUrl, gallery,
+        categories: safeCategories, category: safeCategories[0],
+        latitude: coords.lat, longitude: coords.lng,
+      };
       console.log("[ClubEdit] payload", payload);
       let savedClubId = clubId;
       let error: any = null;
@@ -462,7 +488,7 @@ const ClubEditPage = () => {
                     <button
                       key={c}
                       type="button"
-                      onClick={() => setCategories((prev) => active ? prev.filter((x) => x !== c) : [...prev, c])}
+                      onClick={() => setCategories((prev) => active ? prev.filter((x) => x !== c) : uniqueCategories([...prev, c]))}
                       className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all ${active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent hover:border-primary/40"}`}
                     >
                       {active && <Check size={12} />}
@@ -496,10 +522,22 @@ const ClubEditPage = () => {
         <div className="cartoon-card p-4 space-y-3">
           <p className="text-sm font-black">👶 {t("edit.age_range")}</p>
           <div className="grid grid-cols-2 gap-3">
-            <div><label className={labelCls}>Мин. возраст</label><input type="number" value={form.age_min} onChange={(e) => update("age_min", parseInt(e.target.value) || 0)} className={inputCls} /></div>
-            <div><label className={labelCls}>Макс. возраст</label><input type="number" value={form.age_max} onChange={(e) => update("age_max", parseInt(e.target.value) || 0)} className={inputCls} /></div>
+            <div><label className={labelCls}>Возраст от *</label><input type="number" inputMode="numeric" min={0} max={99} required value={form.age_min} onChange={(e) => update("age_min", e.target.value)} placeholder="3" className={inputCls} /></div>
+            <div><label className={labelCls}>Возраст до *</label><input type="number" inputMode="numeric" min={0} max={99} required value={form.age_max} onChange={(e) => update("age_max", e.target.value)} placeholder="12" className={inputCls} /></div>
           </div>
-          <div><label className={labelCls}>💰 {t("edit.price")}</label><input type="number" value={form.price_from} onChange={(e) => update("price_from", parseInt(e.target.value) || 0)} placeholder="15000" className={inputCls} /></div>
+          <div><label className={labelCls}>💰 {t("edit.price")} (₸) *</label><input type="number" inputMode="numeric" min={0} required value={form.price_from} onChange={(e) => update("price_from", e.target.value)} placeholder="15000" className={inputCls} /></div>
+        </div>
+
+        {/* Location point */}
+        <div className="cartoon-card p-4 space-y-3">
+          <p className="text-sm font-black">📍 Точка на карте</p>
+          <CoordinatePicker
+            latitude={coords.lat}
+            longitude={coords.lng}
+            onChange={(lat, lng) => setCoords({ lat, lng })}
+            inputClassName={inputCls}
+            labelClassName={labelCls}
+          />
         </div>
 
         {/* Schedule */}
