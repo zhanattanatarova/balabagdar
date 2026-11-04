@@ -1127,7 +1127,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   </div>
                 </div>
                 <ArrowRight size={16} className="text-primary shrink-0 mt-5" />
-              </div>
+              </Link>
             );
           })}
         </div>
