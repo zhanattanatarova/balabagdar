@@ -29,6 +29,13 @@
       "when": 1793814868299,
       "tag": "0003_add_twogis_rating",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793815024775,
+      "tag": "0004_protect_twogis_fields",
+      "breakpoints": true
     }
   ]
 }
