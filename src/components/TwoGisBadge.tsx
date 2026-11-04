@@ -1,4 +1,4 @@
-import { Star, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { formatTwoGisRating, hasTwoGisRating, twoGisReviewsLabel, twoGisReviewsUrl } from "@/lib/twogis";
 
@@ -20,12 +20,7 @@ const TwoGisBadge = ({ rating, count, url, size = "sm", className = "" }: Props)
     size === "md" ? "text-xs px-2.5 py-1" : "text-[10px] px-1.5 py-0.5"
   } ${className}`;
   const href = url ? twoGisReviewsUrl(url) : null;
-  const label = (
-    <>
-      <Star size={size === "md" ? 12 : 10} className="text-secondary fill-secondary sr-only" aria-hidden />
-      <span>{text}</span>
-    </>
-  );
+  const label = <span>{text}</span>;
   if (href) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={`${cls} hover:bg-muted/70`} title={text}>
