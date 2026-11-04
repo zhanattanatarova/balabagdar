@@ -209,6 +209,9 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
+      {setCity && (
+        <CityPickerSheet open={showCityPicker} city={city} onClose={() => setShowCityPicker(false)} onSelect={setCity} />
+      )}
       <SEO
         title={`События для детей в ${city} | BalaHub`.slice(0, 60)}
         description={`Афиша детских событий, мастер-классов и праздников в городе ${city}. Актуальные даты, описание и контакты организаторов.`.slice(0, 159)}

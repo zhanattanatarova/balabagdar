@@ -14,20 +14,20 @@ import SEO from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const seoByPath: Record<string, { title: string; description: string; path: string; noindex?: boolean }> = {
-  "/": {
+  "/clubs": {
     title: "BalaHub — балалар үйірмелері мен мамандар Қазақстанда",
     description: "Қазақстанның 35 қаласындағы балалар үйірмелері, секциялар мен мамандарды тауып, броньдаңыз.",
-    path: "/",
+    path: "/clubs",
   },
   "/map": {
     title: "Үйірмелер картасы — BalaHub",
     description: "Қалаңыздағы балалар үйірмелерін картадан тауып, жақын маңдағыларды көріңіз.",
     path: "/map",
   },
-  "/news": {
+  "/": {
     title: "Балаларға арналған іс-шаралар — BalaHub",
     description: "Қазақстандағы балаларға арналған жаңалықтар, мерекелер мен іс-шаралар.",
-    path: "/news",
+    path: "/",
   },
   "/board": {
     title: "Хабарландыру тақтасы — BalaHub",
@@ -60,13 +60,13 @@ const Index = () => {
   const renderPage = () => {
     switch (location.pathname) {
       case "/map": return <MapPage city={city} />;
-      case "/news": return <NewsPage city={city} />;
+      case "/clubs": return <HomePage city={city} setCity={setCity} />;
       case "/board": return <BoardPage city={city} />;
       case "/profile": return <ProfilePage />;
       case "/notifications": return <NotificationsPage />;
       case "/dashboard": return <ClubDashboard />;
       case "/club/edit": return <ClubEditPage />;
-      default: return <HomePage city={city} setCity={setCity} />;
+      default: return <NewsPage city={city} setCity={setCity} />;
     }
   };
 
@@ -76,7 +76,7 @@ const Index = () => {
     : lang === "en"
       ? { title: "BalaHub — kids' clubs and centers in Kazakhstan", description: "Find and book kids' clubs, activities and specialists in 35 cities across Kazakhstan." }
       : { title: seo.title, description: seo.description };
-  const activeSeo = location.pathname === "/" ? { ...seo, ...localizedHomeSeo } : seo;
+  const activeSeo = location.pathname === "/clubs" ? { ...seo, ...localizedHomeSeo } : seo;
 
   return (
     <div className="min-h-screen bg-background">

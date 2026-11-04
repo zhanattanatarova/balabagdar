@@ -62,7 +62,7 @@ const ClubDetailPage = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-3">
         <p className="text-lg font-bold">😕 {t("home.not_found")}</p>
-        <button onClick={() => navigate("/")} className="text-primary font-bold">{t("common.back")}</button>
+        <button onClick={() => navigate("/clubs")} className="text-primary font-bold">{t("common.back")}</button>
       </div>
     );
   }

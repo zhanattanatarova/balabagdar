@@ -9,6 +9,7 @@ import { safeImageUrl } from "@/lib/safeUrl";
 import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
+import { CITIES } from "@/lib/cities";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 import iconCreativity from "@/assets/icon-creativity.png";
 import iconSport from "@/assets/icon-sport.png";
@@ -26,15 +27,7 @@ import iconSpecial from "@/assets/icon-special.png";
 import iconKindergarten from "@/assets/icon-kindergarten.png";
 import AuthModal from "@/components/AuthModal";
 
-const cities = [
-  "Алматы", "Астана", "Шымкент", "Караганда", "Актобе",
-  "Тараз", "Павлодар", "Усть-Каменогорск", "Семей", "Атырау",
-  "Костанай", "Кызылорда", "Уральск", "Петропавловск", "Актау",
-  "Темиртау", "Туркестан", "Кокшетау", "Талдыкорган", "Экибастуз",
-  "Рудный", "Жезказган", "Каскелен", "Талгар", "Конаев",
-  "Жанаозен", "Байконур", "Балхаш", "Кентау", "Сатпаев",
-  "Сарань", "Щучинск", "Риддер", "Аксай", "Степногорск",
-];
+const cities = CITIES;
 
 const categoryIcons: Record<string, string> = {
   creativity: iconCreativity, sport: iconSport, development: iconDevelopment,
