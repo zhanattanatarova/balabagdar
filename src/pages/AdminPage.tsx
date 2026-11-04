@@ -7,6 +7,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
 import AdminClubStats from "@/components/AdminClubStats";
+import AdminTwoGisEditor from "@/components/AdminTwoGisEditor";
 import { TAXONOMY } from "@/lib/categoriesTaxonomy";
 import { uniqueCategories } from "@/lib/clubDisplay";
 import CoordinatePicker from "@/components/CoordinatePicker";
@@ -242,7 +243,7 @@ const AdminPage = () => {
     setClubsLoading(true);
     const { data, error } = await supabase
       .from("clubs")
-      .select("id, name_ru, city, phone, categories, is_active, rating, reviews_count, created_at")
+      .select("id, name_ru, city, phone, categories, is_active, rating, reviews_count, twogis_rating, twogis_reviews_count, twogis_url, twogis_checked_at, created_at")
       .order("created_at", { ascending: false })
       .limit(1000);
     if (error) toast({ title: "Ошибка", description: error.message, variant: "destructive" });
@@ -437,8 +438,16 @@ const AdminPage = () => {
                           </div>
                           <div className="text-xs mt-0.5">📞 <a href={`tel:${c.phone}`} className="font-bold text-primary">{c.phone || "—"}</a></div>
                           <div className="text-xs mt-0.5 text-muted-foreground">
-                            ⭐ {c.rating ?? 0} ({c.reviews_count ?? 0}) · {(c.categories || []).length} направл.
+                            BalaHub: ⭐ {c.rating ?? 0} ({c.reviews_count ?? 0}) · {(c.categories || []).length} направл.
                           </div>
+                          <AdminTwoGisEditor
+                            clubId={c.id}
+                            rating={c.twogis_rating}
+                            count={c.twogis_reviews_count}
+                            url={c.twogis_url}
+                            checkedAt={c.twogis_checked_at}
+                            onSaved={(patch) => setClubs((prev) => prev.map((x) => (x.id === c.id ? { ...x, ...patch } : x)))}
+                          />
                           <div className="text-[10px] text-muted-foreground mt-1">
                             Создан: {c.created_at ? new Date(c.created_at).toLocaleDateString("ru") : "—"}
                           </div>
