@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Loader2, MapPin, Search, Star, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { safeImageUrl } from "@/lib/safeUrl";
@@ -275,10 +275,10 @@ const SearchPage = () => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
               const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
-                <div
+                <Link
                   key={club.id}
-                  onClick={() => navigate(`/club/${club.id}`)}
-                  className="cartoon-card overflow-hidden cursor-pointer animate-slide-up"
+                  to={`/club/${club.id}`}
+                  className="block cartoon-card overflow-hidden cursor-pointer animate-slide-up"
                   style={{ animationDelay: `${i * 0.04}s`, animationFillMode: "both" }}
                 >
                   <div className="relative h-28">
@@ -314,7 +314,7 @@ const SearchPage = () => {
                       ))}
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

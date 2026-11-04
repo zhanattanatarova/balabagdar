@@ -3,6 +3,7 @@ import { toast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +48,8 @@ const ProfilePage = () => {
     <div className="pb-24 max-w-6xl mx-auto">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
 
-      <div className="pt-8 pb-10 flex flex-col items-center rounded-b-[2rem]" style={{ background: "var(--gradient-header)" }}>
+      <div className="relative pt-8 pb-10 flex flex-col items-center rounded-b-[2rem]" style={{ background: "var(--gradient-header)" }}>
+        <div className="absolute top-3 right-3"><LanguageSwitcher compact /></div>
         <div className="border-4 border-primary-foreground/30 rounded-full" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
           <BrandLogo size="lg" />
         </div>
