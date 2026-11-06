@@ -5,3 +5,4 @@
 - Club age 3–18 is the retired database default and is treated as "not specified" in display (`hasRealAge`); new clubs must save explicit age and price.
 - Announcement phones stay hidden from guests (anon has column-level SELECT without `phone`); guests read via `announcements_public` or explicit column lists, never `select("*")`.
 - `/` is the city events page (landing); the clubs catalog lives at `/clubs`; `/news` redirects to `/` so old links keep working; club pages stay at `/club/:id`.
+- 2GIS rating (`twogis_rating`, `twogis_reviews_count`) is shown only as a separate source-labelled badge, never merged with BalaHub's own `rating`; a DB trigger lets only admins/server jobs change it.
