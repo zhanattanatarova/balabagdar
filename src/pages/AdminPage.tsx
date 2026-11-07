@@ -7,6 +7,9 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
 import AdminClubStats from "@/components/AdminClubStats";
+import AdminPastEvents from "@/components/AdminPastEvents";
+import { EVENT_KINDS } from "@/lib/events";
+import { KIND_LABELS } from "@/components/events/eventLabels";
 import AdminTwoGisEditor from "@/components/AdminTwoGisEditor";
 import { TAXONOMY } from "@/lib/categoriesTaxonomy";
 import { uniqueCategories } from "@/lib/clubDisplay";
@@ -72,7 +75,7 @@ const AdminPage = () => {
   const [usersLoading, setUsersLoading] = useState(false);
   const [userQuery, setUserQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "parent" | "club_owner" | "admin">("all");
-  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "posts" | "stats" | "create">("clubs");
+  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "posts" | "past" | "stats" | "create">("clubs");
   const [clubs, setClubs] = useState<any[]>([]);
   const [clubsLoading, setClubsLoading] = useState(false);
   const [clubQuery, setClubQuery] = useState("");
@@ -111,6 +114,11 @@ const AdminPage = () => {
     name: "BalaHub",
     phone: "",
     image_url: "",
+    age_min: "",
+    age_max: "",
+    price: "" as "" | "free" | "paid",
+    price_from: "",
+    event_kind: "",
   });
 
   const uploadFile = async (file: File): Promise<string> => {
@@ -203,6 +211,13 @@ const AdminPage = () => {
       image_url: postForm.image_url || null,
       event_date: postForm.type === "event" ? eventInputToIso(postForm.event_date) : null,
       event_end_date: postForm.type === "event" ? postForm.event_end_date || null : null,
+      ...(postForm.type === "event" ? {
+        age_min: postForm.age_min === "" ? null : Number(postForm.age_min),
+        age_max: postForm.age_max === "" ? null : Number(postForm.age_max),
+        is_free: postForm.price === "" ? null : postForm.price === "free",
+        price_from: postForm.price === "paid" && postForm.price_from ? Number(postForm.price_from) : null,
+        event_kind: postForm.event_kind || null,
+      } : {}),
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     } as any);
     setPostSaving(false);
@@ -219,6 +234,11 @@ const AdminPage = () => {
       event_end_date: "",
       phone: "",
       image_url: "",
+      age_min: "",
+      age_max: "",
+      price: "",
+      price_from: "",
+      event_kind: "",
     }));
   };
 
@@ -396,6 +416,7 @@ const AdminPage = () => {
             ["bookings", `📨 Заявки (${bookings.length})`],
             ["users", `👥 Пользователи (${users.length})`],
             ["posts", "📣 Публикации"],
+            ["past", "🕓 Прошедшие"],
             ["stats", "📊 Статистика"],
             ["create", "➕ Создать кружок"],
           ] as const).map(([k, label]) => (
@@ -410,6 +431,7 @@ const AdminPage = () => {
         </div>
 
         {tab === "stats" && <AdminClubStats clubs={clubs} />}
+        {tab === "past" && <AdminPastEvents />}
 
         {tab === "clubs" && (
           <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
@@ -668,6 +690,22 @@ const AdminPage = () => {
                 <Input id="admin-post-time" type="time" disabled={!postForm.event_date} value={postForm.event_date.split("T")[1] || ""} onChange={(e) => setPostForm({ ...postForm, event_date: postForm.event_date.slice(0, 10) + (e.target.value ? "T" + e.target.value : "") })} />
                 <Label htmlFor="admin-post-end">Дата окончания (необязательно)</Label>
                 <Input id="admin-post-end" type="date" min={postForm.event_date.slice(0, 10)} value={postForm.event_end_date} onChange={(e) => setPostForm({ ...postForm, event_end_date: e.target.value })} />
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <div><Label htmlFor="admin-post-agemin">Возраст от</Label><Input id="admin-post-agemin" type="number" min={0} max={18} value={postForm.age_min} onChange={(e) => setPostForm({ ...postForm, age_min: e.target.value })} /></div>
+                  <div><Label htmlFor="admin-post-agemax">Возраст до</Label><Input id="admin-post-agemax" type="number" min={0} max={18} value={postForm.age_max} onChange={(e) => setPostForm({ ...postForm, age_max: e.target.value })} /></div>
+                </div>
+                <Label className="mt-3 block">Цена</Label>
+                <div className="grid grid-cols-3 gap-2 mt-1">
+                  {([["", "Не указано"], ["free", "Бесплатно"], ["paid", "Платно"]] as const).map(([v, l]) => (
+                    <Button key={v} type="button" size="sm" variant={postForm.price === v ? "default" : "outline"} onClick={() => setPostForm({ ...postForm, price: v })}>{l}</Button>
+                  ))}
+                </div>
+                {postForm.price === "paid" && (<><Label htmlFor="admin-post-price">Цена от, ₸</Label><Input id="admin-post-price" type="number" min={0} value={postForm.price_from} onChange={(e) => setPostForm({ ...postForm, price_from: e.target.value })} /></>)}
+                <Label htmlFor="admin-post-kind" className="mt-3 block">Тип события</Label>
+                <select id="admin-post-kind" value={postForm.event_kind} onChange={(e) => setPostForm({ ...postForm, event_kind: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border text-sm font-bold">
+                  <option value="">Не указан</option>
+                  {EVENT_KINDS.map((k) => <option key={k} value={k}>{KIND_LABELS[k].ru}</option>)}
+                </select>
               </div>
             )}
 

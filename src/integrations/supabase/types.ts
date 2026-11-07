@@ -16,6 +16,8 @@ export type Database = {
     Tables: {
       announcements: {
         Row: {
+          age_max: number | null
+          age_min: number | null
           body: string
           category: string
           city: string
@@ -23,11 +25,15 @@ export type Database = {
           created_at: string
           event_date: string | null
           event_end_date: string | null
+          event_kind: string | null
           expires_at: string
           id: string
           image_url: string | null
+          is_free: boolean | null
           name: string
           phone: string
+          price_from: number | null
+          public_phone: string | null
           source_label: string | null
           source_url: string | null
           title: string
@@ -35,6 +41,8 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          age_max?: number | null
+          age_min?: number | null
           body?: string
           category?: string
           city?: string
@@ -42,11 +50,15 @@ export type Database = {
           created_at?: string
           event_date?: string | null
           event_end_date?: string | null
+          event_kind?: string | null
           expires_at?: string
           id?: string
           image_url?: string | null
+          is_free?: boolean | null
           name?: string
           phone?: string
+          price_from?: number | null
+          public_phone?: string | null
           source_label?: string | null
           source_url?: string | null
           title: string
@@ -54,6 +66,8 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          age_max?: number | null
+          age_min?: number | null
           body?: string
           category?: string
           city?: string
@@ -61,11 +75,15 @@ export type Database = {
           created_at?: string
           event_date?: string | null
           event_end_date?: string | null
+          event_kind?: string | null
           expires_at?: string
           id?: string
           image_url?: string | null
+          is_free?: boolean | null
           name?: string
           phone?: string
+          price_from?: number | null
+          public_phone?: string | null
           source_label?: string | null
           source_url?: string | null
           title?: string
@@ -481,6 +499,8 @@ export type Database = {
     Views: {
       announcements_public: {
         Row: {
+          age_max: number | null
+          age_min: number | null
           body: string | null
           category: string | null
           city: string | null
@@ -488,16 +508,22 @@ export type Database = {
           created_at: string | null
           event_date: string | null
           event_end_date: string | null
+          event_kind: string | null
           expires_at: string | null
           id: string | null
           image_url: string | null
+          is_free: boolean | null
           name: string | null
+          price_from: number | null
+          public_phone: string | null
           source_label: string | null
           source_url: string | null
           title: string | null
           user_id: string | null
         }
         Insert: {
+          age_max?: number | null
+          age_min?: number | null
           body?: string | null
           category?: string | null
           city?: string | null
@@ -505,16 +531,22 @@ export type Database = {
           created_at?: string | null
           event_date?: string | null
           event_end_date?: string | null
+          event_kind?: string | null
           expires_at?: string | null
           id?: string | null
           image_url?: string | null
+          is_free?: boolean | null
           name?: string | null
+          price_from?: number | null
+          public_phone?: string | null
           source_label?: string | null
           source_url?: string | null
           title?: string | null
           user_id?: string | null
         }
         Update: {
+          age_max?: number | null
+          age_min?: number | null
           body?: string | null
           category?: string | null
           city?: string | null
@@ -522,10 +554,14 @@ export type Database = {
           created_at?: string | null
           event_date?: string | null
           event_end_date?: string | null
+          event_kind?: string | null
           expires_at?: string | null
           id?: string | null
           image_url?: string | null
+          is_free?: boolean | null
           name?: string | null
+          price_from?: number | null
+          public_phone?: string | null
           source_label?: string | null
           source_url?: string | null
           title?: string | null

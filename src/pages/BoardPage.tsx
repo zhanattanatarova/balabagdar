@@ -7,6 +7,7 @@ import { toast } from "@/hooks/use-toast";
 import { validateImageFileDeep } from "@/lib/uploadValidation";
 import PublicationSource from "@/components/PublicationSource";
 import { Link } from "react-router-dom";
+import PhoneActions from "@/components/events/PhoneActions";
 
 interface Announcement {
   id: string;
@@ -22,6 +23,7 @@ interface Announcement {
   user_id: string | null;
   source_label?: string | null;
   source_url?: string | null;
+  public_phone?: string | null;
 }
 
 const categoriesByLang = {
@@ -413,9 +415,10 @@ const BoardPage = ({ city }: { city: string }) => {
               <h3 className="font-black text-base"><Link to={`/publication/${a.id}`} className="hover:underline">{a.title}</Link></h3>
               <p className="text-sm mt-2 whitespace-pre-line font-medium">{a.body}</p>
               <PublicationSource label={a.source_label} url={a.source_url} />
+              <PhoneActions phone={a.public_phone} />
               <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
                 <span className="text-xs font-bold text-muted-foreground">{a.name}</span>
-                {a.phone && (
+                {a.phone && !a.public_phone && (
                   <a href={`tel:${a.phone}`} className="flex items-center gap-1 text-xs font-black text-primary">
                     <Phone size={12} /> {a.phone}
                   </a>
