@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { eventInputToIso } from "@/lib/events";
 
 type Credential = { name: string; email: string; password: string; city: string };
 
@@ -106,6 +107,7 @@ const AdminPage = () => {
     title: "",
     body: "",
     event_date: "",
+    event_end_date: "",
     name: "BalaHub",
     phone: "",
     image_url: "",
@@ -185,6 +187,10 @@ const AdminPage = () => {
       toast({ title: "Укажите дату и время события", variant: "destructive" });
       return;
     }
+    if (postForm.type === "event" && postForm.event_end_date && postForm.event_end_date < postForm.event_date.slice(0, 10)) {
+      toast({ title: "Дата окончания не может быть раньше начала", variant: "destructive" });
+      return;
+    }
     setPostSaving(true);
     const { error } = await supabase.from("announcements").insert({
       user_id: user.id,
@@ -195,7 +201,8 @@ const AdminPage = () => {
       name: postForm.name.trim(),
       phone: postForm.phone.trim(),
       image_url: postForm.image_url || null,
-      event_date: postForm.type === "event" ? new Date(postForm.event_date).toISOString() : null,
+      event_date: postForm.type === "event" ? eventInputToIso(postForm.event_date) : null,
+      event_end_date: postForm.type === "event" ? postForm.event_end_date || null : null,
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     } as any);
     setPostSaving(false);
@@ -209,6 +216,7 @@ const AdminPage = () => {
       title: "",
       body: "",
       event_date: "",
+      event_end_date: "",
       phone: "",
       image_url: "",
     }));
@@ -654,8 +662,12 @@ const AdminPage = () => {
 
             {postForm.type === "event" && (
               <div>
-                <Label htmlFor="admin-post-date">Дата и время события*</Label>
-                <Input id="admin-post-date" type="datetime-local" value={postForm.event_date} onChange={(e) => setPostForm({ ...postForm, event_date: e.target.value })} />
+                <Label htmlFor="admin-post-date">Дата события*</Label>
+                <Input id="admin-post-date" type="date" value={postForm.event_date.slice(0, 10)} onChange={(e) => setPostForm({ ...postForm, event_date: e.target.value + (postForm.event_date.includes("T") ? "T" + postForm.event_date.split("T")[1] : "") })} />
+                <Label htmlFor="admin-post-time">Время (необязательно, Актау UTC+5)</Label>
+                <Input id="admin-post-time" type="time" disabled={!postForm.event_date} value={postForm.event_date.split("T")[1] || ""} onChange={(e) => setPostForm({ ...postForm, event_date: postForm.event_date.slice(0, 10) + (e.target.value ? "T" + e.target.value : "") })} />
+                <Label htmlFor="admin-post-end">Дата окончания (необязательно)</Label>
+                <Input id="admin-post-end" type="date" min={postForm.event_date.slice(0, 10)} value={postForm.event_end_date} onChange={(e) => setPostForm({ ...postForm, event_end_date: e.target.value })} />
               </div>
             )}
 

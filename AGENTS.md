@@ -7,3 +7,4 @@
 - `/` is the city events page (landing); the clubs catalog lives at `/clubs`; `/news` redirects to `/` so old links keep working; club pages stay at `/club/:id`.
 - 2GIS rating (`twogis_rating`, `twogis_reviews_count`) is shown only as a separate source-labelled badge, never merged with BalaHub's own `rating`; a DB trigger lets only admins/server jobs change it.
 - Publications use optional `club_id` associations, shared `PublicationSource` links and `/publication/:id` detail pages; the guest view exposes source metadata but never phone numbers.
+- Event filtering, date formatting and form conversions share `src/lib/events.ts` so visitor timezone cannot change event calendar days; optional end dates are stored as calendar dates.
