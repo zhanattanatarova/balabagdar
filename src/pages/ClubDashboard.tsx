@@ -7,6 +7,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { Calendar } from "@/components/ui/calendar";
 import PartnerStats from "@/components/PartnerStats";
+import ReviewInvite from "@/components/ReviewInvite";
 import PartnerDeals from "@/components/PartnerDeals";
 import { cn } from "@/lib/utils";
 
@@ -93,6 +94,7 @@ const ClubDashboard = () => {
       </div>
 
       <PartnerStats clubId={club.id} />
+      <ReviewInvite clubId={club.id} />
       <PartnerDeals club={club} />
 
       {/* Tabs */}

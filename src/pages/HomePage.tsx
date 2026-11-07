@@ -813,15 +813,15 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       )}
 
       {/* Header */}
-      <div className="mx-4 mt-3 px-4 pt-4 pb-4 rounded-3xl border-[3px]"
+      <div className="relative mx-4 mt-3 px-4 pt-4 pb-4 rounded-3xl border-[3px]"
         style={{ background: "var(--gradient-header)", boxShadow: "var(--shadow-cartoon-lg)", borderColor: "hsl(145, 90%, 30% / 0.5)" }}>
+        <div className="absolute top-3 right-3 z-10"><LanguageSwitcher compact /></div>
         <div className="flex items-center justify-center gap-2 mb-3">
           <button onClick={() => setShowCityPicker(true)}
             className="flex items-center gap-1.5 font-black text-lg px-4 py-2 rounded-full border-[3px]"
             style={{ background: "hsl(145, 85%, 38%)", color: "white", borderColor: "hsl(145, 90%, 28% / 0.5)" }}>
             <BrandLogo size="sm" />{city}<ChevronDown size={18} className="text-primary-foreground" />
           </button>
-          <LanguageSwitcher compact />
         </div>
         <h1 className="text-center font-black text-sm mb-2 text-primary-foreground">
           {t("home.city_heading").replace("{city}", city)}
