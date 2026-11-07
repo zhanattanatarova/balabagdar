@@ -22,20 +22,31 @@ export function eventInput(iso: string | null): string {
   return input.endsWith("T00:00") ? input.slice(0, 10) : input;
 }
 
+const MONTHS: Record<string, string[]> = {
+  ru: ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"],
+  kz: ["қаңтар", "ақпан", "наурыз", "сәуір", "мамыр", "маусым", "шілде", "тамыз", "қыркүйек", "қазан", "қараша", "желтоқсан"],
+  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+};
+export const monthName = (m: number, lang: string) => (MONTHS[lang] || MONTHS.ru)[m - 1];
+/** "7 қараша" / "7 ноября" / "November 7" from a YYYY-MM-DD calendar day. */
+export function formatDay(day: string, lang: string): string {
+  const d = Number(day.slice(8, 10));
+  const m = monthName(Number(day.slice(5, 7)), lang);
+  return lang === "en" ? `${m} ${d}` : `${d} ${m}`;
+}
+
 export function formatEventDate(start: string | null, end: string | null | undefined, lang: string): string {
   if (!start) return "";
   const day = aktauDate(start);
   if (!day) return "";
-  const locale = lang === "kz" ? "kk-KZ" : lang === "en" ? "en-US" : "ru-RU";
-  const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", timeZone: "UTC" };
-  const first = new Date(`${day}T12:00:00Z`);
-  let text = first.toLocaleDateString(locale, options);
-  if (end && end > day) {
-    const last = new Date(`${end}T12:00:00Z`);
-    if (!Number.isNaN(last.getTime())) {
-      text = day.slice(0, 7) === end.slice(0, 7)
-        ? `${first.getUTCDate()}–${last.toLocaleDateString(locale, options)}`
-        : `${text} – ${last.toLocaleDateString(locale, options)}`;
+  let text = formatDay(day, lang);
+  if (end && end > day && /^\d{4}-\d{2}-\d{2}$/.test(end)) {
+    const [d1, d2] = [Number(day.slice(8, 10)), Number(end.slice(8, 10))];
+    if (day.slice(0, 7) === end.slice(0, 7)) {
+      const m = monthName(Number(day.slice(5, 7)), lang);
+      text = lang === "en" ? `${m} ${d1}–${d2}` : `${d1}–${d2} ${m}`;
+    } else {
+      text = `${text} – ${formatDay(end, lang)}`;
     }
   }
   const time = eventInput(start).split("T")[1];
