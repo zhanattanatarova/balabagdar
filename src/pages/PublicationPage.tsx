@@ -1,3 +1,4 @@
+import { telHref } from "@/lib/phone";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Loader2, MapPin, Phone } from "lucide-react";
@@ -83,7 +84,7 @@ export default function PublicationPage() {
           <PublicationSource label={post.source_label} url={post.source_url} />
           <div className="mt-5 pt-4 border-t border-border flex flex-wrap justify-between gap-3 text-sm font-bold">
             <span className="text-muted-foreground">{post.name}</span>
-            {post.phone && !post.public_phone && <a href={`tel:${post.phone}`} className="text-primary flex items-center gap-2"><Phone size={16} /> {post.phone}</a>}
+            {post.phone && !post.public_phone && <a href={telHref(post.phone) || undefined} className="text-primary flex items-center gap-2"><Phone size={16} /> {post.phone}</a>}
           </div>
           <PhoneActions phone={post.public_phone} />
           <EventClubLink club={club} />

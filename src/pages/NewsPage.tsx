@@ -19,6 +19,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/components/AuthModal";
 import SEO from "@/components/SEO";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { telHref } from "@/lib/phone";
 import PublicationSource from "@/components/PublicationSource";
 
 interface EventItem {
@@ -238,7 +240,8 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
 
 
   return (
-    <div className="pb-24 max-w-6xl mx-auto">
+    <div className="relative pb-24 max-w-6xl mx-auto">
+      <div className="absolute top-3 right-4 z-20"><LanguageSwitcher compact /></div>
       {setCity && (
         <CityPickerSheet open={showCityPicker} city={city} onClose={() => setShowCityPicker(false)} onSelect={setCity} />
       )}
@@ -402,7 +405,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                         <MapPin size={11} /> {e.city}
                       </span>
                       {e.phone && !e.public_phone && (
-                        <a href={`tel:${e.phone}`} className="flex items-center gap-1 text-xs font-black text-primary">
+                        <a href={telHref(e.phone) || undefined} className="flex items-center gap-1 text-xs font-black text-primary">
                           <Phone size={12} /> {e.phone}
                         </a>
                       )}

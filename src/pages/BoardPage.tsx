@@ -1,3 +1,4 @@
+import { telHref } from "@/lib/phone";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Phone, MapPin, X, Loader2, Pencil, Trash2, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -419,7 +420,7 @@ const BoardPage = ({ city }: { city: string }) => {
               <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
                 <span className="text-xs font-bold text-muted-foreground">{a.name}</span>
                 {a.phone && !a.public_phone && (
-                  <a href={`tel:${a.phone}`} className="flex items-center gap-1 text-xs font-black text-primary">
+                  <a href={telHref(a.phone) || undefined} className="flex items-center gap-1 text-xs font-black text-primary">
                     <Phone size={12} /> {a.phone}
                   </a>
                 )}
