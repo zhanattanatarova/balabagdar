@@ -8,6 +8,9 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2, Copy, Plus, ArrowLeft, ChevronDown, Upload, X, ImagePlus } from "lucide-react";
 import AdminClubStats from "@/components/AdminClubStats";
 import AdminPastEvents from "@/components/AdminPastEvents";
+import AdminCollections from "@/components/AdminCollections";
+import AdminDeals from "@/components/AdminDeals";
+import AdminBlog from "@/components/AdminBlog";
 import { EVENT_KINDS } from "@/lib/events";
 import { KIND_LABELS } from "@/components/events/eventLabels";
 import AdminTwoGisEditor from "@/components/AdminTwoGisEditor";
@@ -75,7 +78,7 @@ const AdminPage = () => {
   const [usersLoading, setUsersLoading] = useState(false);
   const [userQuery, setUserQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "parent" | "club_owner" | "admin">("all");
-  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "posts" | "past" | "stats" | "create">("clubs");
+  const [tab, setTab] = useState<"clubs" | "bookings" | "users" | "posts" | "past" | "collections" | "deals" | "blog" | "stats" | "create">("clubs");
   const [clubs, setClubs] = useState<any[]>([]);
   const [clubsLoading, setClubsLoading] = useState(false);
   const [clubQuery, setClubQuery] = useState("");
@@ -417,6 +420,9 @@ const AdminPage = () => {
             ["users", `👥 Пользователи (${users.length})`],
             ["posts", "📣 Публикации"],
             ["past", "🕓 Прошедшие"],
+            ["deals", "🏷️ Акции"],
+            ["collections", "✨ Подборки"],
+            ["blog", "📖 Блог"],
             ["stats", "📊 Статистика"],
             ["create", "➕ Создать кружок"],
           ] as const).map(([k, label]) => (
@@ -432,6 +438,9 @@ const AdminPage = () => {
 
         {tab === "stats" && <AdminClubStats clubs={clubs} />}
         {tab === "past" && <AdminPastEvents />}
+        {tab === "collections" && <AdminCollections />}
+        {tab === "deals" && <AdminDeals />}
+        {tab === "blog" && <AdminBlog />}
 
         {tab === "clubs" && (
           <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
