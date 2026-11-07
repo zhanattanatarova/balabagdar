@@ -1,6 +1,12 @@
 export type Lang = "ru" | "kz" | "en";
 
 export const translations = {
+  "languages.english": { ru: "Английский", kz: "Ағылшын тілі", en: "English" },
+  "languages.kazakh": { ru: "Казахский", kz: "Қазақ тілі", en: "Kazakh" },
+  "languages.russian": { ru: "Русский", kz: "Орыс тілі", en: "Russian" },
+  "languages.chinese": { ru: "Китайский", kz: "Қытай тілі", en: "Chinese" },
+  "languages.korean": { ru: "Корейский", kz: "Корей тілі", en: "Korean" },
+  "languages.turkish": { ru: "Турецкий", kz: "Түрік тілі", en: "Turkish" },
   // Nav
   "nav.home": { ru: "Главная", kz: "Басты бет", en: "Home" },
   "nav.map": { ru: "Центры", kz: "Орталықтар", en: "Centers" },
