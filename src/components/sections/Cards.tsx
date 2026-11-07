@@ -5,7 +5,7 @@ import PublicationSource from "@/components/PublicationSource";
 import PhoneActions from "@/components/events/PhoneActions";
 import { useLanguage } from "@/hooks/useLanguage";
 import { clubAge } from "@/lib/clubDisplay";
-import { formatEventDate } from "@/lib/events";
+import { formatEventDate, formatDay } from "@/lib/events";
 import type { Pub, PubClub } from "@/lib/publicData";
 
 export function ClubMiniCard({ club }: { club: PubClub }) {
@@ -23,15 +23,17 @@ export function ClubMiniCard({ club }: { club: PubClub }) {
 }
 
 export const AD_LABEL = { ru: "Реклама", kz: "Жарнама", en: "Ad" };
+export const FREE_LABEL = { ru: "Бесплатно", kz: "Тегін", en: "Free" };
 export const DEAL_UNTIL = { ru: "до", kz: "дейін", en: "until" };
 
 export function PubCard({ pub }: { pub: Pub }) {
   const { lang } = useLanguage();
-  const until = pub.deal_until ? new Date(`${pub.deal_until}T12:00:00Z`).toLocaleDateString(lang === "kz" ? "kk-KZ" : lang === "en" ? "en-US" : "ru-RU", { day: "numeric", month: "long", timeZone: "UTC" }) : null;
+  const until = pub.deal_until ? formatDay(pub.deal_until, lang) : null;
   return (
     <div className="cartoon-card p-4">
       <div className="flex items-center gap-2 flex-wrap mb-1.5">
         {pub.is_promoted && <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-accent text-accent-foreground">{AD_LABEL[lang]}</span>}
+        {pub.is_free && <span className="text-xs font-black px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">{FREE_LABEL[lang]}</span>}
         {pub.discount_text && <span className="text-xs font-black px-2 py-0.5 rounded-full bg-primary text-primary-foreground flex items-center gap-1"><Tag size={11} />{pub.discount_text}</span>}
         {pub.event_date && <span className="text-xs font-black text-primary flex items-center gap-1"><Calendar size={12} />{formatEventDate(pub.event_date, pub.event_end_date, lang)}</span>}
         {until && <span className="text-xs font-bold text-muted-foreground">{lang === "kz" ? `${until} ${DEAL_UNTIL.kz}` : `${DEAL_UNTIL[lang]} ${until}`}</span>}
