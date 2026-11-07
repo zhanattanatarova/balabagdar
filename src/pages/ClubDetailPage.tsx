@@ -1,3 +1,4 @@
+import ClubUpcomingEvents from "@/components/events/ClubUpcomingEvents";
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Star, MapPin, Phone, MessageCircle, Calendar, Clock, Loader2 } from "lucide-react";
@@ -288,6 +289,8 @@ const ClubDetailPage = () => {
           </div>
         </div>
       )}
+
+      <ClubUpcomingEvents clubId={club.id} />
 
       {/* Reviews */}
       <ClubReviews clubId={club.id} />
