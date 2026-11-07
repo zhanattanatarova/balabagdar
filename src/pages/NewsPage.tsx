@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { Plus, Loader2, Calendar as CalendarIcon, MapPin, Phone, Pencil, Trash2, ImagePlus, X, ChevronDown, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import CityPickerSheet from "@/components/CityPickerSheet";
-import { upcomingCityEvents, formatEventDate, eventInput, eventInputToIso } from "@/lib/events";
+import { upcomingCityEvents, formatEventDate, eventInput, eventInputToIso, matchesEventFilters, EVENT_KINDS, AGE_FILTERS, type EventFilters, type DateFilter } from "@/lib/events";
+import EventClubLink, { type EventClub } from "@/components/events/EventClubLink";
+import PhoneActions from "@/components/events/PhoneActions";
+import { KIND_LABELS } from "@/components/events/eventLabels";
 import { toast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -31,7 +34,21 @@ interface EventItem {
   user_id: string | null;
   source_label?: string | null;
   source_url?: string | null;
+  club_id?: string | null;
+  age_min?: number | null;
+  age_max?: number | null;
+  is_free?: boolean | null;
+  price_from?: number | null;
+  event_kind?: string | null;
+  public_phone?: string | null;
 }
+
+const EMPTY_FILTERS: EventFilters = { date: "all", age: null, price: null, kind: null };
+const FILTER_UI = {
+  ru: { all: "Все", today: "Сегодня", weekend: "Выходные", week: "Эта неделя", free: "Бесплатно", paid: "Платно", nothing: "Ничего не нашлось", reset: "Сбросить фильтры", years: "лет" },
+  kz: { all: "Барлығы", today: "Бүгін", weekend: "Демалыс", week: "Осы апта", free: "Тегін", paid: "Ақылы", nothing: "Ештеңе табылмады", reset: "Сүзгілерді тазалау", years: "жас" },
+  en: { all: "All", today: "Today", weekend: "Weekend", week: "This week", free: "Free", paid: "Paid", nothing: "Nothing found", reset: "Reset filters", years: "yrs" },
+};
 
 type FormState = {
   title: string;
@@ -73,13 +90,22 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm());
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [clubs, setClubs] = useState<Record<string, EventClub>>({});
+  const [filters, setFilters] = useState<EventFilters>(EMPTY_FILTERS);
+  const fui = FILTER_UI[lang] || FILTER_UI.ru;
+  const visible = events.filter((e) => matchesEventFilters(e, filters));
+  const filtersActive = JSON.stringify(filters) !== JSON.stringify(EMPTY_FILTERS);
+  const chip = (active: boolean, label: string, onClick: () => void, key: string) => (
+    <button key={key} type="button" onClick={onClick} aria-pressed={active}
+      className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border-2 whitespace-nowrap ${active ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}>{label}</button>
+  );
 
   const load = async () => {
     setLoading(true);
     const source = user ? "announcements" : "announcements_public";
     const columns = user
-      ? "id,title,body,name,phone,city,event_date,event_end_date,image_url,created_at,user_id,source_label,source_url"
-      : "id,title,body,name,city,event_date,event_end_date,image_url,created_at,user_id,source_label,source_url";
+      ? "id,title,body,name,phone,city,event_date,event_end_date,image_url,created_at,user_id,source_label,source_url,club_id,age_min,age_max,is_free,price_from,event_kind,public_phone"
+      : "id,title,body,name,city,event_date,event_end_date,image_url,created_at,user_id,source_label,source_url,club_id,age_min,age_max,is_free,price_from,event_kind,public_phone";
     const { data } = await supabase
       .from(source as any)
       .select(columns)
@@ -88,6 +114,11 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
       .order("event_date", { ascending: true, nullsFirst: false });
     const list = upcomingCityEvents((data as any[]) || [], city);
     setEvents(list);
+    const ids = [...new Set(list.map((e) => e.club_id).filter(Boolean))] as string[];
+    if (ids.length) {
+      const { data: cl } = await supabase.from("clubs").select("id,name_ru,name_kz,name_en,avatar_url").in("id", ids);
+      setClubs(Object.fromEntries(((cl as EventClub[]) || []).map((c) => [c.id, c])));
+    }
     setLoading(false);
   };
 
@@ -212,13 +243,13 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
         <CityPickerSheet open={showCityPicker} city={city} onClose={() => setShowCityPicker(false)} onSelect={setCity} />
       )}
       <SEO
-        title={`События для детей в ${city} | BalaHub`.slice(0, 60)}
+        title={`Детская афиша ${city} | BalaHub`.slice(0, 60)}
         description={`Афиша детских событий, мастер-классов и праздников в городе ${city}. Актуальные даты, описание и контакты организаторов.`.slice(0, 159)}
         path="/"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "ItemList",
-          name: `События для детей в ${city}`,
+          name: `Детская афиша ${city}`,
           itemListElement: events
             .filter((e) => e.event_date)
             .slice(0, 20)
@@ -273,6 +304,20 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
         </div>
       </div>
 
+      {/* Filters */}
+      {!loading && events.length > 0 && (
+        <div className="mt-4 space-y-2">
+          {[
+            (["all", "today", "weekend", "week"] as DateFilter[]).map((d) => chip(filters.date === d, fui[d], () => setFilters({ ...filters, date: d }), d)),
+            AGE_FILTERS.map((a) => chip(filters.age === a, a === "12+" ? `12+ ${fui.years}` : `${a.replace("-", "–")} ${fui.years}`, () => setFilters({ ...filters, age: filters.age === a ? null : a }), a)),
+            (["free", "paid"] as const).map((p) => chip(filters.price === p, fui[p], () => setFilters({ ...filters, price: filters.price === p ? null : p }), p)),
+            EVENT_KINDS.map((k) => chip(filters.kind === k, KIND_LABELS[k][lang] || KIND_LABELS[k].ru, () => setFilters({ ...filters, kind: filters.kind === k ? null : k }), k)),
+          ].map((row, i) => (
+            <div key={i} className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">{row}</div>
+          ))}
+        </div>
+      )}
+
       {/* Events list */}
       <div className="px-4 mt-5">
         {loading && (
@@ -299,9 +344,16 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
             </button>
           </div>
         )}
-        {!loading && events.length > 0 && (
+        {!loading && events.length > 0 && visible.length === 0 && (
+          <div className="cartoon-card flex flex-col items-center text-center py-12 px-6">
+            <div className="text-4xl mb-3">🔍</div>
+            <h3 className="font-black text-lg">{fui.nothing}</h3>
+            <button onClick={() => setFilters(EMPTY_FILTERS)} className="mt-4 bg-primary text-primary-foreground font-black text-sm px-6 py-3 rounded-full">{fui.reset}</button>
+          </div>
+        )}
+        {!loading && visible.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {events.map((e, i) => {
+            {visible.map((e, i) => {
               const isOwner = user && e.user_id === user.id;
               return (
                 <div
@@ -341,11 +393,13 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                       </button>
                     )}
                     <PublicationSource label={e.source_label} url={e.source_url} />
+                    {e.club_id && <EventClubLink club={clubs[e.club_id]} />}
+                    {e.public_phone && <PhoneActions phone={e.public_phone} />}
                     <div className="mt-3 pt-3 border-t border-border flex items-center justify-between flex-wrap gap-2">
                       <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
                         <MapPin size={11} /> {e.city}
                       </span>
-                      {e.phone && (
+                      {e.phone && !e.public_phone && (
                         <a href={`tel:${e.phone}`} className="flex items-center gap-1 text-xs font-black text-primary">
                           <Phone size={12} /> {e.phone}
                         </a>
