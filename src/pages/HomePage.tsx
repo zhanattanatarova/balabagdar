@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { supabase } from "@/integrations/supabase/client";
 import { safeImageUrl } from "@/lib/safeUrl";
+import { popularSort } from "@/lib/popular";
 import { clubAge, clubCategoryLabels, clubLocation, clubPrice, hasRealAge } from "@/lib/clubDisplay";
 import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
@@ -382,13 +383,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
     return () => clearTimeout(debounce);
   }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery, ageFilter, matchedCategoryIds]);
 
-  const popularClubs = useMemo(() => [...clubs].sort((a, b) => {
-    const aComplete = Boolean(safeImageUrl(a.avatar_url)) && Number(a.price_from) > 0 ? 1 : 0;
-    const bComplete = Boolean(safeImageUrl(b.avatar_url)) && Number(b.price_from) > 0 ? 1 : 0;
-    return bComplete - aComplete
-      || Number(b.reviews_count || 0) - Number(a.reviews_count || 0)
-      || Number(b.views_count || 0) - Number(a.views_count || 0);
-  }).slice(0, 10), [clubs]);
+  const popularClubs = useMemo(() => popularSort(clubs), [clubs]);
 
   const showNearby = () => {
     if (!navigator.geolocation) {

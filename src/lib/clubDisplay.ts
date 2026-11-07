@@ -74,7 +74,8 @@ export function clubCategoryLabels(
   for (const value of uniqueCategories(categories)) {
     const key = value.includes(".") ? value : `cat.${value}`;
     const translated = translate(key);
-    const label = translated === key ? value : translated;
+    if (!translated || translated === key) continue; // never show raw keys
+    const label = translated;
     const norm = label.trim().toLocaleLowerCase();
     if (seenLabels.has(norm)) continue;
     seenLabels.add(norm);
