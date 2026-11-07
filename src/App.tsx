@@ -13,6 +13,7 @@ import FavoritesPage from "./pages/FavoritesPage";
 import HistoryPage from "./pages/HistoryPage";
 import SearchPage from "./pages/SearchPage";
 import SecurityPage from "./pages/SecurityPage";
+import PublicationPage from "./pages/PublicationPage";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/clubs" element={<Index />} />
             <Route path="/news" element={<Navigate to="/" replace />} />
             <Route path="/board" element={<Index />} />
+            <Route path="/publication/:id" element={<PublicationPage />} />
             <Route path="/profile" element={<Index />} />
             <Route path="/notifications" element={<Index />} />
             <Route path="/dashboard" element={<Index />} />

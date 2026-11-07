@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Plus, Loader2, Calendar as CalendarIcon, MapPin, Phone, Pencil, Trash2, ImagePlus, X, ChevronDown, Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CityPickerSheet from "@/components/CityPickerSheet";
 import { upcomingCityEvents } from "@/lib/events";
 import { toast } from "@/hooks/use-toast";
@@ -334,7 +334,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                         </div>
                       )}
                     </div>
-                    <h3 className="font-black text-base leading-snug">{e.title}</h3>
+                    <h3 className="font-black text-base leading-snug"><Link to={`/publication/${e.id}`} className="hover:underline">{e.title}</Link></h3>
                     <p className={`text-sm mt-2 whitespace-pre-line font-medium ${expanded[e.id] ? "" : "line-clamp-4"}`}>{e.body}</p>
                     {e.body && e.body.length > 180 && (
                       <button
