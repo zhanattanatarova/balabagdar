@@ -4,7 +4,7 @@ export const translations = {
   // Nav
   "nav.home": { ru: "Главная", kz: "Басты бет", en: "Home" },
   "nav.map": { ru: "Центры", kz: "Орталықтар", en: "Centers" },
-  "nav.events": { ru: "События", kz: "Оқиғалар", en: "Events" },
+  "nav.events": { ru: "Афиша", kz: "Афиша", en: "Events" },
   "nav.profile": { ru: "Профиль", kz: "Профиль", en: "Profile" },
  "nav.dashboard": { ru: "Кабинет", kz: "Кабинет", en: "Dashboard" },
  "nav.board": { ru: "Доска", kz: "Тақта", en: "Board" },
@@ -488,7 +488,7 @@ export const translations = {
 
   // News
   "news.today_in": { ru: "Сегодня в", kz: "Бүгін", en: "Today in" },
-  "news.title": { ru: "Новости\nгорода", kz: "Қала\nжаңалықтары", en: "City\nnews" },
+  "news.title": { ru: "Афиша", kz: "Афиша", en: "Events" },
   "news.more": { ru: "Подробнее", kz: "Толығырақ", en: "More" },
   "news.event1_title": { ru: 'Мастер-класс "Юный Художник"', kz: '"Жас суретші" шеберлік сыныбы', en: '"Young Artist" Master Class' },
   "news.event2_title": { ru: "Детский Фестиваль", kz: "Балалар фестивалі", en: "Children's Festival" },
