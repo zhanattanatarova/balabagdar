@@ -28,6 +28,8 @@ type Credential = { name: string; email: string; password: string; city: string 
 
 const POST_CATEGORIES = [
   ["other", "Другое"],
+  ["promo", "Акция"],
+  ["trial", "Пробное занятие"],
   ["masterclass", "Мастер-класс"],
   ["job_seek", "Ищу работу"],
   ["specialist", "Нужен специалист"],
@@ -122,6 +124,10 @@ const AdminPage = () => {
     price: "" as "" | "free" | "paid",
     price_from: "",
     event_kind: "",
+    season: "",
+    deal_until: "",
+    discount_text: "",
+    is_promoted: false,
   });
 
   const uploadFile = async (file: File): Promise<string> => {
@@ -221,6 +227,14 @@ const AdminPage = () => {
         price_from: postForm.price === "paid" && postForm.price_from ? Number(postForm.price_from) : null,
         event_kind: postForm.event_kind || null,
       } : {}),
+      season: postForm.season || null,
+      ...(postForm.type === "announcement" && ["promo", "trial"].includes(postForm.category) ? {
+        deal_until: postForm.deal_until || null,
+        discount_text: postForm.discount_text.trim() || null,
+        is_free: postForm.price === "" ? null : postForm.price === "free",
+        price_from: postForm.price === "paid" && postForm.price_from ? Number(postForm.price_from) : null,
+        is_promoted: postForm.is_promoted,
+      } : {}),
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     } as any);
     setPostSaving(false);
@@ -242,6 +256,10 @@ const AdminPage = () => {
       price: "",
       price_from: "",
       event_kind: "",
+      season: "",
+      deal_until: "",
+      discount_text: "",
+      is_promoted: false,
     }));
   };
 
@@ -717,6 +735,29 @@ const AdminPage = () => {
                 </select>
               </div>
             )}
+
+            {postForm.type === "announcement" && ["promo", "trial"].includes(postForm.category) && (
+              <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label htmlFor="admin-deal-until">Действует до</Label><Input id="admin-deal-until" type="date" value={postForm.deal_until} onChange={(e) => setPostForm({ ...postForm, deal_until: e.target.value })} /></div>
+                  <div><Label htmlFor="admin-deal-discount">Скидка</Label><Input id="admin-deal-discount" maxLength={30} placeholder="−20%, 1+1" value={postForm.discount_text} onChange={(e) => setPostForm({ ...postForm, discount_text: e.target.value })} /></div>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {([["", "Цена не указана"], ["free", "Бесплатно"], ["paid", "Платно"]] as const).map(([v, l]) => (
+                    <Button key={v} type="button" size="sm" variant={postForm.price === v ? "default" : "outline"} onClick={() => setPostForm({ ...postForm, price: v })}>{l}</Button>
+                  ))}
+                </div>
+                {postForm.price === "paid" && <Input type="number" min={0} placeholder="Цена, ₸" value={postForm.price_from} onChange={(e) => setPostForm({ ...postForm, price_from: e.target.value })} />}
+                <label className="flex items-center gap-2 text-sm font-bold"><input type="checkbox" checked={postForm.is_promoted} onChange={(e) => setPostForm({ ...postForm, is_promoted: e.target.checked })} /> Реклама (показывать сверху)</label>
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="admin-post-season">Каникулы (сезон)</Label>
+              <select id="admin-post-season" value={postForm.season} onChange={(e) => setPostForm({ ...postForm, season: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border text-sm font-bold">
+                <option value="">Не относится к каникулам</option><option value="winter">Зимние</option><option value="spring">Весенние</option><option value="summer">Летние</option>
+              </select>
+            </div>
 
             <div>
               <Label htmlFor="admin-post-body">Текст*</Label>
