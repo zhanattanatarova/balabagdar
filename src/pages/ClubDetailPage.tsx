@@ -70,6 +70,7 @@ const ClubDetailPage = () => {
     );
   }
 
+  const contactWa = waNumber(club.whatsapp) || (isMobilePhone(club.phone) ? waNumber(club.phone) : null);
   const name = tField(club.name_ru, club.name_kz, club.name_en);
   const description = tField(club.description_ru, club.description_kz, club.description_en);
   const categoryLabels = clubCategoryLabels(club.categories, t);
@@ -202,7 +203,6 @@ const ClubDetailPage = () => {
       </div>
 
       {/* Contacts */}
-      {(() => null)()}
       <div className="px-4 mt-4">
         <h2 className="font-black text-sm mb-2">{t("club.contacts")}</h2>
         <div className="flex gap-2">
