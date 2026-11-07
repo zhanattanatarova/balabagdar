@@ -66,6 +66,12 @@ const ClubReviews = ({ clubId }: Props) => {
   }, [clubId]);
 
   useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("review") !== "1") return;
+    const id = setTimeout(() => document.getElementById("balahub-review-form")?.scrollIntoView({ behavior: "smooth", block: "center" }), 600);
+    return () => clearTimeout(id);
+  }, [clubId]);
+
+  useEffect(() => {
     if (myReview) {
       setRating(myReview.rating);
       setComment(myReview.comment);
