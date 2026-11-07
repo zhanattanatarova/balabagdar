@@ -1,3 +1,5 @@
+import SectionLinks from "@/components/sections/SectionLinks";
+import CollectionsCarousel from "@/components/sections/CollectionsCarousel";
 import { useState, useMemo, useEffect } from "react";
 import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Loader2, Navigation } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -860,6 +862,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           )}
         </div>
       </div>
+
+      <div className="mt-4 space-y-3"><SectionLinks /><CollectionsCarousel /></div>
 
       {/* Free banner */}
       <div className="mx-4 mt-4 p-4 rounded-2xl bg-secondary/10 border-2 border-secondary/30">

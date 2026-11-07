@@ -1,3 +1,4 @@
+import SectionLinks from "@/components/sections/SectionLinks";
 import { useEffect, useState } from "react";
 import { Plus, Loader2, Calendar as CalendarIcon, MapPin, Phone, Pencil, Trash2, ImagePlus, X, ChevronDown, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -302,6 +303,8 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
           </button>
         </div>
       </div>
+
+      <div className="mt-4"><SectionLinks /></div>
 
       {/* Filters */}
       {!loading && events.length > 0 && (
