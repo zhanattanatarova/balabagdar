@@ -94,7 +94,6 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
   const [filters, setFilters] = useState<EventFilters>(EMPTY_FILTERS);
   const fui = FILTER_UI[lang] || FILTER_UI.ru;
   const visible = events.filter((e) => matchesEventFilters(e, filters));
-  const filtersActive = JSON.stringify(filters) !== JSON.stringify(EMPTY_FILTERS);
   const chip = (active: boolean, label: string, onClick: () => void, key: string) => (
     <button key={key} type="button" onClick={onClick} aria-pressed={active}
       className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border-2 whitespace-nowrap ${active ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}>{label}</button>

@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import PublicationSource from "@/components/PublicationSource";
 import SEO from "@/components/SEO";
 import { formatEventDate } from "@/lib/events";
+import EventClubLink, { type EventClub } from "@/components/events/EventClubLink";
+import PhoneActions from "@/components/events/PhoneActions";
 
 interface Publication {
   id: string;
@@ -23,6 +25,7 @@ interface Publication {
   source_label: string | null;
   source_url: string | null;
   club_id: string | null;
+  public_phone: string | null;
 }
 
 export default function PublicationPage() {
@@ -32,6 +35,7 @@ export default function PublicationPage() {
   const [post, setPost] = useState<Publication | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [club, setClub] = useState<EventClub | null>(null);
   const ui = {
     ru: { back: "Назад", club: "Страница центра", missing: "Публикация недоступна", error: "Не удалось загрузить публикацию" },
     kz: { back: "Артқа", club: "Орталық парақшасы", missing: "Жарияланым қолжетімсіз", error: "Жарияланым жүктелмеді" },
@@ -44,11 +48,16 @@ export default function PublicationPage() {
     const load = async () => {
       setLoading(true);
       setError(false);
-      const columns = "id,title,body,name,city,category,event_date,event_end_date,image_url,source_label,source_url,club_id" + (user ? ",phone" : "");
+      const columns = "id,title,body,name,city,category,event_date,event_end_date,image_url,source_label,source_url,club_id,public_phone" + (user ? ",phone" : "");
       const query = user ? supabase.from("announcements").select(columns) : supabase.from("announcements_public").select(columns);
       const { data, error: loadError } = await query.eq("id", id || "").maybeSingle();
       if (cancelled) return;
       setPost(data as unknown as Publication | null);
+      const clubId = (data as unknown as Publication | null)?.club_id;
+      if (clubId) {
+        const { data: c } = await supabase.from("clubs").select("id,name_ru,name_kz,name_en,avatar_url").eq("id", clubId).maybeSingle();
+        if (!cancelled) setClub(c as EventClub | null);
+      }
       setError(Boolean(loadError));
       setLoading(false);
     };
@@ -74,9 +83,10 @@ export default function PublicationPage() {
           <PublicationSource label={post.source_label} url={post.source_url} />
           <div className="mt-5 pt-4 border-t border-border flex flex-wrap justify-between gap-3 text-sm font-bold">
             <span className="text-muted-foreground">{post.name}</span>
-            {post.phone && <a href={`tel:${post.phone}`} className="text-primary flex items-center gap-2"><Phone size={16} /> {post.phone}</a>}
+            {post.phone && !post.public_phone && <a href={`tel:${post.phone}`} className="text-primary flex items-center gap-2"><Phone size={16} /> {post.phone}</a>}
           </div>
-          {post.club_id && <Button asChild variant="outline" className="mt-5"><Link to={`/club/${post.club_id}`}>{ui.club}</Link></Button>}
+          <PhoneActions phone={post.public_phone} />
+          <EventClubLink club={club} />
         </article>
       )}
     </main>
