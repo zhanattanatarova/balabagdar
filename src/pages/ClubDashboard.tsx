@@ -7,6 +7,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { Calendar } from "@/components/ui/calendar";
 import PartnerStats from "@/components/PartnerStats";
+import PartnerDeals from "@/components/PartnerDeals";
 import { cn } from "@/lib/utils";
 
 const ClubDashboard = () => {
@@ -92,6 +93,7 @@ const ClubDashboard = () => {
       </div>
 
       <PartnerStats clubId={club.id} />
+      <PartnerDeals club={club} />
 
       {/* Tabs */}
       <div className="flex gap-1 px-4 mt-4">
