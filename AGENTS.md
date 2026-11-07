@@ -10,3 +10,7 @@
 - Event filtering, date formatting and form conversions share `src/lib/events.ts` so visitor timezone cannot change event calendar days; optional end dates are stored as calendar dates.
 
 - Afisha filters (date/age/price/kind) live in `matchesEventFilters` in `src/lib/events.ts` so Aktau-day logic is shared and tested.
+- Collections (`collections` table) are resolved client-side by `resolveCollection` in `src/lib/collections.ts` (rule_json or manual ids); empty collections are never shown.
+- Deals are announcements with category `promo`/`trial`; a DB trigger forces partner deals to `is_approved=false` and only admins set `is_approved`/`is_promoted`; public reads require `is_approved`.
+- Public SELECT policies must not call `has_role` (anon cannot execute it); admin access goes in separate authenticated policies.
+- Blog articles render Markdown via react-markdown with `[club:<uuid>]` embeds; the blog link is shown only when a published article exists.
