@@ -105,9 +105,9 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
     const columns = user
       ? "id,title,body,name,phone,city,event_date,event_end_date,image_url,created_at,user_id,source_label,source_url,club_id,age_min,age_max,is_free,price_from,event_kind,public_phone"
       : "id,title,body,name,city,event_date,event_end_date,image_url,created_at,user_id,source_label,source_url,club_id,age_min,age_max,is_free,price_from,event_kind,public_phone";
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from(source as any)
-      .select(columns)
+      .select(columns as string)
       .eq("category", "event")
       .gt("expires_at", new Date().toISOString())
       .order("event_date", { ascending: true, nullsFirst: false });
