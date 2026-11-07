@@ -19,7 +19,7 @@ export const waNumber = (raw: string | null | undefined) => normalizePhone(raw);
 /** Kazakhstan mobile numbers start with +7 7XX. */
 export const isMobilePhone = (raw: string | null | undefined) => {
   const d = normalizePhone(raw);
-  return !!d && d[1] === "7";
+  return !!d && /^7(70[0-8]|747|75[01]|76[0-4]|771|77[5-8])/.test(d);
 };
 
 export const formatPhone = (raw: string | null | undefined) => {
