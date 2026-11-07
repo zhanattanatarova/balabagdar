@@ -46,6 +46,26 @@
     <priority>0.3</priority>
   </url>
   <url>
+    <loc>https://bala-hub.kz/collections/weekend</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bala-hub.kz/collections/free</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bala-hub.kz/collections/age-3-5</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bala-hub.kz/collections/winter-holidays</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://bala-hub.kz/club/6e02159c-0aef-46f1-874a-be484889ab06</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
