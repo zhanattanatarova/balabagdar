@@ -218,7 +218,7 @@ const BoardPage = ({ city }: { city: string }) => {
 
   const filtered = useMemo(
     () => items.filter((i) =>
-      i.category !== "event" &&
+      i.category !== "event" && i.category !== "promo" && i.category !== "trial" &&
       (!city || i.city === city) && (activeCat === "all" || i.category === activeCat)
     ),
     [items, city, activeCat]

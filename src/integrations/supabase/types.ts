@@ -23,17 +23,22 @@ export type Database = {
           city: string
           club_id: string | null
           created_at: string
+          deal_until: string | null
+          discount_text: string | null
           event_date: string | null
           event_end_date: string | null
           event_kind: string | null
           expires_at: string
           id: string
           image_url: string | null
+          is_approved: boolean
           is_free: boolean | null
+          is_promoted: boolean
           name: string
           phone: string
           price_from: number | null
           public_phone: string | null
+          season: string | null
           source_label: string | null
           source_url: string | null
           title: string
@@ -48,17 +53,22 @@ export type Database = {
           city?: string
           club_id?: string | null
           created_at?: string
+          deal_until?: string | null
+          discount_text?: string | null
           event_date?: string | null
           event_end_date?: string | null
           event_kind?: string | null
           expires_at?: string
           id?: string
           image_url?: string | null
+          is_approved?: boolean
           is_free?: boolean | null
+          is_promoted?: boolean
           name?: string
           phone?: string
           price_from?: number | null
           public_phone?: string | null
+          season?: string | null
           source_label?: string | null
           source_url?: string | null
           title: string
@@ -73,17 +83,22 @@ export type Database = {
           city?: string
           club_id?: string | null
           created_at?: string
+          deal_until?: string | null
+          discount_text?: string | null
           event_date?: string | null
           event_end_date?: string | null
           event_kind?: string | null
           expires_at?: string
           id?: string
           image_url?: string | null
+          is_approved?: boolean
           is_free?: boolean | null
+          is_promoted?: boolean
           name?: string
           phone?: string
           price_from?: number | null
           public_phone?: string | null
+          season?: string | null
           source_label?: string | null
           source_url?: string | null
           title?: string
@@ -99,6 +114,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      articles: {
+        Row: {
+          body: string
+          cover_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_published: boolean
+          published_at: string | null
+          slug: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          slug?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       bookings: {
         Row: {
@@ -338,6 +395,63 @@ export type Database = {
         }
         Relationships: []
       }
+      collections: {
+        Row: {
+          club_ids: string[]
+          cover_emoji: string | null
+          created_at: string
+          description_en: string | null
+          description_kz: string | null
+          description_ru: string | null
+          event_ids: string[]
+          id: string
+          is_active: boolean
+          rule_json: Json | null
+          slug: string
+          sort: number
+          title_en: string | null
+          title_kz: string | null
+          title_ru: string
+          updated_at: string
+        }
+        Insert: {
+          club_ids?: string[]
+          cover_emoji?: string | null
+          created_at?: string
+          description_en?: string | null
+          description_kz?: string | null
+          description_ru?: string | null
+          event_ids?: string[]
+          id?: string
+          is_active?: boolean
+          rule_json?: Json | null
+          slug: string
+          sort?: number
+          title_en?: string | null
+          title_kz?: string | null
+          title_ru: string
+          updated_at?: string
+        }
+        Update: {
+          club_ids?: string[]
+          cover_emoji?: string | null
+          created_at?: string
+          description_en?: string | null
+          description_kz?: string | null
+          description_ru?: string | null
+          event_ids?: string[]
+          id?: string
+          is_active?: boolean
+          rule_json?: Json | null
+          slug?: string
+          sort?: number
+          title_en?: string | null
+          title_kz?: string | null
+          title_ru?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       phone_verifications: {
         Row: {
           code: string
@@ -506,6 +620,8 @@ export type Database = {
           city: string | null
           club_id: string | null
           created_at: string | null
+          deal_until: string | null
+          discount_text: string | null
           event_date: string | null
           event_end_date: string | null
           event_kind: string | null
@@ -513,9 +629,11 @@ export type Database = {
           id: string | null
           image_url: string | null
           is_free: boolean | null
+          is_promoted: boolean | null
           name: string | null
           price_from: number | null
           public_phone: string | null
+          season: string | null
           source_label: string | null
           source_url: string | null
           title: string | null
@@ -529,6 +647,8 @@ export type Database = {
           city?: string | null
           club_id?: string | null
           created_at?: string | null
+          deal_until?: string | null
+          discount_text?: string | null
           event_date?: string | null
           event_end_date?: string | null
           event_kind?: string | null
@@ -536,9 +656,11 @@ export type Database = {
           id?: string | null
           image_url?: string | null
           is_free?: boolean | null
+          is_promoted?: boolean | null
           name?: string | null
           price_from?: number | null
           public_phone?: string | null
+          season?: string | null
           source_label?: string | null
           source_url?: string | null
           title?: string | null
@@ -552,6 +674,8 @@ export type Database = {
           city?: string | null
           club_id?: string | null
           created_at?: string | null
+          deal_until?: string | null
+          discount_text?: string | null
           event_date?: string | null
           event_end_date?: string | null
           event_kind?: string | null
@@ -559,9 +683,11 @@ export type Database = {
           id?: string | null
           image_url?: string | null
           is_free?: boolean | null
+          is_promoted?: boolean | null
           name?: string | null
           price_from?: number | null
           public_phone?: string | null
+          season?: string | null
           source_label?: string | null
           source_url?: string | null
           title?: string | null
