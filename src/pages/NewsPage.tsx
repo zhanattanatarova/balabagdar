@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Plus, Loader2, Calendar as CalendarIcon, MapPin, Phone, Pencil, Trash2, ImagePlus, X, ChevronDown, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import CityPickerSheet from "@/components/CityPickerSheet";
-import { upcomingCityEvents } from "@/lib/events";
+import { upcomingCityEvents, formatEventDate, eventInput, eventInputToIso } from "@/lib/events";
 import { toast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -25,6 +25,7 @@ interface EventItem {
   phone?: string;
   city: string;
   event_date: string | null;
+  event_end_date?: string | null;
   image_url?: string | null;
   created_at: string;
   user_id: string | null;
@@ -38,12 +39,13 @@ type FormState = {
   name: string;
   phone: string;
   event_date: string;
+  event_end_date: string;
   image_url: string;
   period: "week" | "month";
 };
 
 const emptyForm = (): FormState => ({
-  title: "", body: "", name: "", phone: "", event_date: "", image_url: "", period: "week",
+  title: "", body: "", name: "", phone: "", event_date: "", event_end_date: "", image_url: "", period: "week",
 });
 
 const newsUi = {
@@ -52,12 +54,7 @@ const newsUi = {
   en: { add: "Add event", add_title: "Add an event in the city", empty: "No events in {city} yet", empty_desc: "Be the first to share your event!", edit: "Edit", del: "Delete", collapse: "Collapse", read: "Read more", edit_event: "Edit event", publish_event: "Publish an event in {city}", form_desc: "Tell people what is happening and when.", name: "Event name *", name_ph: "For example: Children's science festival", date: "Event date and time *", desc: "Description *", desc_ph: "Where, for whom, price, program...", photo: "Photo (optional)", remove_photo: "Remove photo", uploading: "Uploading...", add_photo: "Add photo (any format)", organizer: "Organizer name", organizer_ph: "Center / contact", phone: "Phone", period: "Publication period", week: "Week", month: "Month", save: "Save", publish: "Publish", confirm_del: "Delete event?", browse: "Browse clubs", empty_upcoming: "No upcoming events in {city} yet" },
 };
 
-const toLocalInput = (iso: string | null) => {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
+const toLocalInput = eventInput;
 
 const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) => void }) => {
   const navigate = useNavigate();
@@ -81,8 +78,8 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
     setLoading(true);
     const source = user ? "announcements" : "announcements_public";
     const columns = user
-      ? "id,title,body,name,phone,city,event_date,image_url,created_at,user_id,source_label,source_url"
-      : "id,title,body,name,city,event_date,image_url,created_at,user_id,source_label,source_url";
+      ? "id,title,body,name,phone,city,event_date,event_end_date,image_url,created_at,user_id,source_label,source_url"
+      : "id,title,body,name,city,event_date,event_end_date,image_url,created_at,user_id,source_label,source_url";
     const { data } = await supabase
       .from(source as any)
       .select(columns)
@@ -111,6 +108,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
       name: e.name || "",
       phone: e.phone || "",
       event_date: toLocalInput(e.event_date),
+      event_end_date: e.event_end_date || "",
       image_url: e.image_url || "",
       period: "week",
     });
@@ -155,6 +153,10 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
       toast({ title: "Слишком длинный текст", variant: "destructive" });
       return;
     }
+    if (form.event_end_date && form.event_end_date < form.event_date.slice(0, 10)) {
+      toast({ title: lang === "ru" ? "Дата окончания не может быть раньше начала" : lang === "kz" ? "Аяқталу күні басталу күнінен бұрын болмауы керек" : "End date cannot precede start date", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
     if (editingId) {
       const { error } = await supabase.from("announcements").update({
@@ -162,7 +164,8 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
         body: form.body.trim(),
         name: form.name.trim(),
         phone: form.phone.trim(),
-        event_date: new Date(form.event_date).toISOString(),
+        event_date: eventInputToIso(form.event_date),
+        event_end_date: form.event_end_date || null,
         image_url: form.image_url || null,
       } as any).eq("id", editingId);
       setSubmitting(false);
@@ -179,7 +182,8 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
         name: form.name.trim(),
         phone: form.phone.trim(),
         city,
-        event_date: new Date(form.event_date).toISOString(),
+        event_date: eventInputToIso(form.event_date),
+        event_end_date: form.event_end_date || null,
         image_url: form.image_url || null,
         expires_at: expires,
       } as any);
@@ -201,14 +205,6 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
     load();
   };
 
-  const formatDate = (iso: string | null) => {
-    if (!iso) return "";
-    try {
-      return new Date(iso).toLocaleString(lang === "kz" ? "kk-KZ" : lang === "en" ? "en-US" : "ru-RU", {
-        day: "numeric", month: "long", hour: "2-digit", minute: "2-digit",
-      });
-    } catch { return ""; }
-  };
 
   return (
     <div className="pb-24 max-w-6xl mx-auto">
@@ -320,7 +316,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                     <div className="flex items-start justify-between gap-2">
                       {e.event_date && (
                         <div className="flex items-center gap-1.5 text-xs font-black text-primary mb-2">
-                          <CalendarIcon size={14} /> {formatDate(e.event_date)}
+                          <CalendarIcon size={14} /> {formatEventDate(e.event_date, e.event_end_date, lang)}
                         </div>
                       )}
                       {isOwner && (
@@ -384,12 +380,16 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
               />
             </div>
             <div>
-              <Label>{ui.date}</Label>
+              <Label>{lang === "ru" ? "Дата события *" : lang === "kz" ? "Оқиға күні *" : "Event date *"}</Label>
               <Input
-                type="datetime-local"
-                value={form.event_date}
-                onChange={(e) => setForm({ ...form, event_date: e.target.value })}
+                type="date"
+                value={form.event_date.slice(0, 10)}
+                onChange={(e) => setForm({ ...form, event_date: e.target.value + (form.event_date.includes("T") ? "T" + form.event_date.split("T")[1] : "") })}
               />
+              <Label>{lang === "ru" ? "Время (необязательно, Актау UTC+5)" : lang === "kz" ? "Уақыт (міндетті емес, Ақтау UTC+5)" : "Time (optional, Aktau UTC+5)"}</Label>
+              <Input type="time" disabled={!form.event_date} value={form.event_date.split("T")[1] || ""} onChange={(e) => setForm({ ...form, event_date: form.event_date.slice(0, 10) + (e.target.value ? "T" + e.target.value : "") })} />
+              <Label>{lang === "ru" ? "Дата окончания (необязательно)" : lang === "kz" ? "Аяқталу күні (міндетті емес)" : "End date (optional)"}</Label>
+              <Input type="date" min={form.event_date.slice(0, 10)} value={form.event_end_date} onChange={(e) => setForm({ ...form, event_end_date: e.target.value })} />
             </div>
             <div>
               <Label>{ui.desc}</Label>

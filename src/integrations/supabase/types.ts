@@ -22,6 +22,7 @@ export type Database = {
           club_id: string | null
           created_at: string
           event_date: string | null
+          event_end_date: string | null
           expires_at: string
           id: string
           image_url: string | null
@@ -40,6 +41,7 @@ export type Database = {
           club_id?: string | null
           created_at?: string
           event_date?: string | null
+          event_end_date?: string | null
           expires_at?: string
           id?: string
           image_url?: string | null
@@ -58,6 +60,7 @@ export type Database = {
           club_id?: string | null
           created_at?: string
           event_date?: string | null
+          event_end_date?: string | null
           expires_at?: string
           id?: string
           image_url?: string | null
@@ -484,6 +487,7 @@ export type Database = {
           club_id: string | null
           created_at: string | null
           event_date: string | null
+          event_end_date: string | null
           expires_at: string | null
           id: string | null
           image_url: string | null
@@ -500,6 +504,7 @@ export type Database = {
           club_id?: string | null
           created_at?: string | null
           event_date?: string | null
+          event_end_date?: string | null
           expires_at?: string | null
           id?: string | null
           image_url?: string | null
@@ -516,6 +521,7 @@ export type Database = {
           club_id?: string | null
           created_at?: string | null
           event_date?: string | null
+          event_end_date?: string | null
           expires_at?: string | null
           id?: string | null
           image_url?: string | null

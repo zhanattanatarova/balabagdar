@@ -7,6 +7,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import PublicationSource from "@/components/PublicationSource";
 import SEO from "@/components/SEO";
+import { formatEventDate } from "@/lib/events";
 
 interface Publication {
   id: string;
@@ -17,6 +18,7 @@ interface Publication {
   category: string;
   phone?: string;
   event_date: string | null;
+  event_end_date: string | null;
   image_url: string | null;
   source_label: string | null;
   source_url: string | null;
@@ -42,7 +44,7 @@ export default function PublicationPage() {
     const load = async () => {
       setLoading(true);
       setError(false);
-      const columns = "id,title,body,name,city,category,event_date,image_url,source_label,source_url,club_id" + (user ? ",phone" : "");
+      const columns = "id,title,body,name,city,category,event_date,event_end_date,image_url,source_label,source_url,club_id" + (user ? ",phone" : "");
       const query = user ? supabase.from("announcements").select(columns) : supabase.from("announcements_public").select(columns);
       const { data, error: loadError } = await query.eq("id", id || "").maybeSingle();
       if (cancelled) return;
@@ -65,6 +67,7 @@ export default function PublicationPage() {
         <article>
           <SEO title={`${post.title} | BalaHub`} description={post.body.slice(0, 159)} path={`/publication/${post.id}`} />
           <h1 className="text-2xl font-black break-words">{post.title}</h1>
+          {post.event_date && <p className="mt-3 font-bold text-primary">{formatEventDate(post.event_date, post.event_end_date, lang)}</p>}
           <p className="flex items-center gap-2 text-sm text-muted-foreground mt-3"><MapPin size={16} /> {post.city}</p>
           {post.image_url && <img src={post.image_url} alt={post.title} className="w-full max-h-96 object-cover mt-5 rounded-lg" />}
           <p className="mt-5 text-base whitespace-pre-line">{post.body}</p>

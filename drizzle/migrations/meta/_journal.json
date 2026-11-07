@@ -43,6 +43,13 @@
       "when": 1794052366130,
       "tag": "0005_publication_sources_and_clubs",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794052642654,
+      "tag": "0006_event_end_date",
+      "breakpoints": true
     }
   ]
 }
