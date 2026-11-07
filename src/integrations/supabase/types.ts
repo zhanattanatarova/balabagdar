@@ -289,6 +289,7 @@ export type Database = {
           address: string | null
           age_max: number | null
           age_min: number | null
+          age_source: string | null
           avatar_url: string | null
           categories: string[]
           category: string
@@ -325,6 +326,7 @@ export type Database = {
           address?: string | null
           age_max?: number | null
           age_min?: number | null
+          age_source?: string | null
           avatar_url?: string | null
           categories?: string[]
           category?: string
@@ -361,6 +363,7 @@ export type Database = {
           address?: string | null
           age_max?: number | null
           age_min?: number | null
+          age_source?: string | null
           avatar_url?: string | null
           categories?: string[]
           category?: string
