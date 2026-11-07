@@ -49,7 +49,7 @@ interface EventItem {
 const EMPTY_FILTERS: EventFilters = { date: "all", age: null, price: null, kind: null };
 const FILTER_UI = {
   ru: { all: "Все", today: "Сегодня", weekend: "Выходные", week: "Эта неделя", free: "Бесплатно", paid: "Платно", nothing: "Ничего не нашлось", reset: "Сбросить фильтры", years: "лет" },
-  kz: { all: "Барлығы", today: "Бүгін", weekend: "Демалыс", week: "Осы апта", free: "Тегін", paid: "Ақылы", nothing: "Ештеңе табылмады", reset: "Сүзгілерді тазалау", years: "жас" },
+  kz: { all: "Барлығы", today: "Бүгін", weekend: "Демалыс күндері", week: "Осы апта", free: "Тегін", paid: "Ақылы", nothing: "Ештеңе табылмады", reset: "Сүзгілерді тазалау", years: "жас" },
   en: { all: "All", today: "Today", weekend: "Weekend", week: "This week", free: "Free", paid: "Paid", nothing: "Nothing found", reset: "Reset filters", years: "yrs" },
 };
 
