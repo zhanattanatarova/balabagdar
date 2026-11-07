@@ -53,3 +53,60 @@ export function upcomingCityEvents<T extends CityEvent>(events: T[], city: strin
     return last >= aktauDate(now.toISOString());
   });
 }
+
+export type DateFilter = "all" | "today" | "weekend" | "week";
+export type AgeFilter = "0-3" | "3-7" | "7-12" | "12+";
+export type PriceFilter = "free" | "paid";
+export type EventKind = "masterclass" | "holiday" | "show" | "competition" | "exhibition" | "other";
+export const EVENT_KINDS: EventKind[] = ["masterclass", "holiday", "show", "competition", "exhibition", "other"];
+export const AGE_FILTERS: AgeFilter[] = ["0-3", "3-7", "7-12", "12+"];
+
+export interface FilterableEvent extends CityEvent {
+  age_min?: number | null;
+  age_max?: number | null;
+  is_free?: boolean | null;
+  price_from?: number | null;
+  event_kind?: string | null;
+}
+export interface EventFilters { date: DateFilter; age: AgeFilter | null; price: PriceFilter | null; kind: EventKind | null }
+
+function addDays(day: string, n: number): string {
+  const d = new Date(`${day}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Date window [from, to] in Aktau calendar days for a date chip. */
+export function dateWindow(filter: DateFilter, now: Date = new Date()): [string, string] | null {
+  if (filter === "all") return null;
+  const today = aktauDate(now.toISOString());
+  if (filter === "today") return [today, today];
+  const dow = new Date(`${today}T12:00:00Z`).getUTCDay(); // 0 = Sunday
+  const sunday = addDays(today, dow === 0 ? 0 : 7 - dow);
+  if (filter === "week") return [today, sunday];
+  const saturday = addDays(sunday, -1);
+  return [saturday < today ? today : saturday, sunday];
+}
+
+export function matchesEventFilters(e: FilterableEvent, f: EventFilters, now: Date = new Date()): boolean {
+  const win = dateWindow(f.date, now);
+  if (win) {
+    if (!e.event_date) return false;
+    const start = aktauDate(e.event_date);
+    const last = e.event_end_date && e.event_end_date > start ? e.event_end_date : start;
+    if (start > win[1] || last < win[0]) return false;
+  }
+  if (f.age) {
+    if (e.age_min == null && e.age_max == null) return false;
+    const [lo, hi] = { "0-3": [0, 3], "3-7": [3, 7], "7-12": [7, 12], "12+": [12, 99] }[f.age];
+    const min = e.age_min ?? 0, max = e.age_max ?? 99;
+    if (min >= hi || max < lo) return false;
+  }
+  if (f.price === "free" && e.is_free !== true) return false;
+  if (f.price === "paid" && !(e.is_free === false || (e.price_from ?? 0) > 0)) return false;
+  if (f.kind) {
+    const kind = e.event_kind || "other";
+    if (kind !== f.kind) return false;
+  }
+  return true;
+}
