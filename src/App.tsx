@@ -14,6 +14,10 @@ import HistoryPage from "./pages/HistoryPage";
 import SearchPage from "./pages/SearchPage";
 import SecurityPage from "./pages/SecurityPage";
 import PublicationPage from "./pages/PublicationPage";
+import CollectionsPage from "./pages/sections/CollectionsPage";
+import HolidaysPage from "./pages/sections/HolidaysPage";
+import DealsPage from "./pages/sections/DealsPage";
+import BlogPage from "./pages/sections/BlogPage";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +46,12 @@ const App = () => (
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/security" element={<SecurityPage />} />
+            <Route path="/collections" element={<CollectionsPage />} />
+            <Route path="/collections/:slug" element={<CollectionsPage />} />
+            <Route path="/holidays" element={<HolidaysPage />} />
+            <Route path="/deals" element={<DealsPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:slug" element={<BlogPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
