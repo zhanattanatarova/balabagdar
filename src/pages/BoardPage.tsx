@@ -5,6 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "@/hooks/use-toast";
 import { validateImageFileDeep } from "@/lib/uploadValidation";
+import PublicationSource from "@/components/PublicationSource";
+import { Link } from "react-router-dom";
 
 interface Announcement {
   id: string;
@@ -18,6 +20,8 @@ interface Announcement {
   created_at: string;
   expires_at: string;
   user_id: string | null;
+  source_label?: string | null;
+  source_url?: string | null;
 }
 
 const categoriesByLang = {
@@ -406,8 +410,9 @@ const BoardPage = ({ city }: { city: string }) => {
               {a.image_url && (
                 <img src={a.image_url} alt={a.title} className="w-full max-h-72 object-cover rounded-xl mb-2" />
               )}
-              <h3 className="font-black text-base">{a.title}</h3>
+              <h3 className="font-black text-base"><Link to={`/publication/${a.id}`} className="hover:underline">{a.title}</Link></h3>
               <p className="text-sm mt-2 whitespace-pre-line font-medium">{a.body}</p>
+              <PublicationSource label={a.source_label} url={a.source_url} />
               <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
                 <span className="text-xs font-bold text-muted-foreground">{a.name}</span>
                 {a.phone && (

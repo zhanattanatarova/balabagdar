@@ -36,6 +36,13 @@
       "when": 1793815024775,
       "tag": "0004_protect_twogis_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794052366130,
+      "tag": "0005_publication_sources_and_clubs",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Plus, Loader2, Calendar as CalendarIcon, MapPin, Phone, Pencil, Trash2, ImagePlus, X, ChevronDown, Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CityPickerSheet from "@/components/CityPickerSheet";
 import { upcomingCityEvents } from "@/lib/events";
 import { toast } from "@/hooks/use-toast";
@@ -15,6 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/components/AuthModal";
 import SEO from "@/components/SEO";
+import PublicationSource from "@/components/PublicationSource";
 
 interface EventItem {
   id: string;
@@ -27,6 +28,8 @@ interface EventItem {
   image_url?: string | null;
   created_at: string;
   user_id: string | null;
+  source_label?: string | null;
+  source_url?: string | null;
 }
 
 type FormState = {
@@ -78,8 +81,8 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
     setLoading(true);
     const source = user ? "announcements" : "announcements_public";
     const columns = user
-      ? "id,title,body,name,phone,city,event_date,image_url,created_at,user_id"
-      : "id,title,body,name,city,event_date,image_url,created_at,user_id";
+      ? "id,title,body,name,phone,city,event_date,image_url,created_at,user_id,source_label,source_url"
+      : "id,title,body,name,city,event_date,image_url,created_at,user_id,source_label,source_url";
     const { data } = await supabase
       .from(source as any)
       .select(columns)
@@ -331,7 +334,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                         </div>
                       )}
                     </div>
-                    <h3 className="font-black text-base leading-snug">{e.title}</h3>
+                    <h3 className="font-black text-base leading-snug"><Link to={`/publication/${e.id}`} className="hover:underline">{e.title}</Link></h3>
                     <p className={`text-sm mt-2 whitespace-pre-line font-medium ${expanded[e.id] ? "" : "line-clamp-4"}`}>{e.body}</p>
                     {e.body && e.body.length > 180 && (
                       <button
@@ -341,6 +344,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                         {expanded[e.id] ? ui.collapse : ui.read}
                       </button>
                     )}
+                    <PublicationSource label={e.source_label} url={e.source_url} />
                     <div className="mt-3 pt-3 border-t border-border flex items-center justify-between flex-wrap gap-2">
                       <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
                         <MapPin size={11} /> {e.city}

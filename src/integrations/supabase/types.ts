@@ -19,6 +19,7 @@ export type Database = {
           body: string
           category: string
           city: string
+          club_id: string | null
           created_at: string
           event_date: string | null
           expires_at: string
@@ -26,6 +27,8 @@ export type Database = {
           image_url: string | null
           name: string
           phone: string
+          source_label: string | null
+          source_url: string | null
           title: string
           updated_at: string
           user_id: string | null
@@ -34,6 +37,7 @@ export type Database = {
           body?: string
           category?: string
           city?: string
+          club_id?: string | null
           created_at?: string
           event_date?: string | null
           expires_at?: string
@@ -41,6 +45,8 @@ export type Database = {
           image_url?: string | null
           name?: string
           phone?: string
+          source_label?: string | null
+          source_url?: string | null
           title: string
           updated_at?: string
           user_id?: string | null
@@ -49,6 +55,7 @@ export type Database = {
           body?: string
           category?: string
           city?: string
+          club_id?: string | null
           created_at?: string
           event_date?: string | null
           expires_at?: string
@@ -56,11 +63,21 @@ export type Database = {
           image_url?: string | null
           name?: string
           phone?: string
+          source_label?: string | null
+          source_url?: string | null
           title?: string
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "announcements_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bookings: {
         Row: {
@@ -464,12 +481,15 @@ export type Database = {
           body: string | null
           category: string | null
           city: string | null
+          club_id: string | null
           created_at: string | null
           event_date: string | null
           expires_at: string | null
           id: string | null
           image_url: string | null
           name: string | null
+          source_label: string | null
+          source_url: string | null
           title: string | null
           user_id: string | null
         }
@@ -477,12 +497,15 @@ export type Database = {
           body?: string | null
           category?: string | null
           city?: string | null
+          club_id?: string | null
           created_at?: string | null
           event_date?: string | null
           expires_at?: string | null
           id?: string | null
           image_url?: string | null
           name?: string | null
+          source_label?: string | null
+          source_url?: string | null
           title?: string | null
           user_id?: string | null
         }
@@ -490,16 +513,27 @@ export type Database = {
           body?: string | null
           category?: string | null
           city?: string | null
+          club_id?: string | null
           created_at?: string | null
           event_date?: string | null
           expires_at?: string | null
           id?: string | null
           image_url?: string | null
           name?: string | null
+          source_label?: string | null
+          source_url?: string | null
           title?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "announcements_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
