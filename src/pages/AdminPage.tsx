@@ -1,3 +1,4 @@
+import { telHref } from "@/lib/phone";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -493,7 +494,7 @@ const AdminPage = () => {
                             {c.name_ru || "Без названия"}{" "}
                             <span className="text-xs text-muted-foreground font-bold">· {c.city}</span>
                           </div>
-                          <div className="text-xs mt-0.5">📞 <a href={`tel:${c.phone}`} className="font-bold text-primary">{c.phone || "—"}</a></div>
+                          <div className="text-xs mt-0.5">📞 <a href={telHref(c.phone) || undefined} className="font-bold text-primary">{c.phone || "—"}</a></div>
                           <div className="text-xs mt-0.5 text-muted-foreground">
                             BalaHub: ⭐ {c.rating ?? 0} ({c.reviews_count ?? 0}) · {(c.categories || []).length} направл.
                           </div>
@@ -837,7 +838,7 @@ const AdminPage = () => {
                           👶 <span className="font-bold">{b.child_name}</span>
                           {b.child_age ? <span className="text-muted-foreground"> · {b.child_age} лет</span> : null}
                         </div>
-                        <div className="text-xs mt-0.5">📞 <a href={`tel:${b.phone}`} className="font-bold text-primary">{b.phone || "—"}</a></div>
+                        <div className="text-xs mt-0.5">📞 <a href={telHref(b.phone) || undefined} className="font-bold text-primary">{b.phone || "—"}</a></div>
                         <div className="text-xs mt-0.5">📅 <span className="font-bold">{b.booking_date}</span></div>
                         {b.message && <div className="text-xs mt-1 text-muted-foreground">💬 {b.message}</div>}
                         <div className="text-[10px] text-muted-foreground mt-1">{new Date(b.created_at).toLocaleString("ru")}</div>
@@ -905,7 +906,7 @@ const AdminPage = () => {
                     <div className="flex items-start justify-between gap-2 flex-wrap">
                       <div className="min-w-0">
                         <div className="font-black text-sm">{u.display_name || "Без имени"}</div>
-                        <div className="text-xs mt-0.5">📞 <a href={`tel:+${u.phone}`} className="font-bold text-primary">{u.phone || "—"}</a></div>
+                        <div className="text-xs mt-0.5">📞 <a href={telHref(u.phone) || undefined} className="font-bold text-primary">{u.phone || "—"}</a></div>
                         <div className="text-[10px] text-muted-foreground mt-1">
                           Регистрация: {u.created_at ? new Date(u.created_at).toLocaleString("ru") : "—"}
                           {" · "}Вход: {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleString("ru") : "—"}

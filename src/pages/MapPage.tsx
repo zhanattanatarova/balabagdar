@@ -1,3 +1,4 @@
+import { telHref } from "@/lib/phone";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -289,8 +290,8 @@ const MapPage = ({ city }: { city: string }) => {
                   >
                     {mt.profile} <ArrowRight size={10} />
                   </Link>
-                  {club.phone && (
-                    <a href={`tel:${club.phone}`} className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+                  {telHref(club.phone) && (
+                    <a href={telHref(club.phone) || undefined} className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
                       <Phone size={10} /> {mt.call}
                     </a>
                   )}
@@ -392,9 +393,9 @@ const MapPage = ({ city }: { city: string }) => {
                     >
                       {mt.open_profile} <ArrowRight size={12} />
                     </Link>
-                    {club.phone && (
+                    {telHref(club.phone) && (
                       <a
-                        href={`tel:${club.phone}`}
+                        href={telHref(club.phone) || undefined}
                         onClick={(e) => e.stopPropagation()}
                         className="flex items-center gap-1 text-xs font-black bg-muted px-3 py-2 rounded-xl"
                       >

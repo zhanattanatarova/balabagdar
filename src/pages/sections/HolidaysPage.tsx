@@ -15,7 +15,7 @@ export const SEASON_LABELS: Record<Season, Record<"ru" | "kz" | "en", string>> =
 };
 const UI = {
   ru: { title: "Каникулы и лагеря", sub: "Лагеря и программы на каникулы", empty: "Программы на каникулы скоро появятся", add: "Добавить программу", camps: "Лагеря", programs: "Программы" },
-  kz: { title: "Демалыс және лагерьлер", sub: "Демалысқа арналған лагерьлер мен бағдарламалар", empty: "Демалыс бағдарламалары жақында пайда болады", add: "Бағдарлама қосу", camps: "Лагерьлер", programs: "Бағдарламалар" },
+  kz: { title: "Каникулдар және лагерьлер", sub: "Каникулға арналған лагерьлер мен бағдарламалар", empty: "Каникул бағдарламалары жақында пайда болады", add: "Бағдарлама қосу", camps: "Лагерьлер", programs: "Бағдарламалар" },
   en: { title: "Holidays & camps", sub: "Camps and holiday programs", empty: "Holiday programs are coming soon", add: "Add a program", camps: "Camps", programs: "Programs" },
 };
 

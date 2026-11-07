@@ -37,7 +37,7 @@ export function clubAge(ageMin: number | null | undefined, ageMax: number | null
   }
   const suffix = lang === "kz" ? "жас" : lang === "en" ? "yrs" : "лет";
   if (ageMin != null && ageMax != null) return `${ageMin}–${ageMax} ${suffix}`;
-  if (ageMin != null) return `${ageMin}+ ${suffix}`;
+  if (ageMin != null) return lang === "kz" ? `${ageMin} жастан` : lang === "en" ? `from ${ageMin} yrs` : `от ${ageMin} лет`;
   return `${ageMax} ${suffix}`;
 }
 

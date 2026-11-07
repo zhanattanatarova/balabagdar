@@ -5,7 +5,7 @@ import { hasPublishedArticles } from "@/lib/publicData";
 
 const LINKS = [
   { to: "/collections", emoji: "✨", ru: "Подборки", kz: "Топтамалар", en: "Collections" },
-  { to: "/holidays", emoji: "🏕️", ru: "Каникулы", kz: "Демалыс", en: "Holidays" },
+  { to: "/holidays", emoji: "🏕️", ru: "Каникулы", kz: "Каникулдар", en: "Holidays" },
   { to: "/deals", emoji: "🏷️", ru: "Акции", kz: "Акциялар", en: "Deals" },
   { to: "/blog", emoji: "📖", ru: "Блог", kz: "Блог", en: "Blog", blog: true },
 ];

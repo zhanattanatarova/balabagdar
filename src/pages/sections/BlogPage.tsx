@@ -1,3 +1,4 @@
+import { formatDay } from "@/lib/events";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
@@ -14,7 +15,7 @@ const UI = {
   kz: { title: "Қаладағы ана", sub: "Балалар демалысы туралы BalaHub блогы", empty: "Әзірге мақалалар жоқ", missing: "Мақала табылмады" },
   en: { title: "Mom in the city", sub: "BalaHub blog about kids' activities", empty: "No articles yet", missing: "Article not found" },
 };
-const fmt = (d: string | null, lang: string) => d ? new Date(d).toLocaleDateString(lang === "kz" ? "kk-KZ" : lang === "en" ? "en-US" : "ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Aqtau" }) : "";
+const fmt = (d: string | null, lang: string) => { if (!d) return ""; const day = new Date(new Date(d).getTime() + 5 * 3600e3).toISOString().slice(0, 10); return `${formatDay(day, lang)} ${day.slice(0, 4)}`; };
 
 export default function BlogPage() {
   const { slug } = useParams();

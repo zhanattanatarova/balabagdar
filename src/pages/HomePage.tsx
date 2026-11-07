@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { supabase } from "@/integrations/supabase/client";
 import { safeImageUrl } from "@/lib/safeUrl";
-import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
+import { clubAge, clubCategoryLabels, clubLocation, clubPrice, hasRealAge } from "@/lib/clubDisplay";
 import { translations } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
 import { CITIES } from "@/lib/cities";
@@ -257,6 +257,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const [showSpecialPicker, setShowSpecialPicker] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [clubs, setClubs] = useState<any[]>([]);
+  const [unknownAgeClubs, setUnknownAgeClubs] = useState<any[]>([]);
   const [loadingClubs, setLoadingClubs] = useState(true);
   const [nearbyClubs, setNearbyClubs] = useState<NearbyClub[]>([]);
   const [locating, setLocating] = useState(false);
@@ -363,10 +364,16 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         };
         const [lo, hi] = ranges[ageFilter];
         // club overlaps requested range: age_min <= hi AND age_max >= lo
-        query = query.lte("age_min", hi).gte("age_max", lo);
+        const { data } = await query;
+        const all = data || [];
+        setClubs(all.filter((c: any) => hasRealAge(c.age_min, c.age_max) && (c.age_min ?? 0) <= hi && (c.age_max ?? 99) >= lo));
+        setUnknownAgeClubs(all.filter((c: any) => !hasRealAge(c.age_min, c.age_max)));
+        setLoadingClubs(false);
+        return;
       }
 
       const { data } = await query;
+      setUnknownAgeClubs([]);
       setClubs(data || []);
       setLoadingClubs(false);
     };
@@ -1015,10 +1022,15 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         {loadingClubs ? (
           <div className="flex justify-center py-8"><Loader2 size={24} className="animate-spin text-primary" /></div>
         ) : clubs.length === 0 ? (
+          unknownAgeClubs.length > 0 ? (
+            <p className="px-4 text-sm text-muted-foreground font-bold">{lang === "kz" ? "Осы жасқа нақты сәйкес орталықтар жоқ." : lang === "en" ? "No centers with this exact age yet." : "Центров с точно подходящим возрастом пока нет."}</p>
+          ) : (
           <div className="px-4 py-8 text-center">
             <p className="text-4xl mb-2">🔍</p>
             <p className="text-sm text-muted-foreground font-bold">{t("home.not_found")}</p>
+            <button onClick={() => { setAgeFilter("all"); setSelectedCategory(null); setSearchQuery(""); }} className="mt-3 px-4 py-2 rounded-full bg-primary text-primary-foreground text-xs font-black">{lang === "kz" ? "Сүзгілерді тазалау" : lang === "en" ? "Reset filters" : "Сбросить фильтры"}</button>
           </div>
+          )
         ) : (
           <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
             {popularClubs.map((club, i) => {
@@ -1069,6 +1081,23 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 </Link>
               );
             })}
+          </div>
+        )}
+        {!loadingClubs && ageFilter !== "all" && unknownAgeClubs.length > 0 && (
+          <div className="mt-5 px-4">
+            <h3 className="font-black text-sm mb-1">{lang === "kz" ? "Жасы көрсетілмеген — орталықтан нақтылаңыз" : lang === "en" ? "Age not specified — ask the center" : "Возраст не указан — уточняйте в центре"}</h3>
+            <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto pb-2 scrollbar-none">
+              {unknownAgeClubs.slice(0, 30).map((club) => {
+                const name = tField(club.name_ru, club.name_kz, club.name_en);
+                return (
+                  <Link key={club.id} to={`/club/${club.id}`} className="block min-w-[150px] md:min-w-0 cartoon-card p-3 shrink-0 md:shrink">
+                    {safeImageUrl(club.avatar_url) ? <img src={safeImageUrl(club.avatar_url)!} alt={name} loading="lazy" className="h-12 w-12 rounded-xl object-cover" /> : <ClubInitialAvatar name={name} size="sm" />}
+                    <p className="font-black text-xs mt-2 line-clamp-2">{name}</p>
+                    <p className="text-[11px] text-muted-foreground font-bold">{clubLocation(club.address, club.city)}</p>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

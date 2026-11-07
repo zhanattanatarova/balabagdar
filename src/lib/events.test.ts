@@ -52,3 +52,10 @@ describe("upcomingCityEvents", () => {
     expect(upcomingCityEvents(list, "Актау", now)).toEqual([]);
   });
 });
+
+import { describe as d2, it as i2, expect as e2 } from "vitest";
+d2("kz/en dates", () => {
+  i2("kz range", () => e2(formatEventDate("2026-11-07T00:00:00+05:00", "2026-11-08", "kz")).toBe("7–8 қараша"));
+  i2("kz time", () => e2(formatEventDate("2026-11-07T13:00:00+05:00", null, "kz")).toBe("7 қараша, 13:00"));
+  i2("en range", () => e2(formatEventDate("2026-11-07T00:00:00+05:00", "2026-11-08", "en")).toBe("November 7–8"));
+});
