@@ -8,6 +8,7 @@ interface SitemapEntry {
   path: string;
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority?: string;
+  lastmod?: string;
 }
 
 const entries: SitemapEntry[] = [
@@ -15,6 +16,9 @@ const entries: SitemapEntry[] = [
   { path: "/clubs", changefreq: "daily", priority: "0.9" },
   { path: "/map", changefreq: "daily", priority: "0.9" },
   { path: "/board", changefreq: "daily", priority: "0.8" },
+  { path: "/collections", changefreq: "daily", priority: "0.8" },
+  { path: "/holidays", changefreq: "weekly", priority: "0.8" },
+  { path: "/deals", changefreq: "daily", priority: "0.8" },
   { path: "/search", changefreq: "weekly", priority: "0.7" },
   { path: "/legal", changefreq: "monthly", priority: "0.3" },
 ];
@@ -24,6 +28,7 @@ function generateSitemap(items: SitemapEntry[]) {
     [
       "  <url>",
       `    <loc>${BASE_URL}${e.path}</loc>`,
+      e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
       e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
       e.priority ? `    <priority>${e.priority}</priority>` : null,
       "  </url>",
@@ -70,12 +75,40 @@ async function clubEntries(): Promise<SitemapEntry[]> {
   return out;
 }
 
+// Active collections and published blog articles (blog index only when an article is published).
+async function contentEntries(): Promise<SitemapEntry[]> {
+  const env = readEnv();
+  const url = env.VITE_SUPABASE_URL;
+  const key = env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) return [];
+  const headers = { apikey: key, Authorization: `Bearer ${key}` };
+  const get = async (q: string) => {
+    const res = await fetch(`${url}/rest/v1/${q}`, { headers, signal: AbortSignal.timeout(15000) });
+    if (!res.ok) throw new Error(`${q} failed: ${res.status}`);
+    return res.json();
+  };
+  const cols = (await get("collections?select=slug&is_active=eq.true&order=sort.asc")) as { slug: string }[];
+  const arts = (await get(`articles?select=slug,updated_at&is_published=eq.true&published_at=lte.${new Date().toISOString()}`)) as { slug: string; updated_at: string }[];
+  return [
+    ...cols.map((c) => ({ path: `/collections/${c.slug}`, changefreq: "daily" as const, priority: "0.7" })),
+    ...(arts.length ? [{ path: "/blog", changefreq: "weekly" as const, priority: "0.7" }] : []),
+    ...arts.map((a) => ({ path: `/blog/${a.slug}`, changefreq: "monthly" as const, priority: "0.6", lastmod: a.updated_at.slice(0, 10) })),
+  ];
+}
+
+let content: SitemapEntry[] = [];
+try {
+  content = await contentEntries();
+} catch (e) {
+  console.warn("sitemap: could not load collections/articles", e);
+}
+
 let clubs: SitemapEntry[] = [];
 try {
   clubs = await clubEntries();
 } catch (e) {
   console.warn("sitemap: could not load clubs, writing static pages only", e);
 }
-const all = [...entries, ...clubs];
+const all = [...entries, ...content, ...clubs];
 writeFileSync(resolve("public/sitemap.xml"), generateSitemap(all));
 console.log(`sitemap.xml written (${all.length} entries, ${clubs.length} clubs)`);
