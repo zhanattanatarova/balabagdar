@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { upcomingCityEvents, formatEventDate } from "./events";
+import { upcomingCityEvents, formatEventDate, eventInputToIso } from "./events";
 
 const now = new Date("2026-11-04T12:00:00Z");
 
 describe("upcomingCityEvents", () => {
+  it("saves optional time and date-only values in Aktau UTC+5", () => {
+    expect(eventInputToIso("2026-11-13")).toBe("2026-11-12T19:00:00.000Z");
+    expect(eventInputToIso("2026-11-07T13:00")).toBe("2026-11-07T08:00:00.000Z");
+  });
   it("keeps a November 7 event until midnight in Aktau, not only until its start", () => {
     const list = [{ city: "Актау", event_date: "2026-11-07T13:00:00+05:00" }];
     expect(upcomingCityEvents(list, "Актау", new Date("2026-11-07T18:59:59Z"))).toHaveLength(1);
