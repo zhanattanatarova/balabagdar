@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import BookingModal from "@/components/BookingModal";
+import { telHref, waNumber, isMobilePhone } from "@/lib/phone";
 import ClubReviews from "@/components/ClubReviews";
 import SEO from "@/components/SEO";
 import { safeImageUrl } from "@/lib/safeUrl";
@@ -171,7 +172,7 @@ const ClubDetailPage = () => {
       {/* Primary actions */}
       <div className="px-4 mt-4 space-y-2">
         {(() => {
-          const wa = (club.whatsapp || "").replace(/\D/g, "");
+          const wa = waNumber(club.whatsapp) || (isMobilePhone(club.phone) ? waNumber(club.phone) : null);
           const msg = lang === "kz"
             ? "Сәлеметсіз бе! Сізді BalaHub-тан таптым. Балаға арналған сабақтар туралы білгім келеді."
             : lang === "en"
@@ -183,8 +184,8 @@ const ClubDetailPage = () => {
               <MessageCircle size={20} /> {lang === "kz" ? "WhatsApp-қа жазу" : lang === "en" ? "Message on WhatsApp" : "Написать в WhatsApp"}
             </a>
           );
-          if (club.phone) return (
-            <a href={`tel:${club.phone.replace(/[^\d+]/g, "")}`} className={cls}>
+          if (telHref(club.phone)) return (
+            <a href={telHref(club.phone)!} className={cls}>
               <Phone size={20} /> {t("club.call")}
             </a>
           );
@@ -201,16 +202,17 @@ const ClubDetailPage = () => {
       </div>
 
       {/* Contacts */}
+      {(() => null)()}
       <div className="px-4 mt-4">
         <h2 className="font-black text-sm mb-2">{t("club.contacts")}</h2>
         <div className="flex gap-2">
-          {club.phone && (
-            <a href={`tel:${club.phone}`} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-muted font-bold text-sm">
+          {telHref(club.phone) && (
+            <a href={telHref(club.phone)!} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-muted font-bold text-sm">
               <Phone size={16} className="text-primary" /> {t("club.call")}
             </a>
           )}
-          {club.whatsapp && (
-            <a href={`https://wa.me/${club.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer"
+          {contactWa && (
+            <a href={`https://wa.me/${contactWa}`} target="_blank" rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-green-light font-bold text-sm">
               <MessageCircle size={16} className="text-primary" /> {t("club.whatsapp")}
             </a>

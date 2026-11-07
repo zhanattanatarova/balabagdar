@@ -290,7 +290,7 @@ const MapPage = ({ city }: { city: string }) => {
                   >
                     {mt.profile} <ArrowRight size={10} />
                   </Link>
-                  {club.phone && (
+                  {telHref(club.phone) && (
                     <a href={telHref(club.phone) || undefined} className="text-[11px] font-black bg-muted px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
                       <Phone size={10} /> {mt.call}
                     </a>
@@ -393,7 +393,7 @@ const MapPage = ({ city }: { city: string }) => {
                     >
                       {mt.open_profile} <ArrowRight size={12} />
                     </Link>
-                    {club.phone && (
+                    {telHref(club.phone) && (
                       <a
                         href={telHref(club.phone) || undefined}
                         onClick={(e) => e.stopPropagation()}
