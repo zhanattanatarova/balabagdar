@@ -42,9 +42,9 @@ export default function PublicationPage() {
     const load = async () => {
       setLoading(true);
       setError(false);
-      const source = user ? "announcements" : "announcements_public";
       const columns = "id,title,body,name,city,category,event_date,image_url,source_label,source_url,club_id" + (user ? ",phone" : "");
-      const { data, error: loadError } = await supabase.from(source).select(columns).eq("id", id || "").maybeSingle();
+      const query = user ? supabase.from("announcements").select(columns) : supabase.from("announcements_public").select(columns);
+      const { data, error: loadError } = await query.eq("id", id || "").maybeSingle();
       if (cancelled) return;
       setPost(data as unknown as Publication | null);
       setError(Boolean(loadError));
