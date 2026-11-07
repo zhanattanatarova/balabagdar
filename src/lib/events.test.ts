@@ -1,9 +1,32 @@
 import { describe, expect, it } from "vitest";
-import { upcomingCityEvents } from "./events";
+import { upcomingCityEvents, formatEventDate } from "./events";
 
 const now = new Date("2026-11-04T12:00:00Z");
 
 describe("upcomingCityEvents", () => {
+  it("keeps a November 7 event until midnight in Aktau, not only until its start", () => {
+    const list = [{ city: "Актау", event_date: "2026-11-07T13:00:00+05:00" }];
+    expect(upcomingCityEvents(list, "Актау", new Date("2026-11-07T18:59:59Z"))).toHaveLength(1);
+    expect(upcomingCityEvents(list, "Актау", new Date("2026-11-07T19:00:00Z"))).toHaveLength(0);
+  });
+
+  it("keeps the November 7–8 championship through the entire end date", () => {
+    const list = [{ city: "Актау", event_date: "2026-11-07T00:00:00+05:00", event_end_date: "2026-11-08" }];
+    expect(upcomingCityEvents(list, "Актау", new Date("2026-11-08T18:59:59Z"))).toHaveLength(1);
+    expect(upcomingCityEvents(list, "Актау", new Date("2026-11-08T19:00:00Z"))).toHaveLength(0);
+  });
+
+  it("formats a date range without midnight", () => {
+    expect(formatEventDate("2026-11-07T00:00:00+05:00", "2026-11-08", "ru")).toBe("7–8 ноября");
+  });
+
+  it("shows only the November 13 date when XAN KIDS time is unspecified", () => {
+    expect(formatEventDate("2026-11-13T00:00:00+05:00", null, "ru")).toBe("13 ноября");
+  });
+
+  it("retains the stated 13:00 time in Aktau", () => {
+    expect(formatEventDate("2026-11-07T13:00:00+05:00", null, "ru")).toBe("7 ноября, 13:00");
+  });
   it("keeps only events in the selected city", () => {
     const list = [
       { id: 1, city: "Актау", event_date: "2026-11-10T10:00:00Z" },
