@@ -13,31 +13,27 @@ import BottomNav from "@/components/BottomNav";
 import SEO from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const seoByPath: Record<string, { title: string; description: string; path: string; noindex?: boolean }> = {
+type L = { ru: string; kz: string; en: string };
+const seoByPath: Record<string, { title: L; description: L; path: string }> = {
   "/clubs": {
-    title: "BalaHub — балалар үйірмелері мен мамандар Қазақстанда",
-    description: "Қазақстанның 35 қаласындағы балалар үйірмелері, секциялар мен мамандарды тауып, броньдаңыз.",
+    title: { ru: "BalaHub — детские кружки и центры Казахстана", kz: "BalaHub — балалар үйірмелері мен орталықтары", en: "BalaHub — kids' clubs and centers in Kazakhstan" },
+    description: { ru: "Найдите детские кружки, секции и специалистов в 35 городах Казахстана.", kz: "Қазақстанның 35 қаласындағы балалар үйірмелері мен мамандарын табыңыз.", en: "Find kids' clubs, activities and specialists in 35 cities across Kazakhstan." },
     path: "/clubs",
   },
   "/map": {
-    title: "Үйірмелер картасы — BalaHub",
-    description: "Қалаңыздағы балалар үйірмелерін картадан тауып, жақын маңдағыларды көріңіз.",
+    title: { ru: "Центры на карте — BalaHub", kz: "Орталықтар картада — BalaHub", en: "Centers on the map — BalaHub" },
+    description: { ru: "Детские центры и кружки вашего города на карте.", kz: "Қалаңыздағы балалар орталықтары картада.", en: "Kids' centers and clubs in your city on the map." },
     path: "/map",
   },
-  "/": {
-    title: "Балаларға арналған іс-шаралар — BalaHub",
-    description: "Қазақстандағы балаларға арналған жаңалықтар, мерекелер мен іс-шаралар.",
-    path: "/",
-  },
   "/board": {
-    title: "Хабарландыру тақтасы — BalaHub",
-    description: "Жұмыс іздеу, маман керек, бала күтуші — балалар саласындағы хабарландырулар.",
+    title: { ru: "Доска объявлений — BalaHub", kz: "Хабарландыру тақтасы — BalaHub", en: "Notice board — BalaHub" },
+    description: { ru: "Объявления детских центров и родителей: занятия, вакансии, услуги.", kz: "Балалар орталықтары мен ата-аналардың хабарландырулары.", en: "Announcements from kids' centers and parents." },
     path: "/board",
   },
-  "/profile": { title: "Профиль — BalaHub", description: "Жеке профиль және баптаулар.", path: "/profile" },
-  "/notifications": { title: "Хабарламалар — BalaHub", description: "Жеке хабарламалар.", path: "/notifications", noindex: true },
-  "/dashboard": { title: "Басқару панелі — BalaHub", description: "Үйірме иесіне арналған панель.", path: "/dashboard", noindex: true },
-  "/club/edit": { title: "Үйірмені өңдеу — BalaHub", description: "Үйірме профилін өңдеу.", path: "/club/edit", noindex: true },
+  "/profile": { title: { ru: "Профиль — BalaHub", kz: "Профиль — BalaHub", en: "Profile — BalaHub" }, description: { ru: "Профиль и настройки.", kz: "Жеке профиль және баптаулар.", en: "Profile and settings." }, path: "/profile" },
+  "/notifications": { title: { ru: "Уведомления — BalaHub", kz: "Хабарламалар — BalaHub", en: "Notifications — BalaHub" }, description: { ru: "Уведомления.", kz: "Хабарламалар.", en: "Notifications." }, path: "/notifications" },
+  "/dashboard": { title: { ru: "Мой кабинет — BalaHub", kz: "Жеке кабинет — BalaHub", en: "My dashboard — BalaHub" }, description: { ru: "Кабинет центра.", kz: "Орталық кабинеті.", en: "Center dashboard." }, path: "/dashboard" },
+  "/club/edit": { title: { ru: "Редактирование центра — BalaHub", kz: "Орталықты өңдеу — BalaHub", en: "Edit center — BalaHub" }, description: { ru: "Редактирование профиля центра.", kz: "Орталық профилін өңдеу.", en: "Edit center profile." }, path: "/club/edit" },
 };
 
 const Index = () => {
@@ -70,17 +66,12 @@ const Index = () => {
     }
   };
 
-  const seo = seoByPath[location.pathname] || seoByPath["/"];
-  const localizedHomeSeo = lang === "ru"
-    ? { title: "BalaHub — детские кружки и центры Казахстана", description: "Найдите и забронируйте детские кружки, секции и специалистов в 35 городах Казахстана." }
-    : lang === "en"
-      ? { title: "BalaHub — kids' clubs and centers in Kazakhstan", description: "Find and book kids' clubs, activities and specialists in 35 cities across Kazakhstan." }
-      : { title: seo.title, description: seo.description };
-  const activeSeo = location.pathname === "/clubs" ? { ...seo, ...localizedHomeSeo } : seo;
+  const seo = seoByPath[location.pathname];
+  const l = (lang as keyof L) in { ru: 1, kz: 1, en: 1 } ? (lang as keyof L) : "ru";
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO title={activeSeo.title} description={activeSeo.description} path={activeSeo.path} />
+      {seo && <SEO title={seo.title[l]} description={seo.description[l]} path={seo.path} />}
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       {renderPage()}
       <BottomNav />

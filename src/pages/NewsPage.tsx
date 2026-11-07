@@ -243,7 +243,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
         <CityPickerSheet open={showCityPicker} city={city} onClose={() => setShowCityPicker(false)} onSelect={setCity} />
       )}
       <SEO
-        title={`Детская афиша ${city} | BalaHub`.slice(0, 60)}
+        title={(lang === "kz" ? `${city} балалар афишасы | BalaHub` : lang === "en" ? `Kids events in ${city} | BalaHub` : `Детская афиша ${city} | BalaHub`).slice(0, 60)}
         description={`Афиша детских событий, мастер-классов и праздников в городе ${city}. Актуальные даты, описание и контакты организаторов.`.slice(0, 159)}
         path="/"
         jsonLd={{
