@@ -26,7 +26,7 @@ export default function DealsPage() {
       <SEO title={`${ui.title} — ${city} | BalaHub`} description={`${ui.sub}: ${city}.`} path="/deals" />
       <div className="flex gap-2 mb-4">
         {(["all", "promo", "trial"] as const).map((k) => (
-          <button key={k} onClick={() => setType(k)} aria-pressed={type === k} className={`px-4 py-2 rounded-full text-xs font-black border-2 ${type === k ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}>{ui[k]}</button>
+          <button key={k} onClick={() => setType(k)} aria-pressed={type === k} className={`px-4 py-2 rounded-full text-xs font-black border ${type === k ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}>{ui[k]}</button>
         ))}
       </div>
       {loading ? <Loader2 className="animate-spin text-primary" /> : !deals.length ? <p className="font-bold">{ui.empty}</p> : (

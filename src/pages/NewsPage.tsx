@@ -99,7 +99,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
   const visible = events.filter((e) => matchesEventFilters(e, filters));
   const chip = (active: boolean, label: string, onClick: () => void, key: string) => (
     <button key={key} type="button" onClick={onClick} aria-pressed={active}
-      className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border-2 whitespace-nowrap ${active ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}>{label}</button>
+      className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border whitespace-nowrap ${active ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}>{label}</button>
   );
 
   const load = async () => {
@@ -343,7 +343,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
             </button>
             <button
               onClick={() => navigate("/clubs")}
-              className="mt-3 flex items-center gap-2 bg-muted text-foreground font-black text-sm px-6 py-3 rounded-full border-2 border-border"
+              className="mt-3 flex items-center gap-2 bg-muted text-foreground font-black text-sm px-6 py-3 rounded-full border border-border"
             >
               <Search size={16} /> {ui.browse}
             </button>
@@ -468,7 +468,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                   <button type="button" onClick={() => setForm({ ...form, image_url: "" })} aria-label={ui.remove_photo} className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
                 </div>
               ) : (
-                <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">
+                <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border border-dashed border-border">
                   {uploading ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
                   {uploading ? ui.uploading : ui.add_photo}
                   <input
@@ -507,14 +507,14 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, period: "week" })}
-                    className={`flex-1 py-2 rounded-md border-2 font-bold text-sm ${form.period === "week" ? "bg-primary text-primary-foreground border-primary" : "border-input"}`}
+                    className={`flex-1 py-2 rounded-md border font-bold text-sm ${form.period === "week" ? "bg-primary text-primary-foreground border-primary" : "border-input"}`}
                   >
                     {ui.week}
                   </button>
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, period: "month" })}
-                    className={`flex-1 py-2 rounded-md border-2 font-bold text-sm ${form.period === "month" ? "bg-primary text-primary-foreground border-primary" : "border-input"}`}
+                    className={`flex-1 py-2 rounded-md border font-bold text-sm ${form.period === "month" ? "bg-primary text-primary-foreground border-primary" : "border-input"}`}
                   >
                     {ui.month}
                   </button>

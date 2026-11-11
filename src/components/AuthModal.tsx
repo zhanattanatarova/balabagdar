@@ -267,7 +267,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                           <button
                             type="button"
                             onClick={() => setRegisterRole("parent")}
-                            className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition ${
+                            className={`flex-1 py-3 rounded-xl text-sm font-bold border transition ${
                               registerRole === "parent"
                                 ? "bg-primary text-primary-foreground border-primary"
                                 : "bg-muted text-foreground border-transparent"
@@ -278,7 +278,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
                           <button
                             type="button"
                             onClick={() => setRegisterRole("club_owner")}
-                            className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition ${
+                            className={`flex-1 py-3 rounded-xl text-sm font-bold border transition ${
                               registerRole === "club_owner"
                                 ? "bg-primary text-primary-foreground border-primary"
                                 : "bg-muted text-foreground border-transparent"

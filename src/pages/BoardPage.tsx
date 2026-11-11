@@ -354,7 +354,7 @@ const BoardPage = ({ city }: { city: string }) => {
               <button
                 key={c.value}
                 onClick={() => setActiveCat(c.value)}
-                className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-black border-2 transition-all ${
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-black border transition-all ${
                   active
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-card text-foreground border-border"
@@ -466,7 +466,7 @@ const BoardPage = ({ city }: { city: string }) => {
                     <button onClick={() => setForm({ ...form, image_url: "" })} aria-label="Удалить фото" className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center"><X size={14} /></button>
                   </div>
                 ) : (
-                  <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">
+                  <label className="mt-1 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border border-dashed border-border">
                     {uploading ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
                     {uploading ? tt.uploading : tt.photo_add}
                     <input

@@ -226,7 +226,7 @@ const MapPage = ({ city }: { city: string }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t("map.search")}
-            className="w-full pl-9 pr-9 py-2 rounded-full text-xs font-bold bg-card border-[3px] border-foreground/8 focus:outline-none focus:border-primary"
+            className="w-full pl-9 pr-9 py-2 rounded-full text-xs font-bold bg-card border border-foreground/8 focus:outline-none focus:border-primary"
             style={{ boxShadow: "var(--shadow-cartoon)" }}
           />
           {searchQuery && (
@@ -241,7 +241,7 @@ const MapPage = ({ city }: { city: string }) => {
         </div>
         <button
           onClick={() => setShowMap((v) => !v)}
-          className={`inline-flex items-center gap-2 border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full shrink-0 ${showMap ? "bg-primary text-primary-foreground" : "bg-card"}`}
+          className={`inline-flex items-center gap-2 border border-foreground/8 font-black text-xs px-4 py-2 rounded-full shrink-0 ${showMap ? "bg-primary text-primary-foreground" : "bg-card"}`}
           style={{ boxShadow: "var(--shadow-cartoon)" }}
         >
           <MapIcon size={14} /> {showMap ? mt.hide_map : mt.show_map}
@@ -249,7 +249,7 @@ const MapPage = ({ city }: { city: string }) => {
         {showMap && (
           <button
             onClick={handleLocate}
-            className="inline-flex items-center gap-2 bg-card border-[3px] border-foreground/8 font-black text-xs px-4 py-2 rounded-full shrink-0"
+            className="inline-flex items-center gap-2 bg-card border border-foreground/8 font-black text-xs px-4 py-2 rounded-full shrink-0"
             style={{ boxShadow: "var(--shadow-cartoon)" }}
           >
             <Navigation size={14} /> {mt.nearby}
@@ -259,7 +259,7 @@ const MapPage = ({ city }: { city: string }) => {
 
       {showMap && (
       <div
-        className="mx-4 rounded-2xl overflow-hidden border-[3px] border-foreground/8 bg-muted"
+        className="mx-4 rounded-2xl overflow-hidden border border-foreground/8 bg-muted"
         style={{ boxShadow: "var(--shadow-cartoon-lg)", height: "55vh", minHeight: 360 }}
       >
         <MapContainer
@@ -343,7 +343,7 @@ const MapPage = ({ city }: { city: string }) => {
                   setSelected(club.id === selected ? null : club.id);
                   if (club.lat && club.lng) mapRef.current?.setView([club.lat, club.lng], 15);
                 }}
-                className={`p-3 rounded-2xl text-left transition-all border-[3px] cursor-pointer ${
+                className={`p-3 rounded-2xl text-left transition-all border cursor-pointer ${
                   selected === club.id ? "border-primary bg-yellow-light" : "border-foreground/8 bg-card"
                 }`}
                 style={{ boxShadow: "var(--shadow-cartoon)" }}
@@ -353,7 +353,7 @@ const MapPage = ({ city }: { city: string }) => {
                     <img
                       src={safeImageUrl(club.avatar_url)}
                       alt=""
-                      className="rounded-xl object-cover border-2 border-foreground/5"
+                      className="rounded-xl object-cover border border-foreground/5"
                       style={{ width: 52, height: 52 }}
                     />
                   ) : (

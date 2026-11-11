@@ -51,7 +51,7 @@ const SecurityPage = () => {
 };
 
 const Section = ({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) => (
-  <section className="bg-card border-[3px] border-foreground rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+  <section className="bg-card border border-foreground rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
     <div className="flex gap-4">
       <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center shrink-0">{icon}</div>
       <div>

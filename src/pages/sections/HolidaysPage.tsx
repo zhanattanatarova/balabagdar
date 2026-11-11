@@ -36,7 +36,7 @@ export default function HolidaysPage() {
       <div className="flex gap-2 mb-4" role="tablist">
         {SEASONS.map((s) => (
           <button key={s} role="tab" aria-selected={season === s} onClick={() => setSeason(s)}
-            className={`px-4 py-2 rounded-full text-xs font-black border-2 ${season === s ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}>{SEASON_LABELS[s][lang]}</button>
+            className={`px-4 py-2 rounded-full text-xs font-black border ${season === s ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}>{SEASON_LABELS[s][lang]}</button>
         ))}
       </div>
       {loading ? <Loader2 className="animate-spin text-primary" /> : items.clubs.length + items.pubs.length === 0 ? (

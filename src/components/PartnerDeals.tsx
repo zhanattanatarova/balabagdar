@@ -65,7 +65,7 @@ export default function PartnerDeals({ club }: { club: { id: string; city: strin
           {!f.is_free && <div><Label>{ui.price}</Label><Input type="number" min={0} value={f.price_from} onChange={(e) => setF({ ...f, price_from: e.target.value })} /></div>}
           <div className="grid grid-cols-2 gap-2">
             <div><Label>{ui.phone}</Label><Input maxLength={30} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></div>
-            <div><Label>{ui.season}</Label><select value={f.season} onChange={(e) => setF({ ...f, season: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-md bg-muted border-2 border-border text-sm font-bold">
+            <div><Label>{ui.season}</Label><select value={f.season} onChange={(e) => setF({ ...f, season: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-md bg-muted border border-border text-sm font-bold">
               <option value="">{ui.none}</option><option value="winter">{ui.winter}</option><option value="spring">{ui.spring}</option><option value="summer">{ui.summer}</option></select></div>
           </div>
           <Button className="w-full" onClick={submit} disabled={saving}>{saving && <Loader2 size={14} className="animate-spin" />}{ui.send}</Button>

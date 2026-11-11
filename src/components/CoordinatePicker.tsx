@@ -66,7 +66,7 @@ const CoordinatePicker = ({ latitude, longitude, onChange, inputClassName = "", 
         {linkError && <p className="text-[11px] font-bold text-destructive mt-1">{linkError}</p>}
       </div>
       <p className={labelClassName}>…или нажмите на карту, чтобы поставить точку</p>
-      <div className="h-56 rounded-xl overflow-hidden border-2 border-border relative z-0">
+      <div className="h-56 rounded-xl overflow-hidden border border-border relative z-0">
         <MapContainer center={hasPoint ? [latitude!, longitude!] : KZ_CENTER} zoom={hasPoint ? 16 : 5} className="h-full w-full" scrollWheelZoom={false}>
           <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <ClickHandler onPick={(lat, lng) => onChange(round(lat), round(lng))} />

@@ -34,11 +34,11 @@ export default function AdminBlog() {
 
   return (
     <div className="space-y-4">
-      <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+      <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
         <h2 className="text-lg font-black mb-1">Блог «Мама в городе»</h2>
         <p className="text-xs text-muted-foreground font-bold mb-3">Пока нет опубликованных статей, ссылка на блог на сайте скрыта.</p>
         {!rows ? <Loader2 className="animate-spin text-primary" /> : !rows.length ? <p className="text-sm">Статей пока нет.</p> : rows.map((a) => (
-          <div key={a.id} className="flex items-center gap-2 p-2 rounded-xl bg-muted border-2 border-border mb-2">
+          <div key={a.id} className="flex items-center gap-2 p-2 rounded-xl bg-muted border border-border mb-2">
             <button className="flex-1 text-left text-sm font-bold" onClick={() => setD({ id: a.id, slug: a.slug, title: a.title, excerpt: a.excerpt || "", body: a.body, cover_url: a.cover_url || "", tags: (a.tags || []).join(", "), published_at: a.published_at ? a.published_at.slice(0, 16) : "", is_published: a.is_published })}>
               {a.title} <span className="text-xs text-muted-foreground">/{a.slug} · {a.is_published ? "опубликована" : "черновик"}</span>
             </button>
@@ -46,12 +46,12 @@ export default function AdminBlog() {
           </div>
         ))}
       </div>
-      <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-3">
+      <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-3">
         <div className="flex items-center justify-between"><h3 className="font-black">{d.id ? "Редактировать статью" : "Новая статья"}</h3>
           <div className="flex gap-1"><Button size="sm" variant={preview ? "outline" : "default"} onClick={() => setPreview(false)}>Редактор</Button><Button size="sm" variant={preview ? "default" : "outline"} onClick={() => setPreview(true)}>Предпросмотр</Button></div>
         </div>
         {preview ? (
-          <article className="border-2 border-border rounded-2xl p-4">
+          <article className="border border-border rounded-2xl p-4">
             {d.cover_url && <img src={d.cover_url} alt="" className="w-full max-h-72 object-cover rounded-xl mb-3" />}
             <h1 className="text-2xl font-black">{d.title || "Заголовок"}</h1>
             {d.excerpt && <p className="text-muted-foreground font-bold mt-1">{d.excerpt}</p>}

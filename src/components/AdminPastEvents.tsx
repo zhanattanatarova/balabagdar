@@ -21,13 +21,13 @@ export default function AdminPastEvents() {
       });
   }, []);
   return (
-    <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+    <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
       <h2 className="text-lg font-black mb-1">Прошедшие события</h2>
       <p className="text-xs text-muted-foreground font-bold mb-3">Скрыты из афиши автоматически после окончания дня события (время Актау).</p>
       {!rows ? <Loader2 className="animate-spin text-primary" /> : rows.length === 0 ? <p className="text-sm">Нет прошедших событий.</p> : (
         <div className="space-y-2">
           {rows.map((e) => (
-            <Link key={e.id} to={`/publication/${e.id}`} className="block p-3 rounded-xl bg-muted border-2 border-border">
+            <Link key={e.id} to={`/publication/${e.id}`} className="block p-3 rounded-xl bg-muted border border-border">
               <div className="text-xs font-black text-primary">{formatEventDate(e.event_date, e.event_end_date, "ru")} · {e.city}</div>
               <div className="font-bold text-sm">{e.title}</div>
             </Link>

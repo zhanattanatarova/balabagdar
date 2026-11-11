@@ -21,14 +21,14 @@ const LanguageSwitcher = ({ compact = false }: { compact?: boolean }) => {
           onClick={() => setOpen((o) => !o)}
           aria-label="Language"
           aria-expanded={open}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-primary-foreground/20 text-primary-foreground border-2 border-primary-foreground/30 backdrop-blur-sm"
+          className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-primary-foreground/20 text-primary-foreground border border-primary-foreground/30 backdrop-blur-sm"
         >
           <Globe size={12} /> {labels[lang]}
         </button>
         {open && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-            <div className="absolute right-0 top-full mt-1.5 z-50 bg-card rounded-2xl border-2 border-border p-1 min-w-[120px]" style={{ boxShadow: "var(--shadow-cartoon)" }}>
+            <div className="absolute right-0 top-full mt-1.5 z-50 bg-card rounded-2xl border border-border p-1 min-w-[120px]" style={{ boxShadow: "var(--shadow-cartoon)" }}>
               {langs.map((l) => (
                 <button
                   key={l}

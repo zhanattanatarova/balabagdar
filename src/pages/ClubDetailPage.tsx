@@ -245,7 +245,7 @@ const ClubDetailPage = () => {
           <h2 className="font-black text-sm mb-2">{t("club.directions")}</h2>
           <div className="flex flex-wrap gap-1.5">
             {allCategoryLabels.map((category) => (
-              <span key={category.id} className="px-2.5 py-1 rounded-full bg-primary/15 border-2 border-primary/40 text-[11px] font-bold text-foreground">
+              <span key={category.id} className="px-2.5 py-1 rounded-full bg-primary/15 border border-primary/40 text-[11px] font-bold text-foreground">
                 {category.label}
               </span>
             ))}
