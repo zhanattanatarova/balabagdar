@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    --background: 120 30% 97%;
-    --foreground: 150 30% 10%;
+    --background: 144 45% 97%;
+    --foreground: 160 25% 12%;
 
     --card: 0 0% 100%;
     --card-foreground: 150 30% 10%;
@@ -15,25 +15,25 @@
     --popover: 0 0% 100%;
     --popover-foreground: 150 30% 10%;
 
-    --primary: 145 65% 42%;
+    --primary: 148 66% 39%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 36 100% 50%;
+    --secondary: 36 100% 64%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 140 20% 93%;
-    --muted-foreground: 150 10% 45%;
+    --muted: 145 45% 93%;
+    --muted-foreground: 155 10% 42%;
 
-    --accent: 36 100% 50%;
+    --accent: 36 100% 64%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 90% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 140 20% 88%;
-    --input: 140 20% 88%;
+    --border: 145 30% 89%;
+    --input: 145 30% 89%;
     --ring: 145 65% 42%;
-    --radius: 1rem;
+    --radius: 1.25rem;
 
     --yellow-bright: 45 100% 55%;
     --yellow-light: 50 100% 92%;
@@ -44,12 +44,12 @@
     --blue-sky: 200 95% 92%;
     --purple-fun: 270 80% 70%;
 
-    --gradient-header: linear-gradient(160deg, hsl(145, 80%, 44%) 0%, hsl(152, 75%, 36%) 100%);
+    --gradient-header: radial-gradient(120% 140% at 85% 0%, hsl(150 70% 52%) 0%, transparent 55%), radial-gradient(90% 120% at 0% 100%, hsl(36 100% 70% / 0.35) 0%, transparent 60%), linear-gradient(160deg, hsl(148 66% 42%) 0%, hsl(156 62% 33%) 100%);
     --gradient-warm: linear-gradient(135deg, hsl(36, 100%, 55%) 0%, hsl(45, 100%, 55%) 100%);
     --gradient-fun: linear-gradient(135deg, hsl(340, 90%, 65%) 0%, hsl(270, 80%, 70%) 100%);
 
-    --shadow-cartoon: 0 2px 4px 0 hsl(150 30% 10% / 0.05);
-    --shadow-cartoon-lg: 0 3px 6px 0 hsl(150 30% 10% / 0.07);
+    --shadow-cartoon: 0 1px 2px hsl(160 30% 15% / 0.04), 0 8px 24px -12px hsl(150 40% 25% / 0.14);
+    --shadow-cartoon-lg: 0 2px 4px hsl(160 30% 15% / 0.05), 0 18px 40px -16px hsl(150 45% 25% / 0.22);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 150 30% 10%;
@@ -108,7 +108,12 @@
   }
   body {
     @apply bg-background text-foreground font-nunito antialiased;
+    background-image:
+      radial-gradient(60rem 40rem at 100% -10%, hsl(var(--primary) / 0.08), transparent 60%),
+      radial-gradient(50rem 30rem at -10% 30%, hsl(var(--secondary) / 0.10), transparent 60%);
+    background-attachment: fixed;
   }
+  h1, h2, h3 { letter-spacing: -0.02em; }
 }
 
 @layer components {
@@ -116,10 +121,10 @@
     @apply text-base font-black tracking-tight;
   }
   .badge-rating {
-    @apply inline-flex items-center gap-1 bg-card/95 backdrop-blur-sm text-foreground text-xs font-black px-2.5 py-1 rounded-full shadow-sm border-2 border-primary/30;
+    @apply inline-flex items-center gap-1 bg-card/95 backdrop-blur-sm text-foreground text-xs font-black px-2.5 py-1 rounded-full shadow-sm border border-primary/20;
   }
   .card-photo {
-    @apply relative overflow-hidden rounded-2xl border-[3px];
+    @apply relative overflow-hidden rounded-2xl border;
     border-color: hsl(var(--foreground) / 0.08);
   }
   .card-photo img {
@@ -133,7 +138,7 @@
     @apply text-center cursor-pointer;
   }
   .cat-card-img {
-    @apply aspect-square rounded-2xl overflow-hidden mb-1.5 border-[3px] transition-all duration-200 bg-card flex items-center justify-center p-2;
+    @apply aspect-square rounded-2xl overflow-hidden mb-1.5 border transition-all duration-200 bg-card flex items-center justify-center p-2;
     border-color: hsl(var(--foreground) / 0.06);
     box-shadow: var(--shadow-cartoon);
   }
@@ -148,7 +153,7 @@
   }
 
   .cartoon-card {
-    @apply bg-card rounded-2xl border-[3px] transition-all duration-200;
+    @apply bg-card/90 backdrop-blur-sm rounded-3xl border transition-all duration-300;
     border-color: hsl(var(--foreground) / 0.06);
     box-shadow: var(--shadow-cartoon);
   }
@@ -157,17 +162,16 @@
     transform: translateY(-2px);
   }
   .cartoon-card:active {
-    box-shadow: none;
-    transform: translateY(2px);
+    transform: scale(0.99);
   }
 
   .cartoon-btn {
-    @apply font-black rounded-xl border-[3px] transition-all duration-150;
+    @apply font-bold rounded-2xl border transition-all duration-150;
     border-color: hsl(var(--foreground) / 0.08);
     box-shadow: var(--shadow-cartoon);
   }
   .cartoon-btn:active {
     box-shadow: none;
-    transform: translateY(3px);
+    transform: scale(0.97);
   }
 }

@@ -84,7 +84,7 @@ const LegalPage = () => {
         <h1 className="text-3xl sm:text-4xl font-black mb-2">{s.title}</h1>
         <p className="text-muted-foreground mb-6">{s.intro}</p>
 
-        <section className="bg-card border-[3px] border-amber-400 rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+        <section className="bg-card border border-amber-400 rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
           <div className="flex gap-4">
             <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
               <AlertTriangle className="text-amber-600" size={22} />
@@ -96,7 +96,7 @@ const LegalPage = () => {
           </div>
         </section>
 
-        <section className="bg-card border-[3px] border-foreground rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+        <section className="bg-card border border-foreground rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
           <div className="flex gap-4">
             <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
               <Info className="text-primary" size={22} />
@@ -108,7 +108,7 @@ const LegalPage = () => {
           </div>
         </section>
 
-        <section className="bg-card border-[3px] border-foreground rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+        <section className="bg-card border border-foreground rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
           <div className="flex gap-4">
             <div className="w-12 h-12 rounded-full bg-destructive/15 flex items-center justify-center shrink-0">
               <ShieldAlert className="text-destructive" size={22} />
@@ -120,7 +120,7 @@ const LegalPage = () => {
           </div>
         </section>
 
-        <section className="bg-card border-[3px] border-foreground rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+        <section className="bg-card border border-foreground rounded-3xl p-5 sm:p-6 mb-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
           <div className="flex gap-4">
             <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
               <CheckCircle2 className="text-primary" size={22} />
@@ -136,7 +136,7 @@ const LegalPage = () => {
           </div>
         </section>
 
-        <section className="bg-card border-[3px] border-foreground rounded-3xl p-5 sm:p-6 mb-6 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+        <section className="bg-card border border-foreground rounded-3xl p-5 sm:p-6 mb-6 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
           <div className="flex gap-4">
             <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0">
               <FileWarning className="text-muted-foreground" size={22} />

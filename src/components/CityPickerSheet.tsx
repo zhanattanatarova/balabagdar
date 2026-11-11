@@ -32,13 +32,13 @@ const CityPickerSheet = ({ open, city, onClose, onSelect }: Props) => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("common.search_city")}
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-primary border-2 border-border" autoFocus />
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-primary border border-border" autoFocus />
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-3 pb-8">
           {filtered.map((c) => (
             <button key={c} onClick={() => { onSelect(c); close(); }}
-              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}>
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}>
               <MapPin size={16} className={c === city ? "text-primary" : "text-muted-foreground"} />
               <span className={`text-sm ${c === city ? "font-black text-foreground" : "font-bold"}`}>{c}</span>
               {c === city && <Check size={16} className="text-primary ml-auto" />}

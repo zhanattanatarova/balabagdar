@@ -162,7 +162,7 @@ const SearchPage = () => {
             onKeyDown={(e) => { if (e.key === "Enter") update({ q: searchInput }); }}
             onBlur={() => update({ q: searchInput })}
             placeholder={t("home.search")}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl text-sm font-bold focus:outline-none focus:ring-[3px] focus:ring-secondary border-[3px]"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl text-sm font-bold focus:outline-none focus:ring-[3px] focus:ring-secondary border"
             style={{ background: "white", color: "hsl(145, 70%, 30%)", borderColor: "hsl(145, 50%, 75%)" }}
           />
         </div>
@@ -175,7 +175,7 @@ const SearchPage = () => {
           {cat && (
             <button
               onClick={() => update({ cat: null, sub: null })}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-primary text-primary-foreground border-2 border-primary"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-primary text-primary-foreground border border-primary"
             >
               {group?.emoji} {catLabel}
               <X size={12} />
@@ -184,7 +184,7 @@ const SearchPage = () => {
           {sub && (
             <button
               onClick={() => update({ sub: null })}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-secondary text-secondary-foreground border-2 border-secondary"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-secondary text-secondary-foreground border border-secondary"
             >
               {subLabel}
               <X size={12} />
@@ -193,7 +193,7 @@ const SearchPage = () => {
           {q && (
             <button
               onClick={() => { setSearchInput(""); update({ q: null }); }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-card border-2 border-border"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-card border border-border"
             >
               «{q}»
               <X size={12} />
@@ -202,7 +202,7 @@ const SearchPage = () => {
           {age !== "all" && (
             <button
               onClick={() => update({ age: null })}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-card border-2 border-border"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-card border border-border"
             >
               👶 {ageOptions.find((a) => a.id === age)?.label}
               <X size={12} />
@@ -221,7 +221,7 @@ const SearchPage = () => {
               <button
                 key={opt.id}
                 onClick={() => update({ age: opt.id === "all" ? null : opt.id })}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border-2 transition-colors ${active ? "bg-primary/15 text-primary border-primary" : "bg-muted text-muted-foreground border-transparent"}`}
+                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border transition-colors ${active ? "bg-primary/15 text-primary border-primary" : "bg-muted text-muted-foreground border-transparent"}`}
               >
                 {opt.label}
               </button>
@@ -234,7 +234,7 @@ const SearchPage = () => {
           <div className="mt-2 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
             <button
               onClick={() => update({ sub: null })}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border-2 ${!sub ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border ${!sub ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
             >
               {t("search.all_category")} {catLabel.toLowerCase()}
             </button>
@@ -244,7 +244,7 @@ const SearchPage = () => {
                 <button
                   key={s}
                   onClick={() => update({ sub: s })}
-                  className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border-2 transition-colors ${active ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
+                  className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-black border transition-colors ${active ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border"}`}
                 >
                   {t(`${cat}.${s}` as any)}
                 </button>

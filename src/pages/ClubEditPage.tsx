@@ -328,7 +328,7 @@ const ClubEditPage = () => {
             <div className="mt-2 flex items-center gap-4">
               <div
                 onClick={() => avatarInputRef.current?.click()}
-                className="w-20 h-20 rounded-2xl border-2 border-dashed border-primary/40 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary transition-colors"
+                className="w-20 h-20 rounded-2xl border border-dashed border-primary/40 flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary transition-colors"
               >
                 {uploadingAvatar ? (
                   <Loader2 size={20} className="animate-spin text-primary" />
@@ -350,7 +350,7 @@ const ClubEditPage = () => {
             <label className={labelCls}>Галерея (до 10 фото)</label>
             <div className="mt-2 grid grid-cols-4 gap-2">
               {gallery.map((url, i) => (
-                <div key={i} className="relative aspect-square rounded-xl overflow-hidden border-2 border-border">
+                <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-border">
                   <img src={url} alt="" className="w-full h-full object-cover" />
                   <button
                     onClick={() => removeGalleryImage(i)}
@@ -363,7 +363,7 @@ const ClubEditPage = () => {
               {gallery.length < 10 && (
                 <button
                   onClick={() => galleryInputRef.current?.click()}
-                  className="aspect-square rounded-xl border-2 border-dashed border-primary/40 flex items-center justify-center hover:border-primary transition-colors"
+                  className="aspect-square rounded-xl border border-dashed border-primary/40 flex items-center justify-center hover:border-primary transition-colors"
                 >
                   {uploadingGallery ? (
                     <Loader2 size={18} className="animate-spin text-primary" />
@@ -387,7 +387,7 @@ const ClubEditPage = () => {
                 key={l}
                 type="button"
                 onClick={() => setFormLang(l)}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-black border-2 transition-all ${formLang === l ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent"}`}
+                className={`flex-1 py-2.5 rounded-xl text-xs font-black border transition-all ${formLang === l ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent"}`}
               >
                 {l === "kz" ? "🇰🇿 Қазақша" : l === "ru" ? "🇷🇺 Русский" : "🇬🇧 English"}
               </button>
@@ -420,7 +420,7 @@ const ClubEditPage = () => {
 
             {/* Selected chips */}
             {categories.length > 0 ? (
-              <div className="mt-2 flex flex-wrap gap-1.5 p-2 rounded-xl bg-primary/5 border-2 border-primary/20">
+              <div className="mt-2 flex flex-wrap gap-1.5 p-2 rounded-xl bg-primary/5 border border-primary/20">
                 {categories.map((c) => (
                   <span
                     key={c}
@@ -489,7 +489,7 @@ const ClubEditPage = () => {
                       key={c}
                       type="button"
                       onClick={() => setCategories((prev) => active ? prev.filter((x) => x !== c) : uniqueCategories([...prev, c]))}
-                      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border-2 transition-all ${active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent hover:border-primary/40"}`}
+                      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-all ${active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-transparent hover:border-primary/40"}`}
                     >
                       {active && <Check size={12} />}
                       {t(`cat.${c}` as any) || c}

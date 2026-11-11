@@ -10,7 +10,7 @@ export default function EventClubLink({ club }: { club?: EventClub | null }) {
   const name = tField(club.name_ru, club.name_kz, club.name_en);
   const label = { ru: "О центре →", kz: "Орталық туралы →", en: "About center →" }[lang];
   return (
-    <div className="mt-3 flex items-center gap-3 rounded-xl bg-muted p-2.5 border-2 border-border">
+    <div className="mt-3 flex items-center gap-3 rounded-xl bg-muted p-2.5 border border-border">
       {club.avatar_url
         ? <img src={club.avatar_url} alt={name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
         : <ClubInitialAvatar name={name} size="sm" className="shrink-0" />}

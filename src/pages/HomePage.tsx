@@ -436,7 +436,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowLanguagePicker(false); goSearch("languages"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedLanguage ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedLanguage ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">🌐</span>
                 <span className={`text-sm ${!selectedLanguage ? "font-black text-foreground" : "font-bold"}`}>{t("lang.all")}</span>
@@ -448,7 +448,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={lang.id}
                     onClick={() => { setShowLanguagePicker(false); goSearch("languages", lang.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{lang.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`lang.${lang.id}` as any)}</span>
@@ -476,7 +476,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowDancePicker(false); goSearch("dance"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDance ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDance ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">💫</span>
                 <span className={`text-sm ${!selectedDance ? "font-black text-foreground" : "font-bold"}`}>{t("dance.all")}</span>
@@ -488,7 +488,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={d.id}
                     onClick={() => { setShowDancePicker(false); goSearch("dance", d.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{d.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`dance.${d.id}` as any)}</span>
@@ -516,7 +516,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowSportPicker(false); goSearch("sport"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedSport ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedSport ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">🏅</span>
                 <span className={`text-sm ${!selectedSport ? "font-black text-foreground" : "font-bold"}`}>{t("sport.all")}</span>
@@ -528,7 +528,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={s.id}
                     onClick={() => { setShowSportPicker(false); goSearch("sport", s.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{s.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`sport.${s.id}` as any)}</span>
@@ -556,7 +556,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowHealthPicker(false); goSearch("health"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedHealth ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedHealth ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">❤️</span>
                 <span className={`text-sm ${!selectedHealth ? "font-black text-foreground" : "font-bold"}`}>{t("health.all")}</span>
@@ -568,7 +568,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={h.id}
                     onClick={() => { setShowHealthPicker(false); goSearch("health", h.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{h.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`health.${h.id}` as any)}</span>
@@ -596,7 +596,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowTutorsPicker(false); goSearch("tutors"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedTutors ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedTutors ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">📖</span>
                 <span className={`text-sm ${!selectedTutors ? "font-black text-foreground" : "font-bold"}`}>{t("tutors.all")}</span>
@@ -608,7 +608,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={o.id}
                     onClick={() => { setShowTutorsPicker(false); goSearch("tutors", o.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`tutors.${o.id}` as any)}</span>
@@ -636,7 +636,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowCreativityPicker(false); goSearch("creativity"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedCreativity ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedCreativity ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">🎭</span>
                 <span className={`text-sm ${!selectedCreativity ? "font-black text-foreground" : "font-bold"}`}>{t("creativity.all")}</span>
@@ -648,7 +648,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={o.id}
                     onClick={() => { setShowCreativityPicker(false); goSearch("creativity", o.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`creativity.${o.id}` as any)}</span>
@@ -676,7 +676,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowMusicPicker(false); goSearch("music"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedMusic ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedMusic ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">🎼</span>
                 <span className={`text-sm ${!selectedMusic ? "font-black text-foreground" : "font-bold"}`}>{t("music.all")}</span>
@@ -688,7 +688,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={o.id}
                     onClick={() => { setShowMusicPicker(false); goSearch("music", o.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`music.${o.id}` as any)}</span>
@@ -716,7 +716,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowDevelopmentPicker(false); goSearch("development"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDevelopment ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedDevelopment ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">✨</span>
                 <span className={`text-sm ${!selectedDevelopment ? "font-black text-foreground" : "font-bold"}`}>{t("development.all")}</span>
@@ -728,7 +728,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={o.id}
                     onClick={() => { setShowDevelopmentPicker(false); goSearch("development", o.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`development.${o.id}` as any)}</span>
@@ -756,7 +756,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               <button
                 onClick={() => { setShowSpecialPicker(false); goSearch("special"); }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedSpecial ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors mb-1 ${!selectedSpecial ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
               >
                 <span className="text-xl">✨</span>
                 <span className={`text-sm ${!selectedSpecial ? "font-black text-foreground" : "font-bold"}`}>{t("special.all")}</span>
@@ -768,7 +768,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                   <button
                     key={o.id}
                     onClick={() => { setShowSpecialPicker(false); goSearch("special", o.id); }}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}
+                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${isActive ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}
                   >
                     <span className="text-xl">{o.emoji}</span>
                     <span className={`text-sm ${isActive ? "font-black text-foreground" : "font-bold"}`}>{t(`special.${o.id}` as any)}</span>
@@ -796,13 +796,13 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                 <input value={citySearch} onChange={(e) => setCitySearch(e.target.value)} placeholder={t("common.search_city")}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-primary border-2 border-border" autoFocus />
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-muted text-foreground text-sm font-bold placeholder:text-muted-foreground focus:outline-none focus:ring-[3px] focus:ring-primary border border-border" autoFocus />
               </div>
             </div>
             <div className="flex-1 overflow-y-auto px-3 pb-8">
               {filteredCities.map((c) => (
                 <button key={c} onClick={() => { setCity(c); setShowCityPicker(false); setCitySearch(""); }}
-                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-primary/15 border-2 border-primary" : "hover:bg-muted border-2 border-transparent"}`}>
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-colors ${c === city ? "bg-primary/15 border border-primary" : "hover:bg-muted border border-transparent"}`}>
                   <MapPin size={16} className={c === city ? "text-primary" : "text-muted-foreground"} />
                   <span className={`text-sm ${c === city ? "font-black text-foreground" : "font-bold"}`}>{c}</span>
                   {c === city && <Check size={16} className="text-primary ml-auto" />}
@@ -815,12 +815,12 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       )}
 
       {/* Header */}
-      <div className="relative mx-4 mt-3 px-4 pt-4 pb-4 rounded-3xl border-[3px]"
+      <div className="relative mx-4 mt-3 px-4 pt-4 pb-4 rounded-3xl border"
         style={{ background: "var(--gradient-header)", boxShadow: "var(--shadow-cartoon-lg)", borderColor: "hsl(145, 90%, 30% / 0.5)" }}>
         <div className="absolute top-3 right-3 z-10"><LanguageSwitcher compact /></div>
         <div className="flex items-center justify-center gap-2 mb-3">
           <button onClick={() => setShowCityPicker(true)}
-            className="flex items-center gap-1.5 font-black text-lg px-4 py-2 rounded-full border-[3px]"
+            className="flex items-center gap-1.5 font-black text-lg px-4 py-2 rounded-full border"
             style={{ background: "hsl(145, 85%, 38%)", color: "white", borderColor: "hsl(145, 90%, 28% / 0.5)" }}>
             <BrandLogo size="sm" />{city}<ChevronDown size={18} className="text-primary-foreground" />
           </button>
@@ -845,7 +845,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
               }
             }}
             placeholder={t("home.search")}
-            className="w-full pl-10 pr-4 py-3 rounded-2xl text-sm font-bold focus:outline-none focus:ring-[3px] focus:ring-secondary border-[3px]"
+            className="w-full pl-10 pr-4 py-3 rounded-2xl text-sm font-bold focus:outline-none focus:ring-[3px] focus:ring-secondary border"
             style={{ background: "white", color: "hsl(145, 70%, 30%)", boxShadow: "var(--shadow-cartoon)", borderColor: "hsl(145, 50%, 75%)" }}
           />
           {searchQuery.trim() && (
@@ -868,7 +868,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       <div className="mt-4 space-y-3"><SectionLinks /><CollectionsCarousel /></div>
 
       {/* Free banner */}
-      <div className="mx-4 mt-4 p-4 rounded-2xl bg-secondary/10 border-2 border-secondary/30">
+      <div className="mx-4 mt-4 p-4 rounded-2xl bg-secondary/10 border border-secondary/30">
         <h2 className="font-black text-sm">{t("home.free_banner_title")}</h2>
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{t("home.free_banner_text")}</p>
       </div>
@@ -888,7 +888,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             <button
               key={opt.id}
               onClick={() => setAgeFilter(opt.id as typeof ageFilter)}
-              className={`shrink-0 px-4 py-2 rounded-full text-sm font-black border-[3px] transition-colors ${active ? "bg-primary/15 text-primary border-primary" : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"}`}
+              className={`shrink-0 px-4 py-2 rounded-full text-sm font-black border transition-colors ${active ? "bg-primary/15 text-primary border-primary" : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"}`}
             >
               {opt.label}
             </button>
@@ -1120,7 +1120,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
               <Link key={`nearby-${club.id}`} to={`/club/${club.id}`}
                 className="flex gap-3 cartoon-card p-3 cursor-pointer animate-slide-up"
                 style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
-                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2" style={{ borderColor: "hsl(var(--foreground) / 0.06)" }}>
+                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border" style={{ borderColor: "hsl(var(--foreground) / 0.06)" }}>
                   {safeImageUrl(club.avatar_url) ? (
                     <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
                   ) : (

@@ -448,7 +448,7 @@ const AdminPage = () => {
             <button
               key={k}
               onClick={() => setTab(k as any)}
-              className={`px-4 py-2 rounded-full text-xs font-black border-2 ${tab === k ? "bg-primary text-primary-foreground border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]" : "bg-card border-border"}`}
+              className={`px-4 py-2 rounded-full text-xs font-black border ${tab === k ? "bg-primary text-primary-foreground border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]" : "bg-card border-border"}`}
             >
               {label}
             </button>
@@ -462,7 +462,7 @@ const AdminPage = () => {
         {tab === "blog" && <AdminBlog />}
 
         {tab === "clubs" && (
-          <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+          <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
             <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
               <h2 className="text-lg font-black">🏫 Все кружки и центры ({clubs.length})</h2>
               <button onClick={loadClubs} className="text-xs font-bold text-primary">Обновить</button>
@@ -471,7 +471,7 @@ const AdminPage = () => {
               value={clubQuery}
               onChange={(e) => setClubQuery(e.target.value)}
               placeholder="Поиск по названию, городу или телефону"
-              className="w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm mb-3"
+              className="w-full px-3 py-2 rounded-xl bg-muted border border-border focus:outline-none focus:border-primary text-sm mb-3"
             />
             {clubsLoading ? (
               <div className="flex justify-center py-6"><Loader2 className="animate-spin" /></div>
@@ -487,7 +487,7 @@ const AdminPage = () => {
               return (
                 <div className="space-y-2">
                   {list.map((c) => (
-                    <div key={c.id} className="p-3 rounded-xl bg-muted border-2 border-border">
+                    <div key={c.id} className="p-3 rounded-xl bg-muted border border-border">
                       <div className="flex items-start justify-between gap-2 flex-wrap">
                         <div className="min-w-0 flex-1">
                           <div className="font-black text-sm">
@@ -515,7 +515,7 @@ const AdminPage = () => {
                             {c.is_active ? "активен" : "скрыт"}
                           </span>
                           <button onClick={() => navigate(`/club/${c.id}`)} className="text-[10px] font-bold px-2 py-1 rounded-lg bg-primary text-primary-foreground">Открыть</button>
-                          <button onClick={() => toggleClubActive(c.id, !c.is_active)} className="text-[10px] font-bold px-2 py-1 rounded-lg bg-card border-2 border-border">
+                          <button onClick={() => toggleClubActive(c.id, !c.is_active)} className="text-[10px] font-bold px-2 py-1 rounded-lg bg-card border border-border">
                             {c.is_active ? "Скрыть" : "Показать"}
                           </button>
                         </div>
@@ -529,7 +529,7 @@ const AdminPage = () => {
         )}
 
         {tab === "create" && (<>
-        <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-3">
+        <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-3">
           <h2 className="text-lg font-black flex items-center gap-2"><Plus size={20} /> Новый кружок</h2>
 
           <Field label="Название*" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
@@ -544,11 +544,11 @@ const AdminPage = () => {
                 const groupLabel = t(`cat.${group.id}` as any);
                 const groupActive = form.categories.includes(group.id);
                 return (
-                  <div key={group.id} className="border-2 border-border rounded-2xl p-3 bg-muted/40">
+                  <div key={group.id} className="border border-border rounded-2xl p-3 bg-muted/40">
                     <button
                       type="button"
                       onClick={() => toggleCategory(group.id)}
-                      className={`px-3 py-1.5 rounded-full border-2 text-xs font-black transition-colors ${groupActive ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border hover:border-primary"}`}
+                      className={`px-3 py-1.5 rounded-full border text-xs font-black transition-colors ${groupActive ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border hover:border-primary"}`}
                     >
                       {group.emoji} {groupLabel} {groupActive && "✓"}
                     </button>
@@ -585,14 +585,14 @@ const AdminPage = () => {
             <div className="mt-2 flex items-center gap-3">
               {form.avatar_url ? (
                 <div className="relative">
-                  <img src={form.avatar_url} alt="cover" className="w-24 h-24 rounded-2xl object-cover border-2 border-foreground" />
+                  <img src={form.avatar_url} alt="cover" className="w-24 h-24 rounded-2xl object-cover border border-foreground" />
                   <button type="button" onClick={() => setForm({ ...form, avatar_url: "" })}
-                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 border-2 border-foreground">
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 border border-foreground">
                     <X size={12} />
                   </button>
                 </div>
               ) : (
-                <label className="w-24 h-24 rounded-2xl border-2 border-dashed border-border bg-muted flex items-center justify-center cursor-pointer hover:border-primary">
+                <label className="w-24 h-24 rounded-2xl border border-dashed border-border bg-muted flex items-center justify-center cursor-pointer hover:border-primary">
                   {uploadingAvatar ? <Loader2 className="animate-spin" size={20} /> : <Upload size={20} className="text-muted-foreground" />}
                   <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploadingAvatar} />
                 </label>
@@ -606,14 +606,14 @@ const AdminPage = () => {
             <div className="mt-2 flex flex-wrap gap-2">
               {form.gallery.map((url) => (
                 <div key={url} className="relative">
-                  <img src={url} alt="photo" className="w-20 h-20 rounded-xl object-cover border-2 border-border" />
+                  <img src={url} alt="photo" className="w-20 h-20 rounded-xl object-cover border border-border" />
                   <button type="button" onClick={() => removeGalleryPhoto(url)}
-                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 border-2 border-foreground">
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 border border-foreground">
                     <X size={10} />
                   </button>
                 </div>
               ))}
-              <label className="w-20 h-20 rounded-xl border-2 border-dashed border-border bg-muted flex items-center justify-center cursor-pointer hover:border-primary">
+              <label className="w-20 h-20 rounded-xl border border-dashed border-border bg-muted flex items-center justify-center cursor-pointer hover:border-primary">
                 {uploadingGallery ? <Loader2 className="animate-spin" size={18} /> : <ImagePlus size={18} className="text-muted-foreground" />}
                 <input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} disabled={uploadingGallery} />
               </label>
@@ -636,7 +636,7 @@ const AdminPage = () => {
                 latitude={form.latitude}
                 longitude={form.longitude}
                 onChange={(lat, lng) => setForm((f) => ({ ...f, latitude: lat, longitude: lng }))}
-                inputClassName="w-full mt-1 px-3 py-2.5 rounded-xl bg-muted border-2 border-border text-sm font-bold focus:outline-none focus:border-primary"
+                inputClassName="w-full mt-1 px-3 py-2.5 rounded-xl bg-muted border border-border text-sm font-bold focus:outline-none focus:border-primary"
                 labelClassName="text-xs font-bold text-muted-foreground"
               />
             </div>
@@ -649,17 +649,17 @@ const AdminPage = () => {
 
 
           <button onClick={submit} disabled={submitting}
-            className="w-full mt-3 bg-primary text-primary-foreground font-bold py-3.5 rounded-xl border-[3px] border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] disabled:opacity-50 flex items-center justify-center gap-2">
+            className="w-full mt-3 bg-primary text-primary-foreground font-bold py-3.5 rounded-xl border border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] disabled:opacity-50 flex items-center justify-center gap-2">
             {submitting ? <Loader2 className="animate-spin" size={18} /> : <>Создать кружок</>}
           </button>
         </div>
 
         {creds.length > 0 && (
-          <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+          <div className="mt-6 bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
             <h2 className="text-lg font-black mb-3">Созданные кружки (в этой сессии)</h2>
             <div className="space-y-3">
               {creds.map((c, i) => (
-                <div key={i} className="p-3 rounded-xl bg-muted border-2 border-border">
+                <div key={i} className="p-3 rounded-xl bg-muted border border-border">
                   <div className="flex items-center justify-between gap-2">
                     <div className="font-bold">{c.name} <span className="text-xs text-muted-foreground">· {c.city}</span></div>
                     <button onClick={() => copyAll(c)} className="text-xs font-bold flex items-center gap-1 text-primary">
@@ -679,7 +679,7 @@ const AdminPage = () => {
         </>)}
 
         {tab === "posts" && (
-          <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-4">
+          <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-4">
             <div>
               <h2 className="text-lg font-black">Новая публикация</h2>
               <p className="text-xs text-muted-foreground font-bold mt-1">Публикацию увидят все посетители, включая гостей.</p>
@@ -699,7 +699,7 @@ const AdminPage = () => {
             {postForm.type === "announcement" && (
               <div>
                 <Label>Категория</Label>
-                <select value={postForm.category} onChange={(e) => setPostForm({ ...postForm, category: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm font-bold">
+                <select value={postForm.category} onChange={(e) => setPostForm({ ...postForm, category: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border border-border focus:outline-none focus:border-primary text-sm font-bold">
                   {POST_CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                 </select>
               </div>
@@ -730,7 +730,7 @@ const AdminPage = () => {
                 </div>
                 {postForm.price === "paid" && (<><Label htmlFor="admin-post-price">Цена от, ₸</Label><Input id="admin-post-price" type="number" min={0} value={postForm.price_from} onChange={(e) => setPostForm({ ...postForm, price_from: e.target.value })} /></>)}
                 <Label htmlFor="admin-post-kind" className="mt-3 block">Тип события</Label>
-                <select id="admin-post-kind" value={postForm.event_kind} onChange={(e) => setPostForm({ ...postForm, event_kind: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border text-sm font-bold">
+                <select id="admin-post-kind" value={postForm.event_kind} onChange={(e) => setPostForm({ ...postForm, event_kind: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border border-border text-sm font-bold">
                   <option value="">Не указан</option>
                   {EVENT_KINDS.map((k) => <option key={k} value={k}>{KIND_LABELS[k].ru}</option>)}
                 </select>
@@ -755,7 +755,7 @@ const AdminPage = () => {
 
             <div>
               <Label htmlFor="admin-post-season">Каникулы (сезон)</Label>
-              <select id="admin-post-season" value={postForm.season} onChange={(e) => setPostForm({ ...postForm, season: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border text-sm font-bold">
+              <select id="admin-post-season" value={postForm.season} onChange={(e) => setPostForm({ ...postForm, season: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border border-border text-sm font-bold">
                 <option value="">Не относится к каникулам</option><option value="winter">Зимние</option><option value="spring">Весенние</option><option value="summer">Летние</option>
               </select>
             </div>
@@ -780,13 +780,13 @@ const AdminPage = () => {
               <Label>Фото</Label>
               {postForm.image_url ? (
                 <div className="relative mt-2 w-fit">
-                  <img src={postForm.image_url} alt="Фото публикации" className="w-36 h-28 rounded-xl object-cover border-2 border-border" />
+                  <img src={postForm.image_url} alt="Фото публикации" className="w-36 h-28 rounded-xl object-cover border border-border" />
                   <Button type="button" size="icon" variant="destructive" aria-label="Удалить фото" onClick={() => setPostForm({ ...postForm, image_url: "" })} className="absolute -top-2 -right-2 h-7 w-7 rounded-full">
                     <X size={13} />
                   </Button>
                 </div>
               ) : (
-                <label className="mt-2 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border-2 border-dashed border-border">
+                <label className="mt-2 flex items-center justify-center gap-2 px-4 py-4 rounded-xl bg-muted text-sm font-bold cursor-pointer border border-dashed border-border">
                   {postUploading ? <Loader2 size={16} className="animate-spin" /> : <ImagePlus size={16} />}
                   {postUploading ? "Загрузка..." : "Добавить фото"}
                   <input type="file" accept="image/*" className="hidden" onChange={handlePostImageUpload} disabled={postUploading} />
@@ -802,7 +802,7 @@ const AdminPage = () => {
         )}
 
         {tab === "bookings" && (
-        <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+        <div className="mt-6 bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
           <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
             <h2 className="text-lg font-black">📨 Все заявки на бронь</h2>
             <button onClick={loadBookings} className="text-xs font-bold text-primary">Обновить</button>
@@ -813,7 +813,7 @@ const AdminPage = () => {
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${statusFilter === s ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border"}`}
+                className={`px-3 py-1 rounded-full text-xs font-bold border ${statusFilter === s ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border"}`}
               >
                 {s === "all" ? "Все" : s === "pending" ? "Новые" : s === "confirmed" ? "Подтверждены" : "Отменены"}
                 {" "}({s === "all" ? bookings.length : bookings.filter((b) => b.status === s).length})
@@ -830,7 +830,7 @@ const AdminPage = () => {
               {bookings
                 .filter((b) => statusFilter === "all" || b.status === statusFilter)
                 .map((b) => (
-                  <div key={b.id} className="p-3 rounded-xl bg-muted border-2 border-border">
+                  <div key={b.id} className="p-3 rounded-xl bg-muted border border-border">
                     <div className="flex items-start justify-between gap-2 flex-wrap">
                       <div className="min-w-0 flex-1">
                         <div className="font-black text-sm">{b.clubs?.name_ru || "—"} <span className="text-xs text-muted-foreground font-bold">· {b.clubs?.city}</span></div>
@@ -863,7 +863,7 @@ const AdminPage = () => {
         )}
 
         {tab === "users" && (
-        <div className="mt-6 bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+        <div className="mt-6 bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
           <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
             <h2 className="text-lg font-black">👥 Пользователи ({users.length})</h2>
             <button onClick={loadUsers} className="text-xs font-bold text-primary">Обновить</button>
@@ -873,7 +873,7 @@ const AdminPage = () => {
             value={userQuery}
             onChange={(e) => setUserQuery(e.target.value)}
             placeholder="Поиск по телефону или имени"
-            className="w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm mb-3"
+            className="w-full px-3 py-2 rounded-xl bg-muted border border-border focus:outline-none focus:border-primary text-sm mb-3"
           />
 
           <div className="flex flex-wrap gap-1.5 mb-3">
@@ -881,7 +881,7 @@ const AdminPage = () => {
               <button
                 key={r}
                 onClick={() => setRoleFilter(r)}
-                className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${roleFilter === r ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border"}`}
+                className={`px-3 py-1 rounded-full text-xs font-bold border ${roleFilter === r ? "bg-primary text-primary-foreground border-foreground" : "bg-card border-border"}`}
               >
                 {r === "all" ? "Все" : r === "parent" ? "Родители" : r === "club_owner" ? "Кружки/Центры" : "Админы"}
                 {" "}({r === "all" ? users.length : users.filter((u) => (u.roles || []).includes(r)).length})
@@ -902,7 +902,7 @@ const AdminPage = () => {
             return (
               <div className="space-y-2">
                 {list.map((u) => (
-                  <div key={u.user_id} className="p-3 rounded-xl bg-muted border-2 border-border">
+                  <div key={u.user_id} className="p-3 rounded-xl bg-muted border border-border">
                     <div className="flex items-start justify-between gap-2 flex-wrap">
                       <div className="min-w-0">
                         <div className="font-black text-sm">{u.display_name || "Без имени"}</div>
@@ -939,10 +939,10 @@ const Field = ({ label, value, onChange, multiline }: { label: string; value: st
     <label className="text-xs font-bold uppercase text-muted-foreground">{label}</label>
     {multiline ? (
       <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={3}
-        className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm" />
+        className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border border-border focus:outline-none focus:border-primary text-sm" />
     ) : (
       <input value={value} onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm" />
+        className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border border-border focus:outline-none focus:border-primary text-sm" />
     )}
   </div>
 );
@@ -951,7 +951,7 @@ const Select = ({ label, value, options, onChange }: { label: string; value: str
   <div>
     <label className="text-xs font-bold uppercase text-muted-foreground">{label}</label>
     <select value={value} onChange={(e) => onChange(e.target.value)}
-      className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border focus:outline-none focus:border-primary text-sm font-bold">
+      className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border border-border focus:outline-none focus:border-primary text-sm font-bold">
       {options.map((o) => <option key={o} value={o}>{o}</option>)}
     </select>
   </div>

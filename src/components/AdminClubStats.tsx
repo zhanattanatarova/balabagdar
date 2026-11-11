@@ -47,7 +47,7 @@ const AdminClubStats = ({ clubs }: { clubs: { id: string; name_ru: string }[] })
       <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
         <h2 className="text-lg font-black">📊 Статистика</h2>
         <input type="month" value={month} onChange={(e) => e.target.value && setMonth(e.target.value)}
-          className="border-2 border-border rounded-xl px-3 py-2 text-sm font-bold bg-card" />
+          className="border border-border rounded-xl px-3 py-2 text-sm font-bold bg-card" />
       </div>
       {loading ? (
         <div className="flex justify-center py-8"><Loader2 className="animate-spin text-primary" /></div>

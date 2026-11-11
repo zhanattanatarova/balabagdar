@@ -17,7 +17,7 @@ export default function AdminDeals() {
   const pending = rows?.filter((r) => !r.is_approved) || [];
   const live = rows?.filter((r) => r.is_approved) || [];
   const Item = ({ r }: { r: Row }) => (
-    <div className="p-3 rounded-xl bg-muted border-2 border-border">
+    <div className="p-3 rounded-xl bg-muted border border-border">
       <div className="text-xs font-black text-primary">{r.category === "promo" ? "Акция" : "Пробное занятие"} · {r.city}{r.deal_until ? ` · до ${r.deal_until}` : ""}{r.discount_text ? ` · ${r.discount_text}` : ""}</div>
       <div className="font-bold text-sm">{r.title}</div>
       <p className="text-xs mt-1 line-clamp-3">{r.body}</p>
@@ -31,7 +31,7 @@ export default function AdminDeals() {
     </div>
   );
   return (
-    <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-4">
+    <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-4">
       <h2 className="text-lg font-black">Акции и пробные занятия</h2>
       {!rows ? <Loader2 className="animate-spin text-primary" /> : <>
         <section><h3 className="font-black text-sm mb-2">На модерации ({pending.length})</h3><div className="space-y-2">{pending.length ? pending.map((r) => <Item key={r.id} r={r} />) : <p className="text-sm">Нет заявок.</p>}</div></section>

@@ -36,7 +36,7 @@ const ReviewInvite = ({ clubId }: { clubId: string }) => {
         <p className="font-black text-sm">{s.title}</p>
         <p className="text-xs text-muted-foreground font-bold mt-1">{s.hint}</p>
         <div className="flex gap-3 mt-3 items-center">
-          <div ref={wrap} className="bg-card p-1.5 rounded-xl border-2 border-border shrink-0">
+          <div ref={wrap} className="bg-card p-1.5 rounded-xl border border-border shrink-0">
             <QRCodeCanvas value={url} size={96} level="M" />
           </div>
           <div className="flex-1 min-w-0 space-y-1.5">

@@ -12,7 +12,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        nunito: ["Nunito", "sans-serif"],
+        nunito: ["Onest", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

@@ -128,7 +128,7 @@ const ProfilePage = () => {
       {user && (
         <div className="px-4 mt-5">
           <button onClick={async () => { await signOut(); toast({ title: t("common.logged_out"), description: t("common.bye") }); }}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-destructive/30 text-destructive font-bold text-sm active:scale-[0.97] transition-transform bg-destructive/5">
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-destructive/30 text-destructive font-bold text-sm active:scale-[0.97] transition-transform bg-destructive/5">
             <LogOut size={14} />{t("profile.logout")}
           </button>
         </div>

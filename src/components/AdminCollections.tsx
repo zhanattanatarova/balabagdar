@@ -47,17 +47,17 @@ export default function AdminCollections() {
 
   return (
     <div className="space-y-4">
-      <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+      <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))]">
         <h2 className="text-lg font-black mb-3">Подборки</h2>
         {!rows ? <Loader2 className="animate-spin text-primary" /> : rows.map((c) => (
-          <div key={c.id} className="flex items-center gap-2 p-2 rounded-xl bg-muted border-2 border-border mb-2">
+          <div key={c.id} className="flex items-center gap-2 p-2 rounded-xl bg-muted border border-border mb-2">
             <span className="text-xl">{c.cover_emoji}</span>
             <button className="flex-1 text-left text-sm font-bold" onClick={() => setD(toDraft(c))}>{c.title_ru} <span className="text-xs text-muted-foreground">/{c.slug} · {(c.rule_json as any)?.type} {c.is_active ? "" : "· скрыта"}</span></button>
             <Button size="icon" variant="ghost" aria-label="Удалить" onClick={() => del(c.id)}><Trash2 size={14} /></Button>
           </div>
         ))}
       </div>
-      <div className="bg-card border-[3px] border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-3">
+      <div className="bg-card border border-foreground rounded-3xl p-5 shadow-[6px_6px_0_0_hsl(var(--foreground))] space-y-3">
         <h3 className="font-black">{d.id ? "Редактировать подборку" : "Новая подборка"}</h3>
         <div className="grid grid-cols-[1fr_80px_80px] gap-2">
           <div><Label>Slug*</Label><Input {...f("slug")} placeholder="weekend" /></div>
@@ -69,10 +69,10 @@ export default function AdminCollections() {
         <div><Label>Описание (RU)</Label><Input {...f("description_ru")} /></div>
         <div className="grid sm:grid-cols-2 gap-2"><div><Label>Описание (KZ)</Label><Input {...f("description_kz")} /></div><div><Label>Описание (EN)</Label><Input {...f("description_en")} /></div></div>
         <div><Label>Правило</Label>
-          <select {...f("rule")} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border-2 border-border text-sm font-bold">{RULES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
+          <select {...f("rule")} className="mt-1 w-full px-3 py-2 rounded-xl bg-muted border border-border text-sm font-bold">{RULES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
         </div>
         {d.rule === "age" && <div className="grid grid-cols-2 gap-2"><div><Label>Возраст от</Label><Input type="number" {...f("min")} /></div><div><Label>Возраст до</Label><Input type="number" {...f("max")} /></div></div>}
-        {d.rule === "season" && <select {...f("season")} className="w-full px-3 py-2 rounded-xl bg-muted border-2 border-border text-sm font-bold"><option value="winter">Зимние</option><option value="spring">Весенние</option><option value="summer">Летние</option></select>}
+        {d.rule === "season" && <select {...f("season")} className="w-full px-3 py-2 rounded-xl bg-muted border border-border text-sm font-bold"><option value="winter">Зимние</option><option value="spring">Весенние</option><option value="summer">Летние</option></select>}
         {d.rule === "manual" && <>
           <div><Label>ID клубов (по одному в строке)</Label><Textarea rows={3} {...f("club_ids")} /></div>
           <div><Label>ID публикаций (по одному в строке)</Label><Textarea rows={3} {...f("event_ids")} /></div>

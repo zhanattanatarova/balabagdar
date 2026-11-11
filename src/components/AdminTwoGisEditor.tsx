@@ -56,20 +56,20 @@ const AdminTwoGisEditor = ({ clubId, rating, count, url, checkedAt, onSaved }: P
   }
 
   return (
-    <div className="mt-2 p-2 rounded-lg bg-card border-2 border-border space-y-1.5">
+    <div className="mt-2 p-2 rounded-lg bg-card border border-border space-y-1.5">
       <div className="flex gap-2">
         <label className="flex-1 text-[10px] font-bold">Рейтинг 2GIS
           <input value={r} onChange={(e) => setR(e.target.value)} inputMode="decimal" placeholder="4.9"
-            className="mt-0.5 w-full px-2 py-1 rounded-md border-2 border-border bg-background text-xs" />
+            className="mt-0.5 w-full px-2 py-1 rounded-md border border-border bg-background text-xs" />
         </label>
         <label className="flex-1 text-[10px] font-bold">Отзывов в 2GIS
           <input value={n} onChange={(e) => setN(e.target.value)} inputMode="numeric" placeholder="39"
-            className="mt-0.5 w-full px-2 py-1 rounded-md border-2 border-border bg-background text-xs" />
+            className="mt-0.5 w-full px-2 py-1 rounded-md border border-border bg-background text-xs" />
         </label>
       </div>
       <label className="block text-[10px] font-bold">Ссылка 2GIS
         <input value={u} onChange={(e) => setU(e.target.value)} placeholder="https://2gis.kz/aktau/firm/..."
-          className="mt-0.5 w-full px-2 py-1 rounded-md border-2 border-border bg-background text-xs" />
+          className="mt-0.5 w-full px-2 py-1 rounded-md border border-border bg-background text-xs" />
       </label>
       <div className="flex gap-2">
         <button onClick={save} disabled={saving} className="text-[10px] font-black px-3 py-1 rounded-md bg-primary text-primary-foreground disabled:opacity-60">

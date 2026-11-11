@@ -155,7 +155,7 @@ const ClubReviews = ({ clubId }: Props) => {
           onChange={(e) => setComment(e.target.value.slice(0, 500))}
           placeholder={t("reviews.comment_placeholder")}
           rows={3}
-          className="mt-3 w-full rounded-xl border-[3px] border-foreground/10 bg-background px-3 py-2 text-sm font-medium focus:outline-none focus:border-primary resize-none"
+          className="mt-3 w-full rounded-xl border border-foreground/10 bg-background px-3 py-2 text-sm font-medium focus:outline-none focus:border-primary resize-none"
         />
         <div className="flex gap-2 mt-3">
           <button
@@ -220,7 +220,7 @@ const ClubReviews = ({ clubId }: Props) => {
           document.getElementById("balahub-review-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
           (document.querySelector("#balahub-review-form textarea") as HTMLTextAreaElement | null)?.focus({ preventScroll: true });
         }}
-        className="mt-3 w-full flex items-center justify-center gap-2 bg-secondary/15 text-foreground font-black text-sm py-3 rounded-xl border-2 border-secondary/40 hover:bg-secondary/25 transition-colors"
+        className="mt-3 w-full flex items-center justify-center gap-2 bg-secondary/15 text-foreground font-black text-sm py-3 rounded-xl border border-secondary/40 hover:bg-secondary/25 transition-colors"
       >
         ⭐ {t("reviews.rate_on_balahub")}
       </button>
