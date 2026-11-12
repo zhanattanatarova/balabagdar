@@ -854,32 +854,6 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           <div className="hero-facts"><div><strong>{loadingClubs ? "—" : clubs.length}</strong><span>{lang === "ru" ? "центров в городе" : lang === "kz" ? "қаладағы орталық" : "centers in the city"}</span></div><div><strong>{categoryIds.length}</strong><span>{lang === "ru" ? "направление" : lang === "kz" ? "бағыт" : "categories"}</span></div><div><strong>WhatsApp</strong><span>{lang === "ru" ? "напрямую с центром" : lang === "kz" ? "орталықпен тікелей" : "direct to the center"}</span></div></div>
         </div>
       </section>
-      <div className="catalog-shortcuts mt-6 space-y-4"><SectionLinks /><CollectionsCarousel /></div>
-
-      {/* Age filter */}
-      <div className="mx-4 mt-4 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-        <span className="text-sm font-black shrink-0 flex items-center gap-1">{t("age.label")}</span>
-        {([
-          { id: "all", label: t("age.any") },
-          { id: "0-3", label: t("age.0_3") },
-          { id: "3-7", label: t("age.3_7") },
-          { id: "7-12", label: t("age.7_12") },
-          { id: "12+", label: t("age.12_plus") },
-        ] as const).map((opt) => {
-          const active = ageFilter === opt.id;
-          return (
-            <button
-              key={opt.id}
-              onClick={() => setAgeFilter(opt.id as typeof ageFilter)}
-              className={`shrink-0 px-4 py-2 rounded-full text-sm font-black border transition-colors ${active ? "bg-primary/15 text-primary border-primary" : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"}`}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
-      </div>
-
-
       {/* Categories */}
       <section className="category-section px-4 mt-8">
         <div className="flex items-center justify-between gap-3 mb-5"><h2 className="section-title">{lang === "ru" ? "Направления" : lang === "kz" ? "Бағыттар" : "Categories"}</h2><Button variant="link" onClick={() => setShowAllCategories(!showAllCategories)} className="text-xs px-0">{showAllCategories ? (lang === "ru" ? "Свернуть" : lang === "kz" ? "Жасыру" : "Show less") : (lang === "ru" ? `Все ${categoryIds.length} направление` : lang === "kz" ? `Барлық ${categoryIds.length} бағыт` : `All ${categoryIds.length} categories`)}<ArrowRight /></Button></div>
@@ -990,6 +964,32 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           })}
         </div>
       </section>
+
+      <div className="catalog-shortcuts mt-6 space-y-4"><SectionLinks /><CollectionsCarousel /></div>
+
+      {/* Age filter */}
+      <div className="mx-4 mt-4 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
+        <span className="text-sm font-black shrink-0 flex items-center gap-1">{t("age.label")}</span>
+        {([
+          { id: "all", label: t("age.any") },
+          { id: "0-3", label: t("age.0_3") },
+          { id: "3-7", label: t("age.3_7") },
+          { id: "7-12", label: t("age.7_12") },
+          { id: "12+", label: t("age.12_plus") },
+        ] as const).map((opt) => {
+          const active = ageFilter === opt.id;
+          return (
+            <button
+              key={opt.id}
+              onClick={() => setAgeFilter(opt.id as typeof ageFilter)}
+              className={`shrink-0 px-4 py-2 rounded-full text-sm font-black border transition-colors ${active ? "bg-primary/15 text-primary border-primary" : "bg-muted text-muted-foreground border-transparent hover:bg-muted/70"}`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+
 
       {/* Clubs */}
       <div className="popular-section mt-12">
