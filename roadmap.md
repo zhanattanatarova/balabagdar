@@ -1,4 +1,7 @@
 # Publications for Aktau
+- [ ] Match the supplied logo green and remove the duplicate header name.
+- [ ] Fix city selection overlay and synchronize all city-based pages.
+- [ ] Check available errors, tests and guest navigation on tablet and mobile.
 - [x] Redesign the shared appearance and navigation using the approved photographic reference.
 - [x] Redesign catalog and Afisha, preserving filters, contacts and existing routes.
 - [x] Verify guest navigation, search and RU/KZ layouts on desktop and mobile.
