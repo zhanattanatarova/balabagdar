@@ -1,4 +1,6 @@
 # Publications for Aktau
+- [ ] Use brighter saturated green, brush instead of children and smaller category photos matching the latest reference.
+- [ ] Check catalog layout and search on desktop and mobile.
 - [x] Match the supplied logo green and remove the duplicate header name.
 - [x] Fix city selection overlay and synchronize all city-based pages.
 - [x] Check available errors, tests and guest navigation on tablet and mobile (44 tests passed; preview instrumentation ref warnings remain, no runtime or API errors in checked guest flows).
