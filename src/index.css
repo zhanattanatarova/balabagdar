@@ -1,13 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 144 45% 97%;
-    --foreground: 160 25% 12%;
+    --background: 0 0% 100%;
+    --foreground: 158 24% 11%;
 
     --card: 0 0% 100%;
     --card-foreground: 150 30% 10%;
@@ -15,17 +13,17 @@
     --popover: 0 0% 100%;
     --popover-foreground: 150 30% 10%;
 
-    --primary: 148 66% 39%;
+    --primary: 153 56% 30%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 36 100% 64%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 145 30% 95%;
+    --secondary-foreground: 153 56% 24%;
 
-    --muted: 145 45% 93%;
+    --muted: 145 24% 96%;
     --muted-foreground: 155 10% 42%;
 
-    --accent: 36 100% 64%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 145 30% 93%;
+    --accent-foreground: 153 56% 24%;
 
     --destructive: 0 90% 55%;
     --destructive-foreground: 0 0% 100%;
@@ -33,7 +31,7 @@
     --border: 145 30% 89%;
     --input: 145 30% 89%;
     --ring: 145 65% 42%;
-    --radius: 1.25rem;
+    --radius: 0.5rem;
 
     --yellow-bright: 45 100% 55%;
     --yellow-light: 50 100% 92%;
@@ -108,17 +106,14 @@
   }
   body {
     @apply bg-background text-foreground font-nunito antialiased;
-    background-image:
-      radial-gradient(60rem 40rem at 100% -10%, hsl(var(--primary) / 0.08), transparent 60%),
-      radial-gradient(50rem 30rem at -10% 30%, hsl(var(--secondary) / 0.10), transparent 60%);
-    background-attachment: fixed;
+
   }
-  h1, h2, h3 { letter-spacing: -0.02em; }
+  h1, h2, h3 { letter-spacing: 0; }
 }
 
 @layer components {
   .section-title {
-    @apply text-base font-black tracking-tight;
+    @apply text-2xl font-extrabold;
   }
   .badge-rating {
     @apply inline-flex items-center gap-1 bg-card/95 backdrop-blur-sm text-foreground text-xs font-black px-2.5 py-1 rounded-full shadow-sm border border-primary/20;
@@ -153,7 +148,7 @@
   }
 
   .cartoon-card {
-    @apply bg-card/90 backdrop-blur-sm rounded-3xl border transition-all duration-300;
+    @apply bg-card rounded-lg border transition-all duration-300;
     border-color: hsl(var(--foreground) / 0.06);
     box-shadow: var(--shadow-cartoon);
   }

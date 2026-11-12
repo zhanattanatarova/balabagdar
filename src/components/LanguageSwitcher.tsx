@@ -1,6 +1,7 @@
 import { useLanguage } from "@/hooks/useLanguage";
 import { Lang } from "@/i18n/translations";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
 
 const names: Record<Lang, string> = { ru: "Русский", kz: "Қазақша", en: "English" };
@@ -16,28 +17,28 @@ const LanguageSwitcher = ({ compact = false }: { compact?: boolean }) => {
   if (compact) {
     return (
       <div className="relative">
-        <button
+        <Button
           type="button"
           onClick={() => setOpen((o) => !o)}
           aria-label="Language"
           aria-expanded={open}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-black bg-primary-foreground/20 text-primary-foreground border border-primary-foreground/30 backdrop-blur-sm"
+          variant="outline" size="sm" className="language-control text-xs font-semibold"
         >
           <Globe size={12} /> {labels[lang]}
-        </button>
+        </Button>
         {open && (
           <>
             <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
             <div className="absolute right-0 top-full mt-1.5 z-50 bg-card rounded-2xl border border-border p-1 min-w-[120px]" style={{ boxShadow: "var(--shadow-cartoon)" }}>
               {langs.map((l) => (
-                <button
+                <Button
                   key={l}
                   type="button"
                   onClick={() => { setLang(l); setOpen(false); }}
                   className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-left ${lang === l ? "bg-primary/15 text-foreground" : "text-muted-foreground hover:bg-muted"}`}
                 >
                   <span>{flags[l]}</span><span>{names[l]}</span>
-                </button>
+                </Button>
               ))}
             </div>
           </>
@@ -49,7 +50,7 @@ const LanguageSwitcher = ({ compact = false }: { compact?: boolean }) => {
   return (
     <div className="flex items-center gap-1 bg-muted rounded-xl p-1">
       {langs.map((l) => (
-        <button
+        <Button
           key={l}
           onClick={() => setLang(l)}
           className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
@@ -58,7 +59,7 @@ const LanguageSwitcher = ({ compact = false }: { compact?: boolean }) => {
         >
           <span>{flags[l]}</span>
           <span>{labels[l]}</span>
-        </button>
+        </Button>
       ))}
     </div>
   );

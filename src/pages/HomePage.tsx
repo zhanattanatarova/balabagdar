@@ -1,3 +1,18 @@
+import { Button } from "@/components/ui/button";
+import CatalogEvents from "@/components/CatalogEvents";
+import discoveryScene from "@/assets/discovery-scene.jpg";
+import photoCreativity from "@/assets/category-creativity.jpg";
+import photoSport from "@/assets/category-sport.jpg";
+import photoDevelopment from "@/assets/category-development.jpg";
+import photoSpeech from "@/assets/category-speech.jpg";
+import photoDance from "@/assets/category-dance.jpg";
+import photoRobotics from "@/assets/category-robotics.jpg";
+import photoSwim from "@/assets/category-swim.jpg";
+import photoMusic from "@/assets/category-music.jpg";
+import photoHealth from "@/assets/category-health.jpg";
+import photoLanguages from "@/assets/category-languages.jpg";
+import photoSpecial from "@/assets/category-special.jpg";
+import photoCamp from "@/assets/category-camp.jpg";
 import SectionLinks from "@/components/sections/SectionLinks";
 import CollectionsCarousel from "@/components/sections/CollectionsCarousel";
 import { useState, useMemo, useEffect } from "react";
@@ -34,16 +49,15 @@ import AuthModal from "@/components/AuthModal";
 const cities = CITIES;
 
 const categoryIcons: Record<string, string> = {
-  creativity: iconCreativity, sport: iconSport, development: iconDevelopment,
-  speech: iconSpeech, dance: iconDance, robotics: iconRobotics,
-  swim: iconSwim, music: iconMusic, health: iconHealth, tutors: iconTutors,
-  languages: iconLanguages, shops: iconShops, special: iconSpecial,
-  mini_garden: iconKindergarten, garden: iconKindergarten, school: iconKindergarten,
-  correction: iconSpecial, neuropsychology: iconDevelopment,
-  it: iconRobotics, camp: iconSport, scouts: iconSport,
+ creativity: photoCreativity, sport: photoSport, development: photoDevelopment,
+ speech: photoSpeech, dance: photoDance, robotics: photoRobotics, swim: photoSwim,
+ music: photoMusic, health: photoHealth, tutors: photoLanguages, languages: photoLanguages,
+ shops: photoCreativity, special: photoSpecial, mini_garden: photoDevelopment,
+ garden: photoDevelopment, school: photoLanguages, correction: photoSpecial,
+ neuropsychology: photoDevelopment, it: photoRobotics, camp: photoCamp, scouts: photoCamp,
 };
 
-const categoryIds = ["creativity", "sport", "development", "special", "mini_garden", "garden", "school", "correction", "neuropsychology", "speech", "dance", "robotics", "swim", "music", "health", "tutors", "languages", "it", "camp", "scouts", "shops"];
+const categoryIds = ["creativity", "sport", "development", "speech", "dance", "robotics", "swim", "music", "health", "languages", "special", "camp", "mini_garden", "garden", "school", "correction", "neuropsychology", "tutors", "it", "scouts", "shops"];
 
 
 const languageOptions = [
@@ -234,6 +248,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
     return `/search?${sp.toString()}`;
   };
   const goSearch = (cat: string, sub?: string | null) => navigate(searchHref(cat, sub));
+  const [showAllCategories, setShowAllCategories] = useState(false);
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [citySearch, setCitySearch] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -418,7 +433,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   const filteredCities = cities.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()));
 
   return (
-    <div className="pb-24 max-w-lg md:max-w-4xl lg:max-w-6xl mx-auto bg-background min-h-screen">
+    <div className="catalog-page pb-12 max-w-6xl mx-auto bg-background min-h-screen">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
 
       {/* Language Picker */}
@@ -814,68 +829,24 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         </div>
       )}
 
-      {/* Header */}
-      <div className="relative mx-4 mt-3 px-4 pt-4 pb-4 rounded-3xl border"
-        style={{ background: "var(--gradient-header)", boxShadow: "var(--shadow-cartoon-lg)", borderColor: "hsl(145, 90%, 30% / 0.5)" }}>
-        <div className="absolute top-3 right-3 z-10"><LanguageSwitcher compact /></div>
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <button onClick={() => setShowCityPicker(true)}
-            className="flex items-center gap-1.5 font-black text-lg px-4 py-2 rounded-full border"
-            style={{ background: "hsl(145, 85%, 38%)", color: "white", borderColor: "hsl(145, 90%, 28% / 0.5)" }}>
-            <BrandLogo size="sm" />{city}<ChevronDown size={18} className="text-primary-foreground" />
-          </button>
+      <section className="discovery-hero">
+        <img src={discoveryScene} alt="" width={1920} height={1024} className="discovery-photo" />
+        <div className="discovery-content">
+          <span className="hero-eyebrow">BalaHub · {lang === "ru" ? "Детство с интересом" : lang === "kz" ? "Қызықты балалық шақ" : "A world to discover"}</span>
+          <h1>{lang === "ru" ? "Кружки, секции и афиша для детей" : lang === "kz" ? "Балаларға арналған үйірмелер мен афиша" : "Kids’ clubs, activities and events"}<span>{city}</span></h1>
+          <p>{lang === "ru" ? "Сравнивайте центры по возрасту, адресу и цене. Свяжитесь с ними напрямую в WhatsApp." : lang === "kz" ? "Орталықтарды жас, мекенжай және баға бойынша салыстырыңыз. WhatsApp арқылы тікелей хабарласыңыз." : "Compare centers by age, location and price. Get in touch directly on WhatsApp."}</p>
+          <form className="discovery-search" onSubmit={e => { e.preventDefault(); navigate(searchHref(selectedCategory || "")); }}>
+            <div className="flex items-center gap-2 min-w-0 flex-1"><Search size={18} className="text-primary shrink-0" /><input aria-label={t("home.search")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={t("home.search")} /></div>
+            <Button type="submit"><Search />{t("home.find")}</Button>
+          </form>
+          <div className="hero-facts"><div><strong>{loadingClubs ? "—" : clubs.length}</strong><span>{lang === "ru" ? "центров в городе" : lang === "kz" ? "қаладағы орталық" : "centers in the city"}</span></div><div><strong>{categoryIds.length}</strong><span>{lang === "ru" ? "направление" : lang === "kz" ? "бағыт" : "categories"}</span></div><div><strong>WhatsApp</strong><span>{lang === "ru" ? "напрямую с центром" : lang === "kz" ? "орталықпен тікелей" : "direct to the center"}</span></div></div>
         </div>
-        <h1 className="text-center font-black text-sm mb-2 text-primary-foreground">
-          {t("home.city_heading").replace("{city}", city)}
-        </h1>
-
-        <div className="relative">
-
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2" size={18} style={{ color: "hsl(145, 70%, 35%)" }} />
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && searchQuery.trim()) {
-                const sp = new URLSearchParams();
-                sp.set("q", searchQuery.trim());
-                if (city) sp.set("city", city);
-                if (ageFilter !== "all") sp.set("age", ageFilter);
-                navigate(`/search?${sp.toString()}`);
-              }
-            }}
-            placeholder={t("home.search")}
-            className="w-full pl-10 pr-4 py-3 rounded-2xl text-sm font-bold focus:outline-none focus:ring-[3px] focus:ring-secondary border"
-            style={{ background: "white", color: "hsl(145, 70%, 30%)", boxShadow: "var(--shadow-cartoon)", borderColor: "hsl(145, 50%, 75%)" }}
-          />
-          {searchQuery.trim() && (
-            <button
-              onClick={() => {
-                const sp = new URLSearchParams();
-                sp.set("q", searchQuery.trim());
-                if (city) sp.set("city", city);
-                if (ageFilter !== "all") sp.set("age", ageFilter);
-                navigate(`/search?${sp.toString()}`);
-              }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl text-xs font-black bg-primary text-primary-foreground"
-            >
-              {t("home.find")}
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-4 space-y-3"><SectionLinks /><CollectionsCarousel /></div>
-
-      {/* Free banner */}
-      <div className="mx-4 mt-4 p-4 rounded-2xl bg-secondary/10 border border-secondary/30">
-        <h2 className="font-black text-sm">{t("home.free_banner_title")}</h2>
-        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{t("home.free_banner_text")}</p>
-      </div>
+      </section>
+      <div className="catalog-shortcuts mt-6 space-y-4"><SectionLinks /><CollectionsCarousel /></div>
 
       {/* Age filter */}
       <div className="mx-4 mt-4 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-        <span className="text-sm font-black shrink-0 flex items-center gap-1">👶 {t("age.label")}</span>
+        <span className="text-sm font-black shrink-0 flex items-center gap-1">{t("age.label")}</span>
         {([
           { id: "all", label: t("age.any") },
           { id: "0-3", label: t("age.0_3") },
@@ -898,9 +869,10 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
 
       {/* Categories */}
-      <div className="px-4 mt-4">
-        <div className="grid grid-cols-5 md:grid-cols-10 gap-2 md:gap-4">
-          {categoryIds.map((id) => {
+      <section className="category-section px-4 mt-8">
+        <div className="flex items-center justify-between gap-3 mb-5"><h2 className="section-title">{lang === "ru" ? "Направления" : lang === "kz" ? "Бағыттар" : "Categories"}</h2><Button variant="link" onClick={() => setShowAllCategories(!showAllCategories)} className="text-xs px-0">{showAllCategories ? (lang === "ru" ? "Свернуть" : lang === "kz" ? "Жасыру" : "Show less") : (lang === "ru" ? `Все ${categoryIds.length} направление` : lang === "kz" ? `Барлық ${categoryIds.length} бағыт` : `All ${categoryIds.length} categories`)}<ArrowRight /></Button></div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {(showAllCategories ? categoryIds : categoryIds.slice(0, 12)).map((id) => {
             const handleClick = () => {
               if (id === "languages") {
                 setShowLanguagePicker(true);
@@ -953,9 +925,9 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             return (
               <Link key={id} to={searchHref(id)} className="cat-card" onClick={(e) => { if (opensPicker) { e.preventDefault(); handleClick(); } }}>
                 <div className={`cat-card-img ${isActive ? "!border-primary ring-2 ring-primary/30" : ""}`}>
-                  <img src={categoryIcons[id]} alt="" className="w-full h-full object-contain" />
+                  <img src={categoryIcons[id]} alt="" className="w-full h-full object-cover" loading="lazy" />
                 </div>
-                <span className="text-[10px] md:text-xs font-bold text-foreground leading-tight">{t(`cat.${id}` as any)}</span>
+                <span className="category-label">{t(`cat.${id}` as any)}</span>
                 {id === "languages" && selectedLanguage && (
                   <span className="text-[9px] font-black text-primary leading-none">
                     {languageOptions.find((l) => l.id === selectedLanguage)?.emoji} {t(`lang.${selectedLanguage}` as any)}
@@ -1005,11 +977,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
             );
           })}
         </div>
-      </div>
+      </section>
 
       {/* Clubs */}
-      <div className="mt-5">
-        <div className="flex items-center justify-between px-4 mb-3">
+      <div className="popular-section mt-12">
+        <div className="flex items-center justify-between px-4 mb-5">
           <h2 className="section-title">{t("home.popular")}</h2>
           <Link to="/map" className="text-primary text-sm font-black">{t("home.all")}</Link>
         </div>
@@ -1027,23 +999,23 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           </div>
           )
         ) : (
-          <div className="flex md:grid md:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto px-4 pb-2 scrollbar-none">
+          <div className="flex md:grid md:grid-cols-3 lg:grid-cols-4 gap-5 overflow-x-auto px-4 pb-4 scrollbar-none">
             {popularClubs.map((club, i) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
               const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
                 <Link key={club.id} to={`/club/${club.id}`}
-                  className="block min-w-[160px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
+                  className="block w-[230px] md:w-auto min-w-[230px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
                   style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
-                  <div className="relative h-24">
+                  <div className="relative h-40">
                     {safeImageUrl(club.avatar_url) ? (
                       <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-primary/10 flex items-center justify-center"><ClubInitialAvatar name={name} size="md" /></div>
                     )}
                   </div>
-                  <div className="p-2.5">
-                    <h3 className="font-black text-xs leading-snug line-clamp-1">{name}</h3>
+                  <div className="p-4">
+                    <h3 className="font-bold text-sm leading-snug line-clamp-1">{name}</h3>
                     {club.reviews_count > 0 && (
                       <div className="flex items-center gap-1 mt-1">
                         <Star size={11} className="text-secondary fill-secondary" />
@@ -1086,7 +1058,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                 const name = tField(club.name_ru, club.name_kz, club.name_en);
                 return (
                   <Link key={club.id} to={`/club/${club.id}`} className="block min-w-[150px] md:min-w-0 cartoon-card p-3 shrink-0 md:shrink">
-                    {safeImageUrl(club.avatar_url) ? <img src={safeImageUrl(club.avatar_url)!} alt={name} loading="lazy" className="h-12 w-12 rounded-xl object-cover" /> : <ClubInitialAvatar name={name} size="sm" />}
+                    {safeImageUrl(club.avatar_url) ? <img src={safeImageUrl(club.avatar_url)} alt={name} loading="lazy" className="h-12 w-12 rounded-xl object-cover" /> : <ClubInitialAvatar name={name} size="sm" />}
                     <p className="font-black text-xs mt-2 line-clamp-2">{name}</p>
                     <p className="text-[11px] text-muted-foreground font-bold">{clubLocation(club.address, club.city)}</p>
                   </Link>
@@ -1097,7 +1069,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
         )}
       </div>
 
-      <div className="px-4 mt-5">
+      <CatalogEvents city={city} />
+      <div className="px-4 mt-8">
         {nearbyClubs.length === 0 ? (
           <div className="flex flex-col items-center gap-2 py-2">
             <button onClick={showNearby} disabled={locating} className="cartoon-btn bg-primary text-primary-foreground px-4 py-2.5 flex items-center gap-2 disabled:opacity-60">

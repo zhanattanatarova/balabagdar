@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/hooks/useLanguage";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import Index from "./pages/Index";
 import ClubDetailPage from "./pages/ClubDetailPage";
 import AdminPage from "./pages/AdminPage";
@@ -28,6 +30,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <SiteHeader />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/map" element={<Index />} />
@@ -54,6 +57,7 @@ const App = () => (
             <Route path="/blog/:slug" element={<BlogPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <SiteFooter />
         </BrowserRouter>
       </TooltipProvider>
     </LanguageProvider>
