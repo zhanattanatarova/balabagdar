@@ -13,24 +13,25 @@
     --popover: 0 0% 100%;
     --popover-foreground: 150 30% 10%;
 
-    --primary: 153 56% 30%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 82 51% 49%;
+    --primary-foreground: 158 24% 11%;
+    --photo-foreground: 0 0% 100%;
 
     --secondary: 145 30% 95%;
-    --secondary-foreground: 153 56% 24%;
+    --secondary-foreground: 82 45% 25%;
 
     --muted: 145 24% 96%;
     --muted-foreground: 155 10% 42%;
 
     --accent: 145 30% 93%;
-    --accent-foreground: 153 56% 24%;
+    --accent-foreground: 82 45% 25%;
 
     --destructive: 0 90% 55%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 145 30% 89%;
     --input: 145 30% 89%;
-    --ring: 145 65% 42%;
+    --ring: 82 51% 49%;
     --radius: 0.5rem;
     --hero-surface: 145 30% 94%;
     --hero-wash: linear-gradient(90deg, hsl(145 30% 94%) 0%, hsl(145 30% 94% / .97) 30%, hsl(145 30% 94% / .6) 48%, hsl(145 30% 94% / 0) 70%);
@@ -40,7 +41,7 @@
     --yellow-bright: 45 100% 55%;
     --yellow-light: 50 100% 92%;
     --orange-warm: 36 100% 50%;
-    --green-fresh: 145 65% 42%;
+    --green-fresh: 82 51% 49%;
     --green-light: 145 55% 92%;
     --pink-soft: 340 90% 92%;
     --blue-sky: 200 95% 92%;
@@ -70,8 +71,8 @@
     --card-foreground: 140 20% 94%;
     --popover: 150 18% 9%;
     --popover-foreground: 140 20% 94%;
-    --primary: 145 65% 42%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 82 51% 49%;
+    --primary-foreground: 158 24% 11%;
     --secondary: 36 100% 50%;
     --secondary-foreground: 0 0% 100%;
     --muted: 150 15% 15%;
@@ -127,7 +128,7 @@
   .category-section .cat-card { @apply relative overflow-hidden rounded-lg text-left; height: 104px; }
   .category-section .cat-card-img { @apply absolute inset-0 h-full w-full p-0 m-0 rounded-lg border-0; aspect-ratio: auto; }
   .category-section .cat-card::after { content: ''; @apply absolute inset-0 pointer-events-none; background: var(--image-overlay); }
-  .category-label { @apply absolute bottom-3 left-3 right-3 z-10 text-primary-foreground text-xs font-semibold leading-tight; }
+  .category-label { @apply absolute bottom-3 left-3 right-3 z-10 text-xs font-semibold leading-tight; color: hsl(var(--photo-foreground)); }
   .category-section .cat-card:hover img { transform: scale(1.04); transition: transform .25s ease; }
   .popular-section .cartoon-card { box-shadow: var(--shadow-cartoon); }
   .catalog-events { @apply px-4 mt-12; }

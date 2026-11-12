@@ -1,4 +1,5 @@
 import logo from "@/assets/balahub-logo.png";
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 type BrandLogoSize = "xs" | "sm" | "md" | "lg" | "xl";
@@ -19,24 +20,26 @@ const sizeMap: Record<BrandLogoSize, { box: string; img: string }> = {
   xl: { box: "w-36 h-36", img: "w-32 h-32" },
 };
 
-const BrandLogo = ({ size = "sm", className, alt = "BalaHub", framed = true }: BrandLogoProps) => {
+const BrandLogo = forwardRef<HTMLSpanElement, BrandLogoProps>(({ size = "sm", className, alt = "BalaHub", framed = true }, ref) => {
   const { box, img } = sizeMap[size];
 
   if (!framed) {
-    return <img src={logo} alt={alt} className={cn(box, "object-contain", className)} />;
+    return <span ref={ref} className={cn(box, "inline-flex items-center justify-center shrink-0", className)}><img src={logo} alt={alt} className="w-full h-auto object-contain" /></span>;
   }
 
   return (
     <span
+      ref={ref}
       className={cn(
         box,
-        "inline-flex items-center justify-center rounded-full bg-white shadow-sm shrink-0",
+        "inline-flex items-center justify-center rounded-full bg-card shadow-sm shrink-0",
         className
       )}
     >
       <img src={logo} alt={alt} className={cn(img, "object-contain")} />
     </span>
   );
-};
+});
+BrandLogo.displayName = "BrandLogo";
 
 export default BrandLogo;

@@ -10,6 +10,7 @@ import SEO from "@/components/SEO";
 import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/clubDisplay";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 import TwoGisBadge from "@/components/TwoGisBadge";
+import { currentCity, subscribeCity } from "@/lib/city";
 
 type AgeKey = "all" | "0-3" | "3-7" | "7-12" | "12+";
 
@@ -21,7 +22,7 @@ const SearchPage = () => {
   const cat = params.get("cat") || "";
   const sub = params.get("sub") || "";
   const q = params.get("q") || "";
-  const city = params.get("city") || "Актау";
+  const city = params.get("city") || currentCity();
   const age = (params.get("age") as AgeKey) || "all";
 
   const [clubs, setClubs] = useState<any[]>([]);
@@ -29,6 +30,13 @@ const SearchPage = () => {
   const [searchInput, setSearchInput] = useState(q);
 
   useEffect(() => setSearchInput(q), [q]);
+  useEffect(() => subscribeCity(() => {
+    setParams(previous => {
+      const next = new URLSearchParams(previous);
+      next.set("city", currentCity());
+      return next;
+    }, { replace: true });
+  }), [setParams]);
 
   const group = useMemo(() => TAXONOMY.find((g) => g.id === cat), [cat]);
 
