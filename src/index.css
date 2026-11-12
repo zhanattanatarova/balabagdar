@@ -167,7 +167,7 @@
   .discovery-content p { max-width: 320px; margin-top: 14px; }
   .hero-eyebrow { margin-bottom: 14px; }
   .discovery-search { margin-top: 20px; }
-  .hero-facts { margin-top: 18px; gap: 24px; padding: 10px 0; background: hsl(var(--hero-surface)); border-radius: 8px; }
+  .hero-facts { display: none; }
   .hero-facts strong { font-size: 16px; }
   .hero-facts span { font-size: 10px; }
   .category-section .cat-card { height: 112px; }
