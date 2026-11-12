@@ -13,25 +13,25 @@
     --popover: 0 0% 100%;
     --popover-foreground: 150 30% 10%;
 
-    --primary: 82 51% 49%;
+    --primary: 151 72% 39%;
     --primary-foreground: 0 0% 100%;
     --photo-foreground: 0 0% 100%;
 
     --secondary: 145 30% 95%;
-    --secondary-foreground: 82 45% 25%;
+    --secondary-foreground: 151 65% 28%;
 
     --muted: 145 24% 96%;
     --muted-foreground: 155 10% 42%;
 
     --accent: 145 30% 93%;
-    --accent-foreground: 82 45% 25%;
+    --accent-foreground: 151 65% 28%;
 
     --destructive: 0 90% 55%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 145 30% 89%;
     --input: 145 30% 89%;
-    --ring: 82 51% 49%;
+    --ring: 151 72% 39%;
     --radius: 0.5rem;
     --hero-surface: 145 30% 94%;
     --hero-wash: linear-gradient(90deg, hsl(145 30% 94%) 0%, hsl(145 30% 94% / .97) 30%, hsl(145 30% 94% / .6) 48%, hsl(145 30% 94% / 0) 70%);
@@ -41,7 +41,7 @@
     --yellow-bright: 45 100% 55%;
     --yellow-light: 50 100% 92%;
     --orange-warm: 36 100% 50%;
-    --green-fresh: 82 51% 49%;
+    --green-fresh: 151 72% 39%;
     --green-light: 145 55% 92%;
     --pink-soft: 340 90% 92%;
     --blue-sky: 200 95% 92%;
@@ -71,7 +71,7 @@
     --card-foreground: 140 20% 94%;
     --popover: 150 18% 9%;
     --popover-foreground: 140 20% 94%;
-    --primary: 82 51% 49%;
+    --primary: 151 72% 39%;
     --primary-foreground: 0 0% 100%;
     --secondary: 36 100% 50%;
     --secondary-foreground: 0 0% 100%;
@@ -112,10 +112,12 @@
   .city-control span { @apply truncate; max-width: 150px; }
   .city-control svg { @apply w-3 h-3; }
   .language-control { @apply bg-card text-foreground border-border; }
-  .discovery-hero { @apply relative overflow-hidden; min-height: 470px; background: hsl(var(--hero-surface)); }
+  .discovery-hero { @apply relative overflow-hidden; min-height: 410px; background: hsl(var(--hero-surface)); }
   .discovery-photo { @apply absolute inset-0 h-full w-full object-cover; object-position: center; }
-  .discovery-hero::after { content: ''; @apply absolute inset-0; background: var(--hero-wash); }
-  .discovery-content { @apply relative z-10 px-8 py-12; width: 62%; }
+  .discovery-centers { @apply absolute z-10; left: 67%; top: 55px; width: 200px; }
+  .discovery-center { @apply block; }
+  .discovery-center + .discovery-center { margin-top: 16px; margin-left: 32px; }
+  .discovery-content { @apply relative z-10 px-8 py-9; width: 65%; }
   .hero-eyebrow { @apply inline-flex text-xs font-semibold text-primary mb-5; }
   .discovery-content h1 { @apply font-extrabold leading-tight; font-size: 38px; max-width: 510px; }
   .discovery-content h1 span { @apply block text-primary mt-1; }
@@ -126,10 +128,10 @@
   .hero-facts div { @apply flex flex-col gap-1; }
   .hero-facts strong { @apply text-lg font-extrabold; }
   .hero-facts span { @apply text-[11px] text-muted-foreground; }
-  .category-section .cat-card { @apply relative overflow-hidden rounded-lg text-left; height: 104px; }
+  .category-section .cat-card { @apply relative overflow-hidden rounded-lg text-left; height: 90px; }
   .category-section .cat-card-img { @apply absolute inset-0 h-full w-full p-0 m-0 rounded-lg border-0; aspect-ratio: auto; }
   .category-section .cat-card::after { content: ''; @apply absolute inset-0 pointer-events-none; background: var(--image-overlay); }
-  .category-label { @apply absolute bottom-3 left-3 right-3 z-10 text-xs font-semibold leading-tight; color: hsl(var(--photo-foreground)); }
+  .category-label { @apply absolute bottom-2 left-2 right-2 z-10 text-xs font-semibold leading-tight; color: hsl(var(--photo-foreground)); }
   .category-section .cat-card:hover img { transform: scale(1.04); transition: transform .25s ease; }
   .popular-section .cartoon-card { box-shadow: var(--shadow-cartoon); }
   .catalog-events { @apply px-4 mt-12; }
@@ -155,6 +157,7 @@
   .discovery-content { max-width: 1152px; width: 100%; margin: auto; padding-right: 540px; }
 }
 @media (max-width: 767px) {
+  .discovery-centers { display: none; }
   .site-header-inner { min-height: 66px; gap: 8px; padding: 0 16px; }
   .site-header-inner > a { gap: 5px; }
   .site-header-inner > a span { font-size: 16px; }
@@ -162,18 +165,18 @@
   .city-control span { max-width: 82px; }
   .city-control svg:last-child { display: none; }
   .language-control { height: 34px; padding: 0 8px; }
-  .discovery-hero { min-height: 580px; }
-  .discovery-photo { object-position: 64% bottom; height: 270px; top: auto; }
-  .discovery-hero::after { background: linear-gradient(180deg, hsl(var(--hero-surface)) 0%, hsl(var(--hero-surface)) 50%, hsl(var(--hero-surface) / 0) 74%); }
-  .discovery-content { width: 100%; padding: 28px 20px 24px; }
-  .discovery-content h1 { font-size: 30px; max-width: 350px; }
-  .discovery-content p { max-width: 320px; margin-top: 14px; }
+  .discovery-hero { min-height: 360px; }
+  .discovery-photo { object-position: right center; width: 105px; left: auto; object-fit: cover; }
+  .discovery-content { width: 100%; padding: 24px 20px; }
+  .discovery-content h1 { font-size: 28px; max-width: 310px; }
+  .discovery-content p { max-width: 270px; margin-top: 14px; }
   .hero-eyebrow { margin-bottom: 14px; }
   .discovery-search { margin-top: 20px; }
   .hero-facts { display: none; }
   .hero-facts strong { font-size: 16px; }
   .hero-facts span { font-size: 10px; }
-  .category-section .cat-card { height: 112px; }
+  .category-section .cat-card { height: 76px; }
+  .category-label { font-size: 10px; }
   .section-title { font-size: 22px; }
   .afisha-heading { flex-direction: column; align-items: flex-start; padding: 28px 20px; gap: 20px; }
   .afisha-heading h1 { font-size: 32px; }
