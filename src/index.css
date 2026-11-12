@@ -109,6 +109,7 @@
   .site-header { @apply sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border; box-shadow: var(--shadow-header); }
   .site-header-inner { @apply max-w-6xl mx-auto flex items-center gap-5 px-5; min-height: 76px; }
   .city-control { @apply text-xs font-semibold; }
+  .city-control span { @apply truncate; max-width: 150px; }
   .city-control svg { @apply w-3 h-3; }
   .language-control { @apply bg-card text-foreground border-border; }
   .discovery-hero { @apply relative overflow-hidden; min-height: 470px; background: hsl(var(--hero-surface)); }
@@ -158,6 +159,7 @@
   .site-header-inner > a { gap: 5px; }
   .site-header-inner > a span { font-size: 16px; }
   .city-control { padding: 0 8px; height: 34px; }
+  .city-control span { max-width: 82px; }
   .city-control svg:last-child { display: none; }
   .language-control { height: 34px; padding: 0 8px; }
   .discovery-hero { min-height: 580px; }
