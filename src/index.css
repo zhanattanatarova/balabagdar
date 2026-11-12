@@ -1,13 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 144 45% 97%;
-    --foreground: 160 25% 12%;
+    --background: 0 0% 100%;
+    --foreground: 158 24% 11%;
 
     --card: 0 0% 100%;
     --card-foreground: 150 30% 10%;
@@ -15,17 +13,17 @@
     --popover: 0 0% 100%;
     --popover-foreground: 150 30% 10%;
 
-    --primary: 148 66% 39%;
+    --primary: 153 56% 30%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 36 100% 64%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 145 30% 95%;
+    --secondary-foreground: 153 56% 24%;
 
-    --muted: 145 45% 93%;
+    --muted: 145 24% 96%;
     --muted-foreground: 155 10% 42%;
 
-    --accent: 36 100% 64%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 145 30% 93%;
+    --accent-foreground: 153 56% 24%;
 
     --destructive: 0 90% 55%;
     --destructive-foreground: 0 0% 100%;
@@ -33,7 +31,11 @@
     --border: 145 30% 89%;
     --input: 145 30% 89%;
     --ring: 145 65% 42%;
-    --radius: 1.25rem;
+    --radius: 0.5rem;
+    --hero-surface: 145 30% 94%;
+    --hero-wash: linear-gradient(90deg, hsl(145 30% 94%) 0%, hsl(145 30% 94% / .97) 30%, hsl(145 30% 94% / .6) 48%, hsl(145 30% 94% / 0) 70%);
+    --image-overlay: linear-gradient(180deg, transparent 25%, hsl(158 24% 7% / .75));
+    --shadow-header: 0 2px 14px hsl(158 24% 11% / .04);
 
     --yellow-bright: 45 100% 55%;
     --yellow-light: 50 100% 92%;
@@ -102,23 +104,101 @@
   }
 }
 
+@layer components {
+  .site-header { @apply sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border; box-shadow: var(--shadow-header); }
+  .site-header-inner { @apply max-w-6xl mx-auto flex items-center gap-5 px-5; min-height: 76px; }
+  .city-control { @apply text-xs font-semibold; }
+  .city-control svg { @apply w-3 h-3; }
+  .language-control { @apply bg-card text-foreground border-border; }
+  .discovery-hero { @apply relative overflow-hidden; min-height: 470px; background: hsl(var(--hero-surface)); }
+  .discovery-photo { @apply absolute inset-0 h-full w-full object-cover; object-position: center; }
+  .discovery-hero::after { content: ''; @apply absolute inset-0; background: var(--hero-wash); }
+  .discovery-content { @apply relative z-10 px-8 py-12; width: 62%; }
+  .hero-eyebrow { @apply inline-flex text-xs font-semibold text-primary mb-5; }
+  .discovery-content h1 { @apply font-extrabold leading-tight; font-size: 38px; max-width: 510px; }
+  .discovery-content h1 span { @apply block text-primary mt-1; }
+  .discovery-content p { @apply text-sm leading-relaxed text-muted-foreground mt-5; max-width: 350px; }
+  .discovery-search { @apply flex items-center gap-3 bg-card p-2 pl-4 mt-7 border border-border rounded-lg; box-shadow: var(--shadow-cartoon-lg); max-width: 530px; }
+  .discovery-search input { @apply w-full min-w-0 bg-transparent text-sm outline-none; }
+  .hero-facts { @apply flex gap-8 mt-7; }
+  .hero-facts div { @apply flex flex-col gap-1; }
+  .hero-facts strong { @apply text-lg font-extrabold; }
+  .hero-facts span { @apply text-[11px] text-muted-foreground; }
+  .category-section .cat-card { @apply relative overflow-hidden rounded-lg text-left; height: 104px; }
+  .category-section .cat-card-img { @apply absolute inset-0 h-full w-full p-0 m-0 rounded-lg border-0; aspect-ratio: auto; }
+  .category-section .cat-card::after { content: ''; @apply absolute inset-0 pointer-events-none; background: var(--image-overlay); }
+  .category-label { @apply absolute bottom-3 left-3 right-3 z-10 text-primary-foreground text-xs font-semibold leading-tight; }
+  .category-section .cat-card:hover img { transform: scale(1.04); transition: transform .25s ease; }
+  .popular-section .cartoon-card { box-shadow: var(--shadow-cartoon); }
+  .catalog-events { @apply px-4 mt-12; }
+  .event-row { @apply flex items-center gap-5 border border-border rounded-lg p-4 bg-card transition-colors hover:border-primary; }
+  .event-date { @apply flex flex-col gap-2 items-center text-primary text-xs font-semibold shrink-0 bg-muted rounded-md p-3; width: 140px; }
+  .afisha-heading { @apply flex items-center justify-between gap-6 px-8 py-10 bg-muted/70; }
+  .afisha-heading h1 { @apply text-4xl font-extrabold; }
+  .afisha-heading p { @apply text-sm text-muted-foreground mt-3; }
+  .afisha-heading .hero-eyebrow { @apply mb-3; }
+  .afisha-page > div:last-of-type { @apply pb-4; }
+  .site-footer { @apply max-w-6xl mx-auto px-5 pb-28 lg:pb-8 pt-12; }
+  .partner-band { @apply bg-primary text-primary-foreground px-8 py-9 rounded-lg flex items-center justify-between gap-6; }
+  .partner-band h2 { @apply text-2xl font-bold leading-snug; }
+  .partner-band p { @apply text-sm mt-3 text-primary-foreground/80; }
+  .partner-band .bg-background { @apply bg-primary text-primary-foreground border-primary-foreground/50 hover:bg-primary-foreground hover:text-primary; }
+  .footer-links { @apply grid grid-cols-3 gap-8 mt-10; grid-template-columns: 2fr 1fr 1fr; }
+  .footer-links h3 { @apply text-sm font-bold mb-4; }
+  .footer-links > div > a:not(:first-child) { @apply block text-xs text-muted-foreground mt-3 hover:text-primary; }
+}
+
+@media (min-width: 1200px) {
+  .discovery-hero { margin-left: calc((1152px - 100vw) / 2); margin-right: calc((1152px - 100vw) / 2); }
+  .discovery-content { max-width: 1152px; width: 100%; margin: auto; padding-right: 540px; }
+}
+@media (max-width: 767px) {
+  .site-header-inner { min-height: 66px; gap: 8px; padding: 0 16px; }
+  .site-header-inner > a { gap: 5px; }
+  .site-header-inner > a span { font-size: 16px; }
+  .city-control { padding: 0 8px; height: 34px; }
+  .city-control svg:last-child { display: none; }
+  .language-control { height: 34px; padding: 0 8px; }
+  .discovery-hero { min-height: 580px; }
+  .discovery-photo { object-position: 64% bottom; height: 270px; top: auto; }
+  .discovery-hero::after { background: linear-gradient(180deg, hsl(var(--hero-surface)) 0%, hsl(var(--hero-surface)) 50%, hsl(var(--hero-surface) / 0) 74%); }
+  .discovery-content { width: 100%; padding: 28px 20px 24px; }
+  .discovery-content h1 { font-size: 30px; max-width: 350px; }
+  .discovery-content p { max-width: 320px; margin-top: 14px; }
+  .hero-eyebrow { margin-bottom: 14px; }
+  .discovery-search { margin-top: 20px; }
+  .hero-facts { display: none; }
+  .hero-facts strong { font-size: 16px; }
+  .hero-facts span { font-size: 10px; }
+  .category-section .cat-card { height: 112px; }
+  .section-title { font-size: 22px; }
+  .afisha-heading { flex-direction: column; align-items: flex-start; padding: 28px 20px; gap: 20px; }
+  .afisha-heading h1 { font-size: 32px; }
+  .event-row { padding: 12px; gap: 12px; }
+  .event-date { width: 85px; padding: 10px 6px; font-size: 10px; }
+  .partner-band { padding: 26px 22px; flex-direction: column; align-items: flex-start; }
+  .partner-band h2 { font-size: 22px; }
+  .footer-links { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .footer-links > div:first-child { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground font-nunito antialiased;
-    background-image:
-      radial-gradient(60rem 40rem at 100% -10%, hsl(var(--primary) / 0.08), transparent 60%),
-      radial-gradient(50rem 30rem at -10% 30%, hsl(var(--secondary) / 0.10), transparent 60%);
-    background-attachment: fixed;
+
   }
-  h1, h2, h3 { letter-spacing: -0.02em; }
+  h1, h2, h3 { letter-spacing: 0; }
 }
 
 @layer components {
   .section-title {
-    @apply text-base font-black tracking-tight;
+    @apply text-2xl font-extrabold;
   }
   .badge-rating {
     @apply inline-flex items-center gap-1 bg-card/95 backdrop-blur-sm text-foreground text-xs font-black px-2.5 py-1 rounded-full shadow-sm border border-primary/20;
@@ -153,7 +233,7 @@
   }
 
   .cartoon-card {
-    @apply bg-card/90 backdrop-blur-sm rounded-3xl border transition-all duration-300;
+    @apply bg-card rounded-lg border transition-all duration-300;
     border-color: hsl(var(--foreground) / 0.06);
     box-shadow: var(--shadow-cartoon);
   }

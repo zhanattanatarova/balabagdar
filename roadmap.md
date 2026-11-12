@@ -1,4 +1,7 @@
 # Publications for Aktau
+- [x] Redesign the shared appearance and navigation using the approved photographic reference.
+- [x] Redesign catalog and Afisha, preserving filters, contacts and existing routes.
+- [x] Verify guest navigation, search and RU/KZ layouts on desktop and mobile.
 - [x] Keep events through the last Aktau calendar day; add optional end date to forms and chess championship.
 - [x] Format date ranges and hide unspecified midnight times; verify tests and guest display.
 - [x] Add source fields and optional club association, preserving guest phone privacy.

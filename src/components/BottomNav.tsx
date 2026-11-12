@@ -15,9 +15,9 @@ const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2">
+    <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2">
       <nav>
-        <div className="flex items-center gap-1 bg-card/95 backdrop-blur-xl border border-border rounded-2xl px-2 py-2" style={{ boxShadow: "0 4px 24px hsl(0 0% 0% / 0.12)" }}>
+        <div className="flex items-center gap-1 bg-card/95 backdrop-blur-xl border border-border rounded-2xl px-2 py-2">
           {tabs.map(({ path, icon: Icon, label }) => {
             const active = location.pathname === path;
             return (
@@ -25,7 +25,7 @@ const BottomNav = () => {
                 key={path}
                 to={path}
                 aria-current={active ? "page" : undefined}
-                className={`flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl transition-all duration-200 ${active ? "bg-primary" : "hover:bg-muted"}`}
+                className={`flex flex-col items-center gap-0.5 px-3 sm:px-4 py-1.5 rounded-xl transition-all duration-200 ${active ? "bg-primary" : "hover:bg-muted"}`}
               >
                 <Icon size={20} strokeWidth={active ? 2.5 : 1.8} className={active ? "text-primary-foreground" : "text-muted-foreground"} />
                 <span className={`text-[10px] font-bold ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>{label}</span>

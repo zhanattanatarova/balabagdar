@@ -50,8 +50,14 @@ const Index = () => {
 
   // Persist manual city selection
   useEffect(() => {
-    try { localStorage.setItem("bb_city", city); } catch {}
+    try { localStorage.setItem("bb_city", city); window.dispatchEvent(new Event("balahub-city")); } catch {}
   }, [city]);
+
+  useEffect(() => {
+    const update = () => setCity(localStorage.getItem("bb_city") || "Актау");
+    window.addEventListener("balahub-city", update);
+    return () => window.removeEventListener("balahub-city", update);
+  }, []);
 
   const renderPage = () => {
     switch (location.pathname) {

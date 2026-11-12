@@ -240,8 +240,8 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
 
 
   return (
-    <div className="relative pb-24 max-w-6xl mx-auto">
-      <div className="absolute top-3 right-4 z-20"><LanguageSwitcher compact /></div>
+    <div className="afisha-page relative pb-12 max-w-6xl mx-auto">
+
       {setCity && (
         <CityPickerSheet open={showCityPicker} city={city} onClose={() => setShowCityPicker(false)} onSelect={setCity} />
       )}
@@ -272,40 +272,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
             })),
         }}
       />
-      {/* Header banner */}
-      <div className="relative h-44 rounded-b-3xl overflow-hidden" style={{ background: "var(--gradient-header)" }}>
-        <div className="absolute inset-0 flex items-center justify-between px-5">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <BrandLogo size="xs" />
-              {setCity ? (
-                <button
-                  onClick={() => setShowCityPicker(true)}
-                  aria-label={t("home.select_city")}
-                  className="flex items-center gap-1 text-primary-foreground text-xs font-black px-2.5 py-1 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/30"
-                >
-                  <MapPin size={12} />{city}<ChevronDown size={14} />
-                </button>
-              ) : (
-                <span className="text-primary-foreground/80 text-xs font-bold">{t("news.today_in")} {city}</span>
-              )}
-            </div>
-            <h1 className="text-xl font-black text-primary-foreground leading-snug">
-              {titleLines.map((line, i) => (
-                <span key={i}>{line}{i < titleLines.length - 1 && <br />}</span>
-              ))}
-            </h1>
-          </div>
-          <button
-            onClick={openPostForm}
-            aria-label={ui.add}
-            title={ui.add_title}
-            className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30 active:scale-95 transition-all cursor-pointer"
-          >
-            <Plus size={20} className="text-primary-foreground" />
-          </button>
-        </div>
-      </div>
+      <section className="afisha-heading"><div><span className="hero-eyebrow">BalaHub · {city}</span><h1>{t("nav.events")}</h1><p>{lang === "ru" ? "Маленькие открытия. Большие впечатления." : lang === "kz" ? "Кішкентай жаңалықтар. Үлкен әсерлер." : "Little discoveries. Big memories."}</p></div><Button onClick={openPostForm}><Plus />{ui.add}</Button></section>
 
       <div className="mt-4"><SectionLinks /></div>
 
@@ -330,7 +297,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
         )}
         {!loading && events.length === 0 && (
           <div className="cartoon-card flex flex-col items-center justify-center text-center py-14 px-6">
-            <div className="text-5xl mb-4">🎉</div>
+            <CalendarIcon size={40} className="text-primary mb-4" />
             <h3 className="font-black text-lg">{ui.empty_upcoming.replace("{city}", city)}</h3>
             <p className="text-sm text-muted-foreground font-bold mt-1">
               {ui.empty_desc}

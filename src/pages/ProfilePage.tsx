@@ -45,25 +45,24 @@ const ProfilePage = () => {
   ];
 
   return (
-    <div className="pb-24 max-w-6xl mx-auto">
+    <div className="pb-12 max-w-2xl mx-auto">
       <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
 
-      <div className="relative pt-8 pb-10 flex flex-col items-center rounded-b-[2rem]" style={{ background: "var(--gradient-header)" }}>
-        <div className="absolute top-3 right-3"><LanguageSwitcher compact /></div>
+      <div className="relative pt-8 pb-10 flex flex-col items-center bg-muted/70">
         <div className="border-4 border-primary-foreground/30 rounded-full" style={{ boxShadow: "var(--shadow-cartoon-lg)" }}>
           <BrandLogo size="lg" />
         </div>
         {user ? (
           <>
-            <h1 className="text-xl font-black text-primary-foreground mt-3">
+            <h1 className="text-xl font-bold text-foreground mt-3">
               {user.user_metadata?.display_name || `User ${phone.slice(-4)}`}
             </h1>
-            <p className="text-primary-foreground/70 text-xs font-bold mt-0.5">{t("profile.free_access")}</p>
+            <p className="text-muted-foreground text-xs font-medium mt-0.5">{t("profile.free_access")}</p>
           </>
         ) : (
           <>
-            <h1 className="text-xl font-black text-primary-foreground mt-3">{t("profile.guest")}</h1>
-            <p className="text-primary-foreground/70 text-xs font-bold mt-0.5">{t("profile.guest_desc")}</p>
+            <h1 className="text-xl font-bold text-foreground mt-3">{t("profile.guest")}</h1>
+            <p className="text-muted-foreground text-xs font-medium mt-0.5">{t("profile.guest_desc")}</p>
           </>
         )}
       </div>
@@ -71,7 +70,7 @@ const ProfilePage = () => {
       <div className="px-4 -mt-5 relative z-10">
         {!user && (
           <button onClick={() => setShowAuth(true)}
-            className="w-full flex items-center gap-3 bg-primary rounded-2xl p-3.5 mb-3 text-left cartoon-card border-primary">
+            className="w-full flex items-center gap-3 bg-primary rounded-lg p-3.5 mb-3 text-left border border-primary">
             <div className="w-10 h-10 rounded-xl bg-primary-foreground/20 flex items-center justify-center shrink-0">
               <LogIn size={18} className="text-primary-foreground" />
             </div>
