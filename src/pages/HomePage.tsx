@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import CatalogEvents from "@/components/CatalogEvents";
-import discoveryScene from "@/assets/discovery-scene.jpg";
+import discoveryScene from "@/assets/discovery-brush.jpg";
 import photoCreativity from "@/assets/category-creativity.jpg";
 import photoSport from "@/assets/category-sport.jpg";
 import photoDevelopment from "@/assets/category-development.jpg";
@@ -871,7 +871,7 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       {/* Categories */}
       <section className="category-section px-4 mt-8">
         <div className="flex items-center justify-between gap-3 mb-5"><h2 className="section-title">{lang === "ru" ? "Направления" : lang === "kz" ? "Бағыттар" : "Categories"}</h2><Button variant="link" onClick={() => setShowAllCategories(!showAllCategories)} className="text-xs px-0">{showAllCategories ? (lang === "ru" ? "Свернуть" : lang === "kz" ? "Жасыру" : "Show less") : (lang === "ru" ? `Все ${categoryIds.length} направление` : lang === "kz" ? `Барлық ${categoryIds.length} бағыт` : `All ${categoryIds.length} categories`)}<ArrowRight /></Button></div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
           {(showAllCategories ? categoryIds : categoryIds.slice(0, 12)).map((id) => {
             const handleClick = () => {
               if (id === "languages") {
