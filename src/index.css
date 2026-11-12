@@ -134,6 +134,10 @@
   .category-label { @apply absolute bottom-2 left-2 right-2 z-10 text-xs font-semibold leading-tight; color: hsl(var(--photo-foreground)); }
   .category-section .cat-card:hover img { transform: scale(1.04); transition: transform .25s ease; }
   .popular-section .cartoon-card { box-shadow: var(--shadow-cartoon); }
+  .popular-row { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 48px) / 4); gap: 16px; overflow-x: auto; margin: 0 16px; padding: 2px 0 14px; scroll-snap-type: x mandatory; }
+  .popular-card { scroll-snap-align: start; box-shadow: var(--shadow-cartoon); }
+  .popular-card:hover { box-shadow: var(--shadow-cartoon-lg); }
+  @media (min-width: 768px) and (max-width: 1023px) { .popular-row { grid-auto-columns: calc((100% - 32px) / 3); } }
   .catalog-events { @apply px-4 mt-12; }
   .event-row { @apply flex items-center gap-5 border border-border rounded-lg p-4 bg-card transition-colors hover:border-primary; }
   .event-date { @apply flex flex-col gap-2 items-center text-primary text-xs font-semibold shrink-0 bg-muted rounded-md p-3; width: 140px; }
@@ -157,6 +161,7 @@
   .discovery-content { max-width: 1152px; width: 100%; margin: auto; padding-right: 540px; }
 }
 @media (max-width: 767px) {
+  .popular-row { grid-auto-columns: 78%; gap: 12px; }
   .discovery-centers { display: none; }
   .site-header-inner { min-height: 66px; gap: 8px; padding: 0 16px; }
   .site-header-inner > a { gap: 5px; }
