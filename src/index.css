@@ -166,7 +166,7 @@
   .city-control svg:last-child { display: none; }
   .language-control { height: 34px; padding: 0 8px; }
   .discovery-hero { min-height: 360px; }
-  .discovery-photo { object-position: right center; width: 140px; left: auto; object-fit: cover; opacity: .55; }
+  .discovery-photo { object-position: right center; width: 105px; left: auto; object-fit: cover; }
   .discovery-content { width: 100%; padding: 24px 20px; }
   .discovery-content h1 { font-size: 28px; max-width: 310px; }
   .discovery-content p { max-width: 270px; margin-top: 14px; }
