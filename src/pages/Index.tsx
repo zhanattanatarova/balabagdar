@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
+import { useSelectedCity } from "@/hooks/useSelectedCity";
 import { useLocation } from "react-router-dom";
 import SplashScreen from "./SplashScreen";
 import HomePage from "./HomePage";
@@ -39,24 +40,11 @@ const seoByPath: Record<string, { title: L; description: L; path: string }> = {
 const Index = () => {
   const { lang } = useLanguage();
   const [showSplash, setShowSplash] = useState(true);
-  const [city, setCity] = useState(() => {
-    try { return localStorage.getItem("bb_city") || "Актау"; } catch { return "Актау"; }
-  });
+  const [city, setCity] = useSelectedCity();
   const location = useLocation();
 
   const handleSplashComplete = useCallback(() => {
     setShowSplash(false);
-  }, []);
-
-  // Persist manual city selection
-  useEffect(() => {
-    try { localStorage.setItem("bb_city", city); window.dispatchEvent(new Event("balahub-city")); } catch {}
-  }, [city]);
-
-  useEffect(() => {
-    const update = () => setCity(localStorage.getItem("bb_city") || "Актау");
-    window.addEventListener("balahub-city", update);
-    return () => window.removeEventListener("balahub-city", update);
   }, []);
 
   const renderPage = () => {

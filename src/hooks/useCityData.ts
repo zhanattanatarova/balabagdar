@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
-import { currentCity, fetchClubs, fetchCollections, fetchPubs, type Collection, type Pub, type PubClub } from "@/lib/publicData";
+import { fetchClubs, fetchCollections, fetchPubs, type Collection, type Pub, type PubClub } from "@/lib/publicData";
+import { useSelectedCity } from "./useSelectedCity";
 import { resolveCollection } from "@/lib/collections";
 
 export function useCityData(withCollections = false) {
-  const [state, setState] = useState<{ loading: boolean; city: string; clubs: PubClub[]; pubs: Pub[]; collections: Collection[] }>({ loading: true, city: currentCity(), clubs: [], pubs: [], collections: [] });
+  const [city] = useSelectedCity();
+  const [state, setState] = useState<{ loading: boolean; city: string; clubs: PubClub[]; pubs: Pub[]; collections: Collection[] }>({ loading: true, city, clubs: [], pubs: [], collections: [] });
   useEffect(() => {
-    const city = currentCity();
+    let cancelled = false;
+    setState({ loading: true, city, clubs: [], pubs: [], collections: [] });
     Promise.all([fetchClubs(city), fetchPubs(city), withCollections ? fetchCollections() : Promise.resolve([])])
-      .then(([clubs, pubs, collections]) => setState({ loading: false, city, clubs, pubs, collections }));
-  }, [withCollections]);
+      .then(([clubs, pubs, collections]) => { if (!cancelled) setState({ loading: false, city, clubs, pubs, collections }); })
+      .catch(() => { if (!cancelled) setState({ loading: false, city, clubs: [], pubs: [], collections: [] }); });
+    return () => { cancelled = true; };
+  }, [city, withCollections]);
   return state;
 }
 

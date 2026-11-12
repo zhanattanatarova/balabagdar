@@ -14,5 +14,6 @@
 - Deals are announcements with category `promo`/`trial`; a DB trigger forces partner deals to `is_approved=false` and only admins set `is_approved`/`is_promoted`; public reads require `is_approved`.
 - Public SELECT policies must not call `has_role` (anon cannot execute it); admin access goes in separate authenticated policies.
 - Blog articles render Markdown via react-markdown with `[club:<uuid>]` embeds; the blog link is shown only when a published article exists.
-- Shared SiteHeader/SiteFooter wrap every route; header city selection broadcasts `balahub-city` to synchronize the existing city state without changing route behavior.
+- Shared SiteHeader/SiteFooter wrap every route; all city-based views subscribe through useSelectedCity to the persisted city store, while search preserves filters and updates its city URL parameter on selection.
+- City selection uses a portalled modal with focus and scroll management so sticky header containment cannot clip it.
 - Catalog photography is imported from local generated assets, while center cards keep their own database photos; decorative imagery must never substitute for a center's actual photo.

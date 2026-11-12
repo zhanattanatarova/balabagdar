@@ -22,9 +22,7 @@ export interface Collection {
 export const CLUB_COLS = "id,name_ru,name_kz,name_en,avatar_url,category,categories,age_min,age_max,city,price_from,price_currency";
 export const PUB_COLS = "id,category,title,body,name,city,event_date,event_end_date,image_url,club_id,source_label,source_url,public_phone,age_min,age_max,is_free,price_from,event_kind,season,deal_until,discount_text,is_promoted,created_at";
 
-export function currentCity(): string {
-  try { return localStorage.getItem("bb_city") || "Актау"; } catch { return "Актау"; }
-}
+export { currentCity } from "./city";
 
 export async function fetchClubs(city: string): Promise<PubClub[]> {
   const { data } = await supabase.from("clubs").select(CLUB_COLS).eq("is_active", true).eq("city", city).limit(1000);
