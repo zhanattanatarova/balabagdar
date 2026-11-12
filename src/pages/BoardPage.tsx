@@ -328,10 +328,10 @@ const BoardPage = ({ city }: { city: string }) => {
 
   return (
     <div className="pb-32 max-w-3xl mx-auto">
-      <div className="px-4 pt-5 pb-3 flex items-center justify-between">
+      <div className="px-5 pt-8 pb-6 mb-5 bg-muted/70 flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-lg font-black flex items-center gap-2">
-            <span className="text-xl">📣</span> {tt.title}
+          <h1 className="text-2xl font-extrabold flex items-center gap-2">
+            {tt.title}
           </h1>
           <p className="text-xs text-muted-foreground font-bold mt-0.5">
             {city || "Актау"} · {tt.subtitle}
