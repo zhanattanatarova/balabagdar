@@ -15,8 +15,8 @@ import photoSpecial from "@/assets/category-special.jpg";
 import photoCamp from "@/assets/category-camp.jpg";
 import SectionLinks from "@/components/sections/SectionLinks";
 import CollectionsCarousel from "@/components/sections/CollectionsCarousel";
-import { useState, useMemo, useEffect } from "react";
-import { Search, MapPin, ChevronDown, Star, ArrowRight, X, Check, Loader2, Navigation } from "lucide-react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { Search, MapPin, ChevronDown, ChevronLeft, ChevronRight, Star, ArrowRight, X, Check, Loader2, Navigation } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Link, useNavigate } from "react-router-dom";
@@ -399,6 +399,12 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
   }, [city, selectedCategory, selectedLanguage, selectedDance, selectedSport, selectedHealth, selectedTutors, selectedCreativity, selectedMusic, selectedDevelopment, selectedSpecial, searchQuery, ageFilter, matchedCategoryIds]);
 
   const popularClubs = useMemo(() => popularSort(clubs), [clubs]);
+  const popularRow = useRef<HTMLDivElement>(null);
+  const scrollPopular = (direction: number) => {
+    const row = popularRow.current;
+    if (!row) return;
+    row.scrollBy({ left: direction * row.clientWidth, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  };
 
   const showNearby = () => {
     if (!navigator.geolocation) {
@@ -995,7 +1001,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       <div className="popular-section mt-12">
         <div className="flex items-center justify-between px-4 mb-5">
           <h2 className="section-title">{t("home.popular")}</h2>
-          <Link to="/map" className="text-primary text-sm font-black">{t("home.all")}</Link>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" onClick={() => scrollPopular(-1)} aria-label={lang === "ru" ? "Предыдущие центры" : lang === "kz" ? "Алдыңғы орталықтар" : "Previous centers"} title={lang === "ru" ? "Предыдущие центры" : lang === "kz" ? "Алдыңғы орталықтар" : "Previous centers"} className="h-8 w-8"><ChevronLeft size={16} /></Button>
+            <Button variant="outline" size="icon" onClick={() => scrollPopular(1)} aria-label={lang === "ru" ? "Следующие центры" : lang === "kz" ? "Келесі орталықтар" : "Next centers"} title={lang === "ru" ? "Следующие центры" : lang === "kz" ? "Келесі орталықтар" : "Next centers"} className="h-8 w-8"><ChevronRight size={16} /></Button>
+            <Link to="/map" className="text-primary text-xs font-semibold ml-1 whitespace-nowrap">{t("home.all")}</Link>
+          </div>
         </div>
 
         {loadingClubs ? (
@@ -1011,22 +1021,21 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           </div>
           )
         ) : (
-          <div className="flex md:grid md:grid-cols-3 lg:grid-cols-4 gap-5 overflow-x-auto px-4 pb-4 scrollbar-none">
+          <div ref={popularRow} className="popular-row scrollbar-none">
             {popularClubs.map((club, i) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
               const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
                 <Link key={club.id} to={`/club/${club.id}`}
-                  className="block w-[230px] md:w-auto min-w-[230px] md:min-w-0 cartoon-card overflow-hidden shrink-0 md:shrink cursor-pointer animate-slide-up"
-                  style={{ animationDelay: `${i * 0.06}s`, animationFillMode: "both" }}>
-                  <div className="relative h-40">
+                  className="popular-card block min-w-0 bg-card border border-border rounded-lg overflow-hidden transition-shadow">
+                  <div className="relative h-32">
                     {safeImageUrl(club.avatar_url) ? (
-                      <img src={safeImageUrl(club.avatar_url)} alt={name} className="w-full h-full object-cover" />
+                      <img src={safeImageUrl(club.avatar_url)} alt={name} loading="lazy" className="w-full h-full object-contain bg-card" />
                     ) : (
                       <div className="w-full h-full bg-primary/10 flex items-center justify-center"><ClubInitialAvatar name={name} size="md" /></div>
                     )}
                   </div>
-                  <div className="p-4">
+                  <div className="p-3">
                     <h3 className="font-bold text-sm leading-snug line-clamp-1">{name}</h3>
                     {club.reviews_count > 0 && (
                       <div className="flex items-center gap-1 mt-1">
@@ -1036,8 +1045,8 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
                       </div>
                     )}
                     <TwoGisBadge rating={club.twogis_rating} count={club.twogis_reviews_count} className="mt-1" />
-                    <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-bold">
-                      <MapPin size={10} className="text-primary" />{clubLocation(club.city, club.address)}
+                    <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-medium">
+                      <MapPin size={10} className="text-primary shrink-0" /><span className="truncate">{clubLocation(club.city, club.address)}</span>
                     </p>
                     {club.price_from > 0 && (
                       <p className="text-[10px] font-bold text-primary mt-1">
