@@ -90,7 +90,7 @@ const CITY_SLUG: Record<string, string> = {
 };
 
 // Geocode using Nominatim with localStorage cache
-async function geocode(query: string): Promise<[number, number] | null> {
+async function geocode(query: string, signal: AbortSignal): Promise<[number, number] | null> {
   const key = `geo:${query}`;
   try {
     const cached = localStorage.getItem(key);
@@ -99,15 +99,16 @@ async function geocode(query: string): Promise<[number, number] | null> {
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`,
-      { headers: { "Accept-Language": "ru" } }
+      { headers: { "Accept-Language": "ru" }, signal }
     );
+    if (!res.ok) throw new Error("Geocoding unavailable");
     const data = await res.json();
     if (data?.[0]) {
       const coords: [number, number] = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
       try { localStorage.setItem(key, JSON.stringify(coords)); } catch {}
       return coords;
     }
-  } catch {}
+  } catch (error) { throw error; }
   return null;
 }
 
@@ -135,6 +136,7 @@ const MapPage = ({ city }: { city: string }) => {
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const load = async () => {
       setLoading(true);
       const { data } = await supabase
@@ -147,24 +149,36 @@ const MapPage = ({ city }: { city: string }) => {
         lat: club.latitude ?? undefined,
         lng: club.longitude ?? undefined,
       }));
+      if (cancelled) return;
       setClubs(list);
       setLoading(false);
-
-      // Geocode addresses progressively
-      setGeocoding(true);
-      for (const club of list) {
-        if (club.lat && club.lng) continue;
-        if (!club.address) continue;
-        const coords = await geocode(`${club.address}, ${club.city}, Казахстан`);
-        if (coords) {
-          setClubs((prev) => prev.map((c) => (c.id === club.id ? { ...c, lat: coords[0], lng: coords[1] } : c)));
-        }
-        await new Promise((r) => setTimeout(r, 250)); // Nominatim rate limit ~1 req/s, be polite
-      }
-      setGeocoding(false);
     };
     load();
+    return () => { cancelled = true; };
   }, [city]);
+
+  useEffect(() => {
+    if (!showMap || loading) return;
+    const controller = new AbortController();
+    const run = async () => {
+      setGeocoding(true);
+      try {
+        for (const club of clubs) {
+          if (controller.signal.aborted) break;
+          if ((club.lat != null && club.lng != null) || !club.address) continue;
+          const coords = await geocode(`${club.address}, ${club.city}, Казахстан`, controller.signal);
+          if (controller.signal.aborted) break;
+          if (coords) setClubs(prev => prev.map(c => c.id === club.id ? { ...c, lat: coords[0], lng: coords[1] } : c));
+          await new Promise(resolve => setTimeout(resolve, 1100));
+        }
+      } catch { /* Stop requests if the external map service is unavailable. */ }
+      finally { if (!controller.signal.aborted) setGeocoding(false); }
+    };
+    run();
+    return () => { controller.abort(); setGeocoding(false); };
+    // Geocode only when opening a loaded map, not after every resolved marker.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showMap, loading, city]);
 
   const filteredClubs = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
