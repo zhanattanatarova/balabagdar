@@ -831,6 +831,18 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
 
       <section className="discovery-hero">
         <img src={discoveryScene} alt="" width={1920} height={1024} className="discovery-photo" />
+        <div className="discovery-centers">
+          {popularClubs.slice(0, 2).map(club => (
+            <Link key={club.id} to={`/club/${club.id}`} className="discovery-center bg-card border border-border rounded-lg shadow-sm p-3">
+              <div className="flex items-center gap-3">
+                {safeImageUrl(club.avatar_url) ? <img src={safeImageUrl(club.avatar_url)} alt="" width={44} height={44} className="w-11 h-11 rounded-md object-cover" /> : <ClubInitialAvatar name={tField(club.name_ru, club.name_kz, club.name_en)} size="sm" />}
+                <strong className="text-sm font-bold">{tField(club.name_ru, club.name_kz, club.name_en)}</strong>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">{clubAge(club.age_min, club.age_max, lang)}</p>
+              <span className="block text-xs text-primary font-semibold mt-1">{clubPrice(club.price_from, club.price_currency, lang)}</span>
+            </Link>
+          ))}
+        </div>
         <div className="discovery-content">
           <span className="hero-eyebrow">BalaHub · {lang === "ru" ? "Детство с интересом" : lang === "kz" ? "Қызықты балалық шақ" : "A world to discover"}</span>
           <h1>{lang === "ru" ? "Кружки, секции и афиша для детей" : lang === "kz" ? "Балаларға арналған үйірмелер мен афиша" : "Kids’ clubs, activities and events"}<span>{city}</span></h1>

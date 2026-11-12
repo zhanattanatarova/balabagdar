@@ -114,6 +114,9 @@
   .language-control { @apply bg-card text-foreground border-border; }
   .discovery-hero { @apply relative overflow-hidden; min-height: 410px; background: hsl(var(--hero-surface)); }
   .discovery-photo { @apply absolute inset-0 h-full w-full object-cover; object-position: center; }
+  .discovery-centers { @apply absolute z-10; left: 67%; top: 55px; width: 200px; }
+  .discovery-center { @apply block; }
+  .discovery-center + .discovery-center { margin-top: 16px; margin-left: 32px; }
   .discovery-content { @apply relative z-10 px-8 py-9; width: 65%; }
   .hero-eyebrow { @apply inline-flex text-xs font-semibold text-primary mb-5; }
   .discovery-content h1 { @apply font-extrabold leading-tight; font-size: 38px; max-width: 510px; }
@@ -154,6 +157,7 @@
   .discovery-content { max-width: 1152px; width: 100%; margin: auto; padding-right: 540px; }
 }
 @media (max-width: 767px) {
+  .discovery-centers { display: none; }
   .site-header-inner { min-height: 66px; gap: 8px; padding: 0 16px; }
   .site-header-inner > a { gap: 5px; }
   .site-header-inner > a span { font-size: 16px; }
