@@ -16,7 +16,7 @@ import photoCamp from "@/assets/category-camp.jpg";
 import SectionLinks from "@/components/sections/SectionLinks";
 import CollectionsCarousel from "@/components/sections/CollectionsCarousel";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { Search, MapPin, ChevronDown, ChevronLeft, ChevronRight, Star, ArrowRight, X, Check, Loader2, Navigation } from "lucide-react";
+import { Search, MapPin, ChevronDown, ChevronLeft, ChevronRight, Star, ArrowRight, X, Check, Loader2, Navigation, MessageCircle, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { safeImageUrl } from "@/lib/safeUrl";
 import { popularSort } from "@/lib/popular";
 import { clubAge, clubCategoryLabels, clubLocation, clubPrice, hasRealAge } from "@/lib/clubDisplay";
-import { translations } from "@/i18n/translations";
+import { translations, type TranslationKey } from "@/i18n/translations";
 import BrandLogo from "@/components/BrandLogo";
 import { CITIES } from "@/lib/cities";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
@@ -838,26 +838,37 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       <section className="discovery-hero">
         <img src={discoveryScene} alt="" width={1920} height={1024} className="discovery-photo" />
         <div className="discovery-centers">
-          {popularClubs.slice(0, 2).map(club => (
-            <Link key={club.id} to={`/club/${club.id}`} className="discovery-center bg-card border border-border rounded-lg shadow-sm p-3">
-              <div className="flex items-center gap-3">
-                {safeImageUrl(club.avatar_url) ? <img src={safeImageUrl(club.avatar_url)} alt="" width={44} height={44} className="w-11 h-11 rounded-md object-cover" /> : <ClubInitialAvatar name={tField(club.name_ru, club.name_kz, club.name_en)} size="sm" />}
-                <strong className="text-sm font-bold">{tField(club.name_ru, club.name_kz, club.name_en)}</strong>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">{clubAge(club.age_min, club.age_max, lang)}</p>
-              <span className="block text-xs text-primary font-semibold mt-1">{clubPrice(club.price_from, club.price_currency, lang)}</span>
-            </Link>
-          ))}
+          {popularClubs.slice(0, 2).map((club, i) => {
+            const name = tField(club.name_ru, club.name_kz, club.name_en);
+            const photo = safeImageUrl(club.avatar_url);
+            const labels = clubCategoryLabels(club.categories, t).slice(0, 2);
+            return i === 0 ? (
+              <Link key={club.id} to={`/club/${club.id}`} className="discovery-center featured">
+                <span className="featured-media">{photo ? <img src={photo} alt="" width={96} height={96} /> : <ClubInitialAvatar name={name} size="md" />}<span className="featured-badge">{lang === "ru" ? "Популярное" : lang === "kz" ? "Танымал" : "Popular"}</span></span>
+                <strong>{name}</strong>
+                {club.reviews_count > 0 && <span className="center-rating"><Star size={12} className="fill-current" />{Number(club.rating).toFixed(1)}<span>· {club.reviews_count} {t("club.reviews")}</span></span>}
+                <span className="center-meta">{[clubAge(club.age_min, club.age_max, lang), club.price_from > 0 ? clubPrice(club.price_from, club.price_currency, lang) : null].filter(Boolean).join(" · ")}</span>
+                {labels.length > 0 && <span className="center-tags">{labels.map(l => <span key={l.id}>{l.label}</span>)}</span>}
+              </Link>
+            ) : (
+              <Link key={club.id} to={`/club/${club.id}`} className="discovery-center compact">
+                <span className="flex items-center gap-3">{photo ? <img src={photo} alt="" width={40} height={40} className="w-10 h-10 rounded-xl object-cover" /> : <ClubInitialAvatar name={name} size="sm" />}<span className="min-w-0"><strong>{name}</strong>{labels[0] && <small>{labels[0].label}</small>}</span></span>
+                <span className="center-wa"><MessageCircle size={14} />{lang === "ru" ? "Написать в WhatsApp" : lang === "kz" ? "WhatsApp-қа жазу" : "Message on WhatsApp"}</span>
+              </Link>
+            );
+          })}
         </div>
         <div className="discovery-content">
-          <span className="hero-eyebrow">BalaHub · {lang === "ru" ? "Детство с интересом" : lang === "kz" ? "Қызықты балалық шақ" : "A world to discover"}</span>
+          <span className="hero-eyebrow"><Sparkles size={14} />BalaHub · {lang === "ru" ? "Детство с интересом" : lang === "kz" ? "Қызықты балалық шақ" : "A world to discover"}</span>
           <h1>{lang === "ru" ? "Кружки, секции и афиша для детей" : lang === "kz" ? "Балаларға арналған үйірмелер мен афиша" : "Kids’ clubs, activities and events"}<span>{city}</span></h1>
           <p>{lang === "ru" ? "Сравнивайте центры по возрасту, адресу и цене. Свяжитесь с ними напрямую в WhatsApp." : lang === "kz" ? "Орталықтарды жас, мекенжай және баға бойынша салыстырыңыз. WhatsApp арқылы тікелей хабарласыңыз." : "Compare centers by age, location and price. Get in touch directly on WhatsApp."}</p>
           <form className="discovery-search" onSubmit={e => { e.preventDefault(); navigate(searchHref(selectedCategory || "")); }}>
-            <div className="flex items-center gap-2 min-w-0 flex-1"><Search size={18} className="text-primary shrink-0" /><input aria-label={t("home.search")} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={t("home.search")} /></div>
+            <label className="search-field grow"><span>{lang === "ru" ? "Что ищете" : lang === "kz" ? "Не іздейсіз" : "Looking for"}</span><input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={lang === "ru" ? "Рисование, танцы, логопед…" : lang === "kz" ? "Сурет, би, логопед…" : "Art, dance, speech…"} /></label>
+            <label className="search-field"><span>{t("age.label").replace(/:$/, "")}</span><select value={ageFilter} onChange={e => setAgeFilter(e.target.value as typeof ageFilter)}><option value="all">{t("age.any")}</option><option value="0-3">{t("age.0_3")}</option><option value="3-7">{t("age.3_7")}</option><option value="7-12">{t("age.7_12")}</option><option value="12+">{t("age.12_plus")}</option></select></label>
+            <label className="search-field"><span>{lang === "ru" ? "Направление" : lang === "kz" ? "Бағыт" : "Category"}</span><select value={selectedCategory || ""} onChange={e => setSelectedCategory(e.target.value || null)}><option value="">{lang === "ru" ? "Любое" : lang === "kz" ? "Кез келген" : "Any"}</option>{categoryIds.map(id => <option key={id} value={id}>{t(`cat.${id}` as TranslationKey)}</option>)}</select></label>
             <Button type="submit"><Search />{t("home.find")}</Button>
           </form>
-          <div className="hero-facts"><div><strong>{loadingClubs ? "—" : clubs.length}</strong><span>{lang === "ru" ? "центров в городе" : lang === "kz" ? "қаладағы орталық" : "centers in the city"}</span></div><div><strong>{categoryIds.length}</strong><span>{lang === "ru" ? "направление" : lang === "kz" ? "бағыт" : "categories"}</span></div><div><strong>WhatsApp</strong><span>{lang === "ru" ? "напрямую с центром" : lang === "kz" ? "орталықпен тікелей" : "direct to the center"}</span></div></div>
+          <div className="hero-facts"><div><strong>{loadingClubs ? "—" : clubs.length}</strong><span>{lang === "ru" ? "центров в городе" : lang === "kz" ? "қаладағы орталық" : "centers in the city"}</span></div><div><strong>{categoryIds.length}</strong><span>{lang === "ru" ? "направление" : lang === "kz" ? "бағыт" : "categories"}</span></div><div><strong>0 ₸</strong><span>{lang === "ru" ? "для родителей" : lang === "kz" ? "ата-аналарға" : "for parents"}</span></div></div>
         </div>
       </section>
       {/* Categories */}
@@ -1000,11 +1011,11 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
       {/* Clubs */}
       <div className="popular-section mt-12">
         <div className="flex items-center justify-between px-4 mb-5">
-          <h2 className="section-title">{t("home.popular")}</h2>
+          <div><h2 className="section-title">{lang === "ru" ? "Популярные центры" : lang === "kz" ? "Танымал орталықтар" : "Popular centers"}</h2><p className="section-sub">{lang === "ru" ? "Чаще всего смотрят родители вашего города" : lang === "kz" ? "Қалаңыздағы ата-аналар жиі қарайды" : "Most viewed by parents in your city"}</p></div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" onClick={() => scrollPopular(-1)} aria-label={lang === "ru" ? "Предыдущие центры" : lang === "kz" ? "Алдыңғы орталықтар" : "Previous centers"} title={lang === "ru" ? "Предыдущие центры" : lang === "kz" ? "Алдыңғы орталықтар" : "Previous centers"} className="h-8 w-8"><ChevronLeft size={16} /></Button>
             <Button variant="outline" size="icon" onClick={() => scrollPopular(1)} aria-label={lang === "ru" ? "Следующие центры" : lang === "kz" ? "Келесі орталықтар" : "Next centers"} title={lang === "ru" ? "Следующие центры" : lang === "kz" ? "Келесі орталықтар" : "Next centers"} className="h-8 w-8"><ChevronRight size={16} /></Button>
-            <Link to="/map" className="text-primary text-xs font-semibold ml-1 whitespace-nowrap">{t("home.all")}</Link>
+            <Link to="/map" className="pill-link">{lang === "ru" ? `Все ${loadingClubs ? "" : clubs.length} центров` : lang === "kz" ? "Барлық орталықтар" : "All centers"}</Link>
           </div>
         </div>
 
@@ -1022,48 +1033,38 @@ const HomePage = ({ city, setCity }: HomePageProps) => {
           )
         ) : (
           <div ref={popularRow} className="popular-row scrollbar-none">
-            {popularClubs.map((club, i) => {
+            {popularClubs.map((club) => {
               const name = tField(club.name_ru, club.name_kz, club.name_en);
               const categoryLabels = clubCategoryLabels(club.categories, t);
               return (
-                <Link key={club.id} to={`/club/${club.id}`}
-                  className="popular-card block min-w-0 bg-card border border-border rounded-lg overflow-hidden transition-shadow">
-                  <div className="relative h-32">
+                <Link key={club.id} to={`/club/${club.id}`} className="popular-card">
+                  <div className="popular-media">
                     {safeImageUrl(club.avatar_url) ? (
-                      <img src={safeImageUrl(club.avatar_url)} alt={name} loading="lazy" className="w-full h-full object-contain bg-card" />
+                      <img src={safeImageUrl(club.avatar_url)} alt={name} loading="lazy" />
                     ) : (
-                      <div className="w-full h-full bg-primary/10 flex items-center justify-center"><ClubInitialAvatar name={name} size="md" /></div>
+                      <span className="popular-placeholder" aria-hidden="true" />
                     )}
+                    <ClubInitialAvatar name={name} size="sm" className="popular-initial" />
                   </div>
-                  <div className="p-3">
+                  <div className="popular-body">
                     <h3 className="font-bold text-sm leading-snug line-clamp-1">{name}</h3>
                     {club.reviews_count > 0 && (
-                      <div className="flex items-center gap-1 mt-1">
-                        <Star size={11} className="text-secondary fill-secondary" />
-                        <span className="text-xs font-black">{club.rating}</span>
-                        <span className="text-[10px] text-muted-foreground font-bold">{club.reviews_count} {t("club.reviews")}</span>
+                      <div className="center-rating mt-1">
+                        <Star size={12} className="fill-current" />{Number(club.rating).toFixed(1)}<span>· {club.reviews_count} {t("club.reviews")}</span>
                       </div>
                     )}
                     <TwoGisBadge rating={club.twogis_rating} count={club.twogis_reviews_count} className="mt-1" />
-                    <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 font-medium">
-                      <MapPin size={10} className="text-primary shrink-0" /><span className="truncate">{clubLocation(club.city, club.address)}</span>
+                    <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
+                      <MapPin size={12} className="text-primary shrink-0" /><span className="truncate">{clubLocation(club.city, club.address)}</span>
                     </p>
                     {club.price_from > 0 && (
-                      <p className="text-[10px] font-bold text-primary mt-1">
+                      <p className="text-xs font-semibold text-primary mt-1">
                         {clubPrice(club.price_from, club.price_currency, lang)}
                       </p>
                     )}
-                    <div className="flex flex-wrap gap-1 mt-1.5">
-                      {clubAge(club.age_min, club.age_max, lang) && (
-                        <span className="text-[9px] font-bold bg-primary/10 text-primary px-1.5 py-0.5 rounded-lg">
-                          {clubAge(club.age_min, club.age_max, lang)}
-                        </span>
-                      )}
-                      {categoryLabels.map((category) => (
-                        <span key={category.id} className="text-[9px] font-bold bg-muted px-1.5 py-0.5 rounded-lg">
-                          {category.label}
-                        </span>
-                      ))}
+                    <div className="center-tags mt-2">
+                      {clubAge(club.age_min, club.age_max, lang) && <span>{clubAge(club.age_min, club.age_max, lang)}</span>}
+                      {categoryLabels.map((category) => <span key={category.id}>{category.label}</span>)}
                     </div>
                   </div>
                 </Link>
