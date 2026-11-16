@@ -14,7 +14,7 @@ const pubs = [
   { id: "next", category: "event", city: "Актау", event_date: "2026-11-12T19:00:00Z" },
   { id: "trial", category: "trial", city: "Актау", event_date: null, is_free: true },
   { id: "promo", category: "promo", city: "Актау", event_date: null },
-  { id: "winter", category: "other", city: "Актау", event_date: null, season: "winter" },
+  { id: "winter", category: "other", city: "Актау", event_date: null, season: "winter", club_id: "camp" },
 ];
 
 describe("collections", () => {
@@ -33,7 +33,11 @@ describe("collections", () => {
     const r = holidayItems(clubs, pubs, "winter", now);
     expect(r.clubs.map((c) => c.id)).toEqual(["camp"]);
     expect(r.pubs.map((p) => p.id)).toEqual(["winter"]);
-    expect(holidayItems(clubs, pubs, "summer", now).pubs).toHaveLength(0);
+    expect(holidayItems(clubs, pubs, "summer", now)).toEqual({ clubs: [], pubs: [] });
+  });
+  it("does not assign an untagged camp to every season", () => {
+    expect(holidayItems(clubs, [], "winter", now).clubs).toEqual([]);
+    expect(holidayItems(clubs, [], "spring", now).clubs).toEqual([]);
   });
   it("deal expires after its last Aktau day", () => {
     expect(dealActive({ deal_until: "2026-11-07" }, new Date("2026-11-07T18:59:00Z"))).toBe(true);
