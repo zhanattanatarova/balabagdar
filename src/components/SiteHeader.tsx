@@ -23,7 +23,7 @@ export default function SiteHeader() {
         <LanguageSwitcher compact />
         <Button asChild variant="ghost" size="icon" className="lg:hidden" aria-label={t("nav.profile")}><Link to="/profile"><User /></Link></Button>
         <Button asChild variant="ghost" size="sm" className="hidden lg:inline-flex"><Link to="/profile">{t("nav.profile")}</Link></Button>
-        <Button asChild size="sm" className="hidden xl:inline-flex"><Link to="/dashboard"><Plus />{lang === "ru" ? "Добавить центр" : lang === "kz" ? "Орталық қосу" : "Add center"}</Link></Button>
+        <Button asChild size="sm" className="hidden xl:inline-flex"><Link to="/club/edit"><Plus />{lang === "ru" ? "Добавить центр" : lang === "kz" ? "Орталық қосу" : "Add center"}</Link></Button>
       </div>
     </div>
     <CityPickerSheet open={open} city={city} onClose={() => setOpen(false)} onSelect={setCity} />
