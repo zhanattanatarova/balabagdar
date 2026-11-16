@@ -17,7 +17,7 @@ const CityPickerSheet = ({ open, city, onClose, onSelect }: Props) => {
   const { t } = useLanguage();
   const [query, setQuery] = useState("");
   useEffect(() => { if (!open) setQuery(""); }, [open]);
-  const filtered = CITIES.filter((c) => c.toLowerCase().includes(query.trim().toLowerCase()));
+  const filtered = [city, ...CITIES.filter((c) => c !== city)].filter((c) => c.toLowerCase().includes(query.trim().toLowerCase()));
   const close = () => { setQuery(""); onClose(); };
 
   return (

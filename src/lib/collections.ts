@@ -11,7 +11,7 @@ export type CollectionRule =
   | { type: "manual" };
 
 export interface RuleClub { id: string; categories?: string[] | null; category?: string | null; age_min?: number | null; age_max?: number | null }
-export interface RulePub extends FilterableEvent { id: string; category: string; season?: string | null; deal_until?: string | null }
+export interface RulePub extends FilterableEvent { id: string; category: string; season?: string | null; deal_until?: string | null; club_id?: string | null }
 export interface CollectionDef { rule_json?: CollectionRule | null; club_ids?: string[] | null; event_ids?: string[] | null }
 
 export const isCamp = (c: RuleClub) => c.category === "camp" || (c.categories || []).includes("camp");
@@ -24,7 +24,8 @@ export function dealActive(p: { deal_until?: string | null }, now: Date = new Da
 /** Holiday page items: camp clubs + publications tagged with the season (events only while upcoming). */
 export function holidayItems<C extends RuleClub, P extends RulePub>(clubs: C[], pubs: P[], season: Season, now: Date = new Date()) {
   const seasonal = pubs.filter((p) => p.season === season && (p.category !== "event" || upcomingCityEvents([p], "", now).length > 0));
-  return { clubs: clubs.filter(isCamp), pubs: seasonal };
+  const seasonalClubIds = new Set(seasonal.map((p) => p.club_id).filter(Boolean));
+  return { clubs: clubs.filter((c) => isCamp(c) && seasonalClubIds.has(c.id)), pubs: seasonal };
 }
 
 export function resolveCollection<C extends RuleClub, P extends RulePub>(def: CollectionDef, clubs: C[], pubs: P[], now: Date = new Date()): { clubs: C[]; pubs: P[] } {

@@ -9,6 +9,8 @@ import { validateImageFileDeep } from "@/lib/uploadValidation";
 import PublicationSource from "@/components/PublicationSource";
 import { Link } from "react-router-dom";
 import PhoneActions from "@/components/events/PhoneActions";
+import AuthModal from "@/components/AuthModal";
+import { usePublicationCreate } from "@/hooks/usePublicationCreate";
 
 interface Announcement {
   id: string;
@@ -225,15 +227,11 @@ const BoardPage = ({ city }: { city: string }) => {
     [items, city, activeCat]
   );
 
-  const openCreate = () => {
-    if (!user) {
-      toast({ title: tt.login_req, description: tt.login_desc, variant: "destructive" });
-      return;
-    }
+  const { authOpen, requestCreate: openCreate, closeAuth } = usePublicationCreate(() => {
     setEditingId(null);
     setForm(emptyForm(city));
     setOpen(true);
-  };
+  });
 
   const openEdit = (a: Announcement) => {
     setEditingId(a.id);
@@ -328,6 +326,7 @@ const BoardPage = ({ city }: { city: string }) => {
 
   return (
     <div className="pb-32 max-w-3xl mx-auto">
+      <AuthModal open={authOpen} onClose={closeAuth} redirectTo="/board?action=create" />
       <div className="px-5 pt-8 pb-6 mb-5 bg-muted/70 flex items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold flex items-center gap-2">
