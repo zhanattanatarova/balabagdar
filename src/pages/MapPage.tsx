@@ -11,6 +11,7 @@ import { clubAge, clubCategoryLabels, clubLocation, clubPrice } from "@/lib/club
 import { useLanguage } from "@/hooks/useLanguage";
 import ClubInitialAvatar from "@/components/ClubInitialAvatar";
 import TwoGisBadge from "@/components/TwoGisBadge";
+import { mapCoordinates, mapAddressQueries } from "@/lib/mapLocation";
 
 const mapStrings = {
   kz: { title: "🏫 Орталықтар мен үйірмелер", geocoding: "геокодтау…", nearby: "Менің жанымда", profile: "Профиль", call: "Қоңырау", open_profile: "Профильді ашу", phone: "Қоңырау шалу", all_clubs: "Барлық орталықтар", no_clubs: "Бұл қалада әзірге үйірмелер жоқ", show_map: "Картаны көрсету", hide_map: "Картаны жасыру" },
@@ -53,6 +54,7 @@ interface Club {
   longitude?: number | null;
   lat?: number;
   lng?: number;
+  approximate?: boolean;
 }
 
 const CITY_CENTERS: Record<string, [number, number]> = {
@@ -99,7 +101,7 @@ async function geocode(query: string, signal: AbortSignal): Promise<[number, num
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`,
-      { headers: { "Accept-Language": "ru" }, signal }
+      { headers: { "Accept-Language": "ru" }, signal: AbortSignal.any([signal, AbortSignal.timeout(7000)]) }
     );
     if (!res.ok) throw new Error("Geocoding unavailable");
     const data = await res.json();
@@ -144,11 +146,10 @@ const MapPage = ({ city }: { city: string }) => {
         .select("id,name_ru,name_kz,name_en,address,phone,rating,reviews_count,twogis_rating,twogis_reviews_count,price_from,price_currency,categories,age_min,age_max,avatar_url,twogis_url,city,latitude,longitude")
         .eq("is_active", true)
         .eq("city", city);
-      const list = (((data as any) || []) as Club[]).map((club) => ({
-        ...club,
-        lat: club.latitude ?? undefined,
-        lng: club.longitude ?? undefined,
-      }));
+      const list = (((data as any) || []) as Club[]).map((club) => {
+        const coords = mapCoordinates(club);
+        return { ...club, lat: coords?.lat, lng: coords?.lng };
+      });
       if (cancelled) return;
       setClubs(list);
       setLoading(false);
@@ -166,10 +167,19 @@ const MapPage = ({ city }: { city: string }) => {
         for (const club of clubs) {
           if (controller.signal.aborted) break;
           if ((club.lat != null && club.lng != null) || !club.address) continue;
-          const coords = await geocode(`${club.address}, ${club.city}, Казахстан`, controller.signal);
-          if (controller.signal.aborted) break;
-          if (coords) setClubs(prev => prev.map(c => c.id === club.id ? { ...c, lat: coords[0], lng: coords[1] } : c));
-          await new Promise(resolve => setTimeout(resolve, 1100));
+          const queries = mapAddressQueries(club.address, club.city);
+          for (let i = 0; i < queries.length; i++) {
+            if (controller.signal.aborted) break;
+            try {
+              const coords = await geocode(queries[i], controller.signal);
+              if (coords && !controller.signal.aborted) {
+                setClubs(prev => prev.map(c => c.id === club.id ? { ...c, lat: coords[0], lng: coords[1], approximate: i > 0 } : c));
+                await new Promise(resolve => setTimeout(resolve, 1100));
+                break;
+              }
+            } catch { /* One unresolvable address must not stop the remaining centers. */ }
+            await new Promise(resolve => setTimeout(resolve, 1100));
+          }
         }
       } catch { /* Stop requests if the external map service is unavailable. */ }
       finally { if (!controller.signal.aborted) setGeocoding(false); }
@@ -189,7 +199,7 @@ const MapPage = ({ city }: { city: string }) => {
     );
   }, [clubs, searchQuery]);
   const center = CITY_CENTERS[city] || [48.0196, 66.9237];
-  const markers = useMemo(() => filteredClubs.filter((c) => c.lat && c.lng) as Required<Pick<Club, "lat" | "lng">> & Club[], [filteredClubs]);
+  const markers = useMemo(() => filteredClubs.filter((c): c is Club & { lat: number; lng: number } => c.lat != null && c.lng != null && Number.isFinite(c.lat) && Number.isFinite(c.lng)), [filteredClubs]);
 
   const handleLocate = () => {
     if (!navigator.geolocation) return;
@@ -291,11 +301,12 @@ const MapPage = ({ city }: { city: string }) => {
           {markers.map((club) => (
             <Marker
               key={club.id}
-              position={[club.lat!, club.lng!]}
+              position={[club.lat, club.lng]}
               eventHandlers={{ click: () => setSelected(club.id) }}
             >
               <Popup>
                 <div className="font-bold text-sm">{club.name_ru}</div>
+                {club.approximate && <div className="text-xs">{lang === "ru" ? "Примерно: микрорайон" : lang === "kz" ? "Шамамен: шағын аудан" : "Approximate: neighborhood"}</div>}
                 {clubLocation(club.city, club.address) && <div className="text-xs opacity-70">{clubLocation(club.city, club.address)}</div>}
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   <Link
@@ -328,7 +339,7 @@ const MapPage = ({ city }: { city: string }) => {
               })}
             />
           )}
-          <FitBounds points={markers.map((m) => [m.lat!, m.lng!])} />
+          <FitBounds points={markers.map((m) => [m.lat, m.lng])} />
         </MapContainer>
       </div>
       )}
