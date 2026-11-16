@@ -10,6 +10,7 @@ import ProfilePage from "./ProfilePage";
 import NotificationsPage from "./NotificationsPage";
 import ClubDashboard from "./ClubDashboard";
 import ClubEditPage from "./ClubEditPage";
+import CenterAuthGate from "@/components/CenterAuthGate";
 import BottomNav from "@/components/BottomNav";
 import SEO from "@/components/SEO";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -54,8 +55,8 @@ const Index = () => {
       case "/board": return <BoardPage city={city} />;
       case "/profile": return <ProfilePage />;
       case "/notifications": return <NotificationsPage />;
-      case "/dashboard": return <ClubDashboard />;
-      case "/club/edit": return <ClubEditPage />;
+      case "/dashboard": return <CenterAuthGate><ClubDashboard /></CenterAuthGate>;
+      case "/club/edit": return <CenterAuthGate><ClubEditPage /></CenterAuthGate>;
       default: return <NewsPage city={city} setCity={setCity} />;
     }
   };

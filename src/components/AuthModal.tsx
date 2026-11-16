@@ -11,6 +11,8 @@ import { useAuth } from "@/hooks/useAuth";
 interface AuthModalProps {
   open: boolean;
   onClose: () => void;
+  redirectTo?: string;
+  defaultRegisterRole?: "parent" | "club_owner";
 }
 
 
@@ -19,7 +21,7 @@ type PhoneStep = "phone" | "code";
 
 const emailFromDigits = (digits: string) => `${digits}@phone.balahub.kz`;
 
-const AuthModal = ({ open, onClose }: AuthModalProps) => {
+const AuthModal = ({ open, onClose, redirectTo, defaultRegisterRole = "parent" }: AuthModalProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const { role, loading: roleLoading } = useUserRole();
@@ -32,7 +34,7 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [code, setCode] = useState("");
-  const [registerRole, setRegisterRole] = useState<"parent" | "club_owner">("parent");
+  const [registerRole, setRegisterRole] = useState<"parent" | "club_owner">(defaultRegisterRole);
 
 
   const [loading, setLoading] = useState(false);
@@ -48,9 +50,10 @@ const AuthModal = ({ open, onClose }: AuthModalProps) => {
   useEffect(() => {
     if (open && user && !roleLoading) {
       onClose();
-      if (role === "club_owner") navigate("/dashboard");
+      if (redirectTo) navigate(redirectTo);
+      else if (role === "club_owner") navigate("/dashboard");
     }
-  }, [user, role, roleLoading, open]);
+  }, [user, role, roleLoading, open, redirectTo]);
 
   if (!open) return null;
 
