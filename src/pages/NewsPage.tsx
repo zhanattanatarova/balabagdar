@@ -22,6 +22,7 @@ import SEO from "@/components/SEO";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { telHref } from "@/lib/phone";
 import PublicationSource from "@/components/PublicationSource";
+import { usePublicationCreate } from "@/hooks/usePublicationCreate";
 
 interface EventItem {
   id: string;
@@ -87,7 +88,6 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -126,12 +126,11 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
 
   useEffect(() => { load(); }, [user, city]);
 
-  const openPostForm = () => {
-    if (!user) { setAuthOpen(true); return; }
+  const { authOpen, requestCreate: openPostForm, closeAuth } = usePublicationCreate(() => {
     setEditingId(null);
     setForm(emptyForm());
     setOpen(true);
-  };
+  });
 
   const openEdit = (e: EventItem) => {
     setEditingId(e.id);
@@ -385,7 +384,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
         )}
       </div>
 
-      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      <AuthModal open={authOpen} onClose={closeAuth} redirectTo="/?action=create" />
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">

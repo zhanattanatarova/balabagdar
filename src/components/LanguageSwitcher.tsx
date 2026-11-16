@@ -34,8 +34,10 @@ const LanguageSwitcher = ({ compact = false }: { compact?: boolean }) => {
                 <Button
                   key={l}
                   type="button"
+                  variant="ghost"
+                  aria-pressed={lang === l}
                   onClick={() => { setLang(l); setOpen(false); }}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-left ${lang === l ? "bg-primary/15 text-foreground" : "text-muted-foreground hover:bg-muted"}`}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-left text-foreground ${lang === l ? "bg-primary/15" : "hover:bg-muted"}`}
                 >
                   <span>{flags[l]}</span><span>{names[l]}</span>
                 </Button>
@@ -52,9 +54,11 @@ const LanguageSwitcher = ({ compact = false }: { compact?: boolean }) => {
       {langs.map((l) => (
         <Button
           key={l}
+          variant="ghost"
+          aria-pressed={lang === l}
           onClick={() => setLang(l)}
           className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-            lang === l ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            lang === l ? "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground" : "text-foreground hover:text-foreground"
           }`}
         >
           <span>{flags[l]}</span>

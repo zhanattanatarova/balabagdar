@@ -18,7 +18,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-all duration-500 ${
+      className={`pointer-events-none fixed inset-0 z-50 flex flex-col items-center justify-center transition-all duration-500 ${
         phase === "exit" ? "opacity-0 scale-105" : "opacity-100 scale-100"
       }`}
       style={{ background: "linear-gradient(160deg, hsl(145, 65%, 48%) 0%, hsl(145, 55%, 35%) 100%)" }}
