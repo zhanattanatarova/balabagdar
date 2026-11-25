@@ -1,10 +1,10 @@
 # Publications for Aktau
-- [ ] Verify and fix header city picker.
-- [ ] Resume board/event creation after login; connect footer event action.
-- [ ] Filter camps by evidenced season without changing data.
-- [ ] Resolve real map coordinates/address markers and verify.
-- [ ] Remove demo notifications, fix language option states and support link.
-- [ ] Check all eight actions as a guest and report results.
+- [x] Verify and fix header city picker.
+- [x] Resume board/event creation after login; connect footer event action.
+- [x] Filter camps by evidenced season without changing data.
+- [x] Resolve real map coordinates/address markers and verify (address-based neighborhood fallback is labelled approximate).
+- [x] Remove demo notifications, fix language option states and support link.
+- [x] Check all eight actions as a guest and report results; signed-in forms and empty notifications verified.
 - [x] Use brighter saturated green, brush instead of children and smaller category photos matching the latest reference.
 - [x] Check catalog layout and search on desktop and mobile.
 - [x] Match the supplied logo green and remove the duplicate header name.
