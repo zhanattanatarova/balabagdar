@@ -1,4 +1,5 @@
 # Project architecture
+- OTP secrets stay in server env; service-only RPCs serialize attempts and consume purpose-bound hashes atomically, while Telegram phone bindings are stored separately from expiring codes to preserve notification delivery.
 
 - Center dashboard and editing routes use CenterAuthGate before mounting data-loading pages; add-center links target the editor and authentication preserves that destination to avoid signed-out loading loops.
 - Publication creation uses usePublicationCreate with an action=create URL intent so footer links and post-login continuation open the same form.

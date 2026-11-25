@@ -1,4 +1,9 @@
 # Publications for Aktau
+- [ ] Harden OTP hashing, expiry, one-time use and atomic five-attempt verification.
+- [ ] Add phone/IP request limits after confirmation of the database-based approach.
+- [ ] Revoke previous sessions/codes on password reset and notify Telegram.
+- [ ] Update six-digit input, attempts and resend timer without redesign.
+- [ ] Verify serial/concurrent attacks, stale codes and denied client access.
 - [x] Verify and fix header city picker.
 - [x] Resume board/event creation after login; connect footer event action.
 - [x] Filter camps by evidenced season without changing data.

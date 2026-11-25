@@ -457,29 +457,41 @@ export type Database = {
       }
       phone_verifications: {
         Row: {
+          attempts: number
           code: string
+          code_hash: string | null
+          consumed_at: string | null
           created_at: string
           expires_at: string
           id: string
           phone: string
+          purpose: string
           telegram_chat_id: string | null
           verified: boolean
         }
         Insert: {
-          code: string
+          attempts?: number
+          code?: string
+          code_hash?: string | null
+          consumed_at?: string | null
           created_at?: string
           expires_at?: string
           id?: string
           phone: string
+          purpose?: string
           telegram_chat_id?: string | null
           verified?: boolean
         }
         Update: {
+          attempts?: number
           code?: string
+          code_hash?: string | null
+          consumed_at?: string | null
           created_at?: string
           expires_at?: string
           id?: string
           phone?: string
+          purpose?: string
           telegram_chat_id?: string | null
           verified?: boolean
         }
@@ -593,6 +605,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      telegram_phone_links: {
+        Row: {
+          phone: string
+          telegram_chat_id: string
+          updated_at: string
+        }
+        Insert: {
+          phone: string
+          telegram_chat_id: string
+          updated_at?: string
+        }
+        Update: {
+          phone?: string
+          telegram_chat_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
@@ -740,6 +770,15 @@ export type Database = {
       log_club_event: {
         Args: { _club_id: string; _event_type: string }
         Returns: undefined
+      }
+      otp_invalidate: { Args: { _phone: string }; Returns: undefined }
+      otp_issue: {
+        Args: { _hash: string; _phone: string; _purpose: string }
+        Returns: string
+      }
+      otp_verify: {
+        Args: { _hash: string; _phone: string; _purpose: string }
+        Returns: Json
       }
     }
     Enums: {
