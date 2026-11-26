@@ -1,4 +1,5 @@
 # Publications for Aktau
+- [x] Add calendar saving on Afisha cards and event detail pages with supplied dates, times and addresses; verify exports and guest flow (19 tests and guest downloads passed).
 - [x] Harden OTP hashing, expiry, one-time use and atomic five-attempt verification.
 - [x] Add phone/IP request limits after confirmation of the database-based approach.
 - [x] Revoke previous sessions/codes on password reset and notify Telegram.

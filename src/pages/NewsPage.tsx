@@ -6,6 +6,7 @@ import CityPickerSheet from "@/components/CityPickerSheet";
 import { upcomingCityEvents, formatEventDate, eventInput, eventInputToIso, matchesEventFilters, EVENT_KINDS, AGE_FILTERS, type EventFilters, type DateFilter } from "@/lib/events";
 import EventClubLink, { type EventClub } from "@/components/events/EventClubLink";
 import PhoneActions from "@/components/events/PhoneActions";
+import EventCalendarButton from "@/components/events/EventCalendarButton";
 import { KIND_LABELS } from "@/components/events/eventLabels";
 import { toast } from "@/hooks/use-toast";
 import BrandLogo from "@/components/BrandLogo";
@@ -364,6 +365,7 @@ const NewsPage = ({ city, setCity }: { city: string; setCity?: (city: string) =>
                       </button>
                     )}
                     <PublicationSource label={e.source_label} url={e.source_url} />
+                    <div className="mt-3"><EventCalendarButton event={e} /></div>
                     {e.club_id && <EventClubLink club={clubs[e.club_id]} />}
                     {e.public_phone && <PhoneActions phone={e.public_phone} />}
                     <div className="mt-3 pt-3 border-t border-border flex items-center justify-between flex-wrap gap-2">

@@ -11,6 +11,7 @@ import SEO from "@/components/SEO";
 import { formatEventDate } from "@/lib/events";
 import EventClubLink, { type EventClub } from "@/components/events/EventClubLink";
 import PhoneActions from "@/components/events/PhoneActions";
+import EventCalendarButton from "@/components/events/EventCalendarButton";
 
 interface Publication {
   id: string;
@@ -78,6 +79,7 @@ export default function PublicationPage() {
           <SEO title={`${post.title} | BalaHub`} description={post.body.slice(0, 159)} path={`/publication/${post.id}`} />
           <h1 className="text-2xl font-black break-words">{post.title}</h1>
           {post.event_date && <p className="mt-3 font-bold text-primary">{formatEventDate(post.event_date, post.event_end_date, lang)}</p>}
+          {post.category === "event" && <div className="mt-3"><EventCalendarButton event={post} /></div>}
           <p className="flex items-center gap-2 text-sm text-muted-foreground mt-3"><MapPin size={16} /> {post.city}</p>
           {post.image_url && <img src={post.image_url} alt={post.title} className="w-full max-h-96 object-cover mt-5 rounded-lg" />}
           <p className="mt-5 text-base whitespace-pre-line">{post.body}</p>

@@ -15,6 +15,7 @@
 - 2GIS rating (`twogis_rating`, `twogis_reviews_count`) is shown only as a separate source-labelled badge, never merged with BalaHub's own `rating`; a DB trigger lets only admins/server jobs change it.
 - Publications use optional `club_id` associations, shared `PublicationSource` links and `/publication/:id` detail pages; the guest view exposes source metadata but never phone numbers.
 - Event filtering, date formatting and form conversions share `src/lib/events.ts` so visitor timezone cannot change event calendar days; optional end dates are stored as calendar dates.
+- Event calendar exports share `src/lib/eventCalendar.ts` and `EventCalendarButton`: use UTC timed entries or exclusive-end all-day dates, explicit labelled venue lines, and no invented end times so phone calendars preserve supplied details.
 
 - Afisha filters (date/age/price/kind) live in `matchesEventFilters` in `src/lib/events.ts` so Aktau-day logic is shared and tested.
 - Collections (`collections` table) are resolved client-side by `resolveCollection` in `src/lib/collections.ts` (rule_json or manual ids); empty collections are never shown.
