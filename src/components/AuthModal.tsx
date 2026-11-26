@@ -38,6 +38,8 @@ const AuthModal = ({ open, onClose, redirectTo, defaultRegisterRole = "parent" }
 
 
   const [loading, setLoading] = useState(false);
+  const [attemptsLeft, setAttemptsLeft] = useState<number | null>(null);
+  const [resendIn, setResendIn] = useState(0);
   const [botUrl, setBotUrl] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
   const retryTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -45,6 +47,12 @@ const AuthModal = ({ open, onClose, redirectTo, defaultRegisterRole = "parent" }
   useEffect(() => {
     return () => { if (retryTimerRef.current) clearInterval(retryTimerRef.current); };
   }, []);
+
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const timer = setTimeout(() => setResendIn((value) => Math.max(0, value - 1)), 1000);
+    return () => clearTimeout(timer);
+  }, [resendIn]);
 
   // Auto-close on successful auth and route club owners to their dashboard.
   useEffect(() => {
@@ -62,7 +70,7 @@ const AuthModal = ({ open, onClose, redirectTo, defaultRegisterRole = "parent" }
 
   const resetState = () => {
     setStep("phone"); setCode(""); setBotUrl(null); setRetrying(false);
-    setPassword(""); setNewPassword("");
+    setPassword(""); setNewPassword(""); setAttemptsLeft(null); setResendIn(0);
     if (retryTimerRef.current) clearInterval(retryTimerRef.current);
   };
 
@@ -97,8 +105,11 @@ const AuthModal = ({ open, onClose, redirectTo, defaultRegisterRole = "parent" }
   };
 
   const sendCode = async (): Promise<"sent" | "not_linked" | "error"> => {
-    const { data, error } = await supabase.functions.invoke("send-code", { body: { phone: digits() } });
+    const { data, error } = await supabase.functions.invoke("send-code", { body: { phone: digits(), mode: flow } });
     if (error) throw error;
+    if (typeof data?.resend_in === "number") setResendIn(data.resend_in);
+    if (data?.error === "rate_limited") throw new Error(t("auth.resend_in").replace("{seconds}", String(data.resend_in)));
+    if (typeof data?.remaining_attempts === "number") { setAttemptsLeft(data.remaining_attempts); setCode(""); }
     if (data?.error === "telegram_not_linked") { setBotUrl(data?.bot_url || "https://t.me"); return "not_linked"; }
     if (data?.error) throw new Error(data.error);
     return "sent";
@@ -158,7 +169,7 @@ const AuthModal = ({ open, onClose, redirectTo, defaultRegisterRole = "parent" }
   };
 
   const handleVerify = async () => {
-    if (code.length < 4) {
+    if (!/^\d{6}$/.test(code)) {
       toast({ title: t("common.error"), description: t("auth.enter_code"), variant: "destructive" });
       return;
     }
@@ -185,6 +196,10 @@ const AuthModal = ({ open, onClose, redirectTo, defaultRegisterRole = "parent" }
         });
         setFlow("register"); resetState();
         return;
+      }
+      if (typeof data?.remaining_attempts === "number") {
+        setAttemptsLeft(data.remaining_attempts); setCode("");
+        throw new Error(t("auth.invalid_code"));
       }
       if (data?.error) throw new Error(data.error);
       if (data?.session) {
@@ -340,19 +355,23 @@ const AuthModal = ({ open, onClose, redirectTo, defaultRegisterRole = "parent" }
                   )}
                   <div className="mt-4">
                     <div className="flex gap-2.5 justify-center">
-                      {[0, 1, 2, 3].map((i) => (
-                        <input key={i} type="text" maxLength={1} value={code[i] || ""}
+                      {[0, 1, 2, 3, 4, 5].map((i) => (
+                        <input key={i} type="text" maxLength={1} value={code[i]?.trim() || ""} inputMode="numeric" autoComplete={i === 0 ? "one-time-code" : "off"} aria-label={`${t("auth.enter_code")} ${i + 1}`}
                           onChange={(e) => {
                             const val = e.target.value.replace(/\D/g, "");
-                            const newCode = code.split(""); newCode[i] = val; setCode(newCode.join(""));
-                            if (val && i < 3) (e.target.nextElementSibling as HTMLInputElement)?.focus();
+                            const newCode = code.padEnd(6, " ").split(""); newCode[i] = val.slice(-1) || " "; setCode(newCode.join("").replace(/\s+$/g, ""));
+                            if (val && i < 5) (e.target.nextElementSibling as HTMLInputElement)?.focus();
                           }}
-                          className="w-14 h-14 text-center text-2xl font-black rounded-xl bg-muted focus:outline-none focus:ring-2 focus:ring-primary" />
+                          className="w-11 h-12 sm:w-14 sm:h-14 text-center text-xl sm:text-2xl font-black rounded-xl bg-muted focus:outline-none focus:ring-2 focus:ring-primary" />
                       ))}
                     </div>
-                    <button onClick={handleVerify} disabled={loading || !!botUrl}
+                    {attemptsLeft !== null && <p className="mt-3 text-center text-xs font-bold text-muted-foreground">{t("auth.attempts_left").replace("{count}", String(attemptsLeft))}</p>}
+                    <button onClick={handleVerify} disabled={loading || !!botUrl || attemptsLeft === 0}
                       className="w-full mt-5 bg-primary text-primary-foreground font-bold text-base py-3.5 rounded-xl hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center">
                       {loading ? <Loader2 size={18} className="animate-spin" /> : t("auth.confirm")}
+                    </button>
+                    <button onClick={handleManualRetry} disabled={loading || resendIn > 0} className="w-full mt-2 text-primary font-bold text-sm py-2 disabled:text-muted-foreground">
+                      {resendIn > 0 ? t("auth.resend_in").replace("{seconds}", String(resendIn)) : t("auth.resend")}
                     </button>
                     <button onClick={resetState} className="w-full mt-2 text-muted-foreground font-bold text-sm py-2">
                       {t("auth.change_number")}

@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { generateCode, hashCode, normalizePhone, OTP_MAX_ATTEMPTS, OTP_RESEND_SECONDS } from "../_shared/otp.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,13 +7,6 @@ const corsHeaders = {
 };
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/telegram";
-
-const normalizePhone = (raw: string) => {
-  const digits = raw.replace(/\D/g, "");
-  if (digits.length === 10) return `7${digits}`;
-  if (digits.length === 11 && digits.startsWith("8")) return `7${digits.slice(1)}`;
-  return digits;
-};
 
 async function telegramApi(method: string, body: Record<string, unknown> = {}) {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -63,26 +57,7 @@ async function upsertPhoneChat(
   const phone = normalizePhone(rawPhone);
   if (phone.length < 11) return;
 
-  const { data: existing } = await supabase
-    .from("phone_verifications")
-    .select("id")
-    .eq("phone", phone)
-    .order("created_at", { ascending: false })
-    .limit(1);
-
-  if (existing?.length) {
-    await supabase
-      .from("phone_verifications")
-      .update({ telegram_chat_id: chatId })
-      .eq("id", existing[0].id);
-  } else {
-    await supabase.from("phone_verifications").insert({
-      phone,
-      telegram_chat_id: chatId,
-      code: "0000",
-      verified: true,
-    });
-  }
+  await supabase.from("telegram_phone_links").upsert({ phone, telegram_chat_id: chatId, updated_at: new Date().toISOString() }, { onConflict: "phone" });
 
   console.log(`Linked phone=${phone} to chat_id=${chatId}`);
 }
@@ -161,7 +136,8 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { phone } = await req.json();
+    const { phone, mode } = await req.json();
+    const purpose = mode === "reset" ? "reset" : "register";
     if (!phone || normalizePhone(phone).length < 11) {
       return new Response(JSON.stringify({ error: "Неверный номер телефона" }), {
         status: 400,
@@ -170,9 +146,9 @@ Deno.serve(async (req) => {
     }
 
     const cleanPhone = normalizePhone(phone);
-    const rand = new Uint32Array(1);
-    crypto.getRandomValues(rand);
-    const code = String(1000 + (rand[0] % 9000));
+    const code = generateCode();
+    const OTP_HASH_SECRET = Deno.env.get("OTP_HASH_SECRET");
+    if (!OTP_HASH_SECRET) throw new Error("OTP_HASH_SECRET is not configured");
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -183,15 +159,11 @@ Deno.serve(async (req) => {
 
     const lookupChatId = async () => {
       const { data: candidates } = await supabase
-        .from("phone_verifications")
-        .select("phone, telegram_chat_id, created_at")
-        .not("telegram_chat_id", "is", null)
-        .order("created_at", { ascending: false })
-        .limit(100);
-      const matched = (candidates ?? []).find((row) =>
-        normalizePhone(row.phone).endsWith(phoneTail),
-      );
-      return matched?.telegram_chat_id ?? null;
+        .from("telegram_phone_links")
+        .select("phone, telegram_chat_id")
+        .like("phone", `%${phoneTail}`)
+        .limit(5);
+      return candidates?.find((row) => normalizePhone(row.phone).endsWith(phoneTail))?.telegram_chat_id ?? null;
     };
 
     // Fast path: if the phone is already linked to a chat, skip the slow
@@ -202,54 +174,37 @@ Deno.serve(async (req) => {
       chatId = await lookupChatId();
     }
 
-    await supabase.from("phone_verifications").delete().eq("phone", cleanPhone);
-
-    const { error: insertError } = await supabase.from("phone_verifications").insert({
-      phone: cleanPhone,
-      code,
-      telegram_chat_id: chatId,
-      expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-    });
-
-    if (insertError) {
-      console.error("Insert error:", insertError);
-      return new Response(JSON.stringify({ error: "Не удалось создать код" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     if (!chatId) {
       const botInfo = await getBotInfo();
-      console.log(`No Telegram chat_id for phone=${cleanPhone}`);
-      return new Response(
-        JSON.stringify({
-          error: "telegram_not_linked",
-          message: "Сначала откройте бота и отправьте номер телефона",
-          bot_url: botInfo.botUrl,
-          bot_username: botInfo.botUsername,
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
+      return new Response(JSON.stringify({ error: "telegram_not_linked", message: "Сначала откройте бота и отправьте номер телефона", bot_url: botInfo.botUrl, bot_username: botInfo.botUsername }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    const { data: limit, error: limitError } = await supabase.rpc("otp_send_allowed", { _phone: cleanPhone });
+    if (limitError) throw new Error(limitError.message);
+    if (!limit?.allowed) {
+      return new Response(JSON.stringify({ error: "rate_limited", resend_in: limit?.retry_after ?? 60 }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    const { error: insertError } = await supabase.rpc("otp_issue", { _phone: cleanPhone, _purpose: purpose, _hash: await hashCode(cleanPhone, purpose, code, OTP_HASH_SECRET) });
+    if (insertError) {
+      console.error("OTP issue error:", insertError.message);
+      return new Response(JSON.stringify({ error: "Не удалось создать код" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     await telegramApi("sendMessage", {
       chat_id: chatId,
-      text: `🔐 Ваш код для входа в BalaHub: *${code}*\n\nНикому не сообщайте этот код.`,
+      text: `🔐 Ваш код для BalaHub: *${code}*\n\nКод действует 5 минут. Никому не сообщайте его.`,
       parse_mode: "Markdown",
     });
 
     console.log(`Code sent to chat_id=${chatId} for phone=${cleanPhone}`);
 
-    return new Response(JSON.stringify({ success: true, message: "Код отправлен в Telegram" }), {
+    return new Response(JSON.stringify({ success: true, message: "Код отправлен в Telegram", remaining_attempts: OTP_MAX_ATTEMPTS, resend_in: OTP_RESEND_SECONDS }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Error:", error);
-    return new Response(JSON.stringify({ error: (error as Error).message || "Внутренняя ошибка" }), {
+    return new Response(JSON.stringify({ error: "Внутренняя ошибка" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

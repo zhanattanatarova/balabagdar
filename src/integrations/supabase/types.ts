@@ -455,6 +455,27 @@ export type Database = {
         }
         Relationships: []
       }
+      otp_rate_events: {
+        Row: {
+          created_at: string
+          id: number
+          kind: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          kind: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          kind?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       phone_verifications: {
         Row: {
           attempts: number
@@ -776,9 +797,15 @@ export type Database = {
         Args: { _hash: string; _phone: string; _purpose: string }
         Returns: string
       }
+      otp_record_failure: { Args: { _phone: string }; Returns: undefined }
+      otp_send_allowed: { Args: { _phone: string }; Returns: Json }
       otp_verify: {
         Args: { _hash: string; _phone: string; _purpose: string }
         Returns: Json
+      }
+      otp_verify_allowed: {
+        Args: { _ip: string; _phone: string }
+        Returns: boolean
       }
     }
     Enums: {

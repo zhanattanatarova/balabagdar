@@ -55,14 +55,12 @@ Deno.serve(async (req) => {
 
     const normalized = owner.phone.replace(/\D/g, "");
     const { data: pv } = await supabase
-      .from("phone_verifications")
+      .from("telegram_phone_links")
       .select("telegram_chat_id, phone")
-      .eq("verified", true)
-      .not("telegram_chat_id", "is", null)
-      .order("created_at", { ascending: false })
-      .limit(50);
+      .eq("phone", normalized.length === 10 ? `7${normalized}` : normalized.replace(/^8/, "7"))
+      .limit(1);
 
-    const match = (pv || []).find((r: any) => r.phone.replace(/\D/g, "") === normalized);
+    const match = (pv || []).find((r: any) => r.telegram_chat_id);
     if (!match?.telegram_chat_id) {
       return new Response(JSON.stringify({ ok: false, reason: "no telegram chat" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

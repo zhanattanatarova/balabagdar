@@ -50,6 +50,10 @@ export const translations = {
   "auth.not_registered": { ru: "Не зарегистрированы", kz: "Тіркелмегенсіз", en: "Not registered" },
   "auth.not_registered_desc": { ru: "Этот номер не зарегистрирован. Пройдите регистрацию.", kz: "Бұл нөмір тіркелмеген. Тіркеуден өтіңіз.", en: "This number is not registered. Please register." },
   "auth.register_success": { ru: "Регистрация завершена", kz: "Тіркелу аяқталды", en: "Registration complete" },
+  "auth.attempts_left": { ru: "Осталось попыток: {count}", kz: "Қалған әрекет саны: {count}", en: "Attempts left: {count}" },
+  "auth.resend_in": { ru: "Повторная отправка через {seconds} с", kz: "Қайта жіберу {seconds} с кейін", en: "Resend in {seconds}s" },
+  "auth.resend": { ru: "Отправить код повторно", kz: "Кодты қайта жіберу", en: "Resend code" },
+  "auth.invalid_code": { ru: "Неверный или просроченный код", kz: "Код қате немесе мерзімі өткен", en: "Invalid or expired code" },
   "auth.password_updated": { ru: "Пароль обновлён", kz: "Құпиясөз жаңартылды", en: "Password updated" },
 
   // Role selection
