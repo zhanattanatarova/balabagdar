@@ -92,6 +92,13 @@
       "when": 1795689795573,
       "tag": "0012_otp_rate_limits",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795690384578,
+      "tag": "0013_otp_tables_revoke_client",
+      "breakpoints": true
     }
   ]
 }
