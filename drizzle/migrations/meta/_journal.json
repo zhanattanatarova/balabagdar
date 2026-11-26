@@ -99,6 +99,27 @@
       "when": 1795690384578,
       "tag": "0013_otp_tables_revoke_client",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1795690705576,
+      "tag": "0014_secure_views_and_reports",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1795690731232,
+      "tag": "0015_allow_report_counter_trigger",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1795690776379,
+      "tag": "0016_revoke_view_marks_clients",
+      "breakpoints": true
     }
   ]
 }

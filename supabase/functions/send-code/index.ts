@@ -59,7 +59,6 @@ async function upsertPhoneChat(
 
   await supabase.from("telegram_phone_links").upsert({ phone, telegram_chat_id: chatId, updated_at: new Date().toISOString() }, { onConflict: "phone" });
 
-  console.log(`Linked phone=${phone} to chat_id=${chatId}`);
 }
 
 async function processTelegramUpdates(supabase: ReturnType<typeof createClient>) {
@@ -197,7 +196,6 @@ Deno.serve(async (req) => {
       parse_mode: "Markdown",
     });
 
-    console.log(`Code sent to chat_id=${chatId} for phone=${cleanPhone}`);
 
     return new Response(JSON.stringify({ success: true, message: "Код отправлен в Telegram", remaining_attempts: OTP_MAX_ATTEMPTS, resend_in: OTP_RESEND_SECONDS }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

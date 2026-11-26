@@ -1,0 +1,1 @@
+REVOKE ALL ON public.club_view_marks FROM anon, authenticated;

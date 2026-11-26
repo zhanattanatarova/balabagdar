@@ -284,6 +284,24 @@ export type Database = {
           },
         ]
       }
+      club_view_marks: {
+        Row: {
+          club_id: string
+          day: string
+          visitor_hash: string
+        }
+        Insert: {
+          club_id: string
+          day?: string
+          visitor_hash: string
+        }
+        Update: {
+          club_id?: string
+          day?: string
+          visitor_hash?: string
+        }
+        Relationships: []
+      }
       clubs: {
         Row: {
           address: string | null
@@ -805,6 +823,10 @@ export type Database = {
       }
       otp_verify_allowed: {
         Args: { _ip: string; _phone: string }
+        Returns: boolean
+      }
+      record_club_view: {
+        Args: { _club_id: string; _visitor_hash: string }
         Returns: boolean
       }
     }

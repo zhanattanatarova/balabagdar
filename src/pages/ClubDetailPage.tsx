@@ -30,14 +30,8 @@ const ClubDetailPage = () => {
     if (!id) return;
     if (viewedClubId.current !== id) {
       viewedClubId.current = id;
-      void supabase.rpc("increment_club_views", { _club_id: id });
-      const key = `club_viewed:${id}`;
-      try {
-        if (!sessionStorage.getItem(key)) {
-          sessionStorage.setItem(key, "1");
-          void supabase.rpc("log_club_event", { _club_id: id, _event_type: "view" });
-        }
-      } catch { /* storage unavailable */ }
+      // Server counts at most one view per visitor, club and day.
+      void supabase.functions.invoke("track-club-view", { body: { club_id: id } });
     }
     const fetchClub = async () => {
       const { data } = await supabase.from("clubs").select("*").eq("id", id).single();
